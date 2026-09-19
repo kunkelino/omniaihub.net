@@ -70,18 +70,18 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
   <div id="portfolio">
     <a class="box" href="ofn.html"><img src="ofn-preview.jpg" alt="One From Now"><span class="cap">One From Now</span></a>
     <a class="box" href="lifehub.html"><img src="lifehub-preview.jpg" alt="LifeHub"><span class="cap">LifeHub</span></a>
-    <a class="box" href="https://www.youtube.com/watch?v=XhXTWCofzMo" target="_blank" rel="noopener">
+    <a class="box yt" href="https://www.youtube.com/watch?v=XhXTWCofzMo" target="_blank" rel="noopener" data-id="XhXTWCofzMo">
       <img src="https://img.youtube.com/vi/XhXTWCofzMo/sddefault.jpg" alt="YouTube">
       <span class="play-badge">▶</span>
       <span class="cap">YouTube</span>
     </a>
     <a class="box" href="spk4gln.html"><img src="speak4-preview.jpg" alt="Speak4"><span class="cap">Speak4</span></a>
-    <a class="box" href="https://www.youtube.com/watch?v=iSAq5QqCaFI" target="_blank" rel="noopener">
+    <a class="box yt" href="https://www.youtube.com/watch?v=iSAq5QqCaFI" target="_blank" rel="noopener" data-id="iSAq5QqCaFI">
       <img src="https://img.youtube.com/vi/iSAq5QqCaFI/sddefault.jpg" alt="YouTube">
       <span class="play-badge">▶</span>
       <span class="cap">YouTube</span>
     </a>
-    <a class="box" href="https://www.youtube.com/shorts/6lhyfMfMqyE" target="_blank" rel="noopener">
+    <a class="box yt" href="https://www.youtube.com/shorts/6lhyfMfMqyE" target="_blank" rel="noopener" data-id="6lhyfMfMqyE">
       <img src="https://img.youtube.com/vi/6lhyfMfMqyE/maxresdefault.jpg" alt="YouTube">
       <span class="play-badge">▶</span>
       <span class="cap">YouTube</span>
@@ -175,18 +175,19 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
 </div>
 <script>
 document.querySelectorAll(".yt").forEach(function(box){
-  box.addEventListener("click", function(e){
-    if(e.target.closest(".expand")){
-      window.open("https://www.youtube.com/watch?v="+box.dataset.id,"_blank","noopener");
-      return;
-    }
+  box.addEventListener("mouseenter", function(){
     if(box.classList.contains("playing")) return;
     box.classList.add("playing");
-    box.innerHTML='<iframe src="https://www.youtube.com/embed/'+box.dataset.id+'?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe><button class="expand" type="button">Expand</button>';
-    box.querySelector(".expand").addEventListener("click", function(ev){
-      ev.stopPropagation();
-      window.open("https://www.youtube.com/watch?v="+box.dataset.id,"_blank","noopener");
-    });
+    var id=box.dataset.id;
+    var frame=document.createElement("iframe");
+    frame.src="https://www.youtube.com/embed/"+id+"?autoplay=1&mute=1&rel=0&playsinline=1";
+    frame.allow="autoplay; encrypted-media; picture-in-picture";
+    frame.setAttribute("allowfullscreen","");
+    var hit=document.createElement("span");
+    hit.className="yt-hit";
+    hit.style.cssText="position:absolute;inset:0;z-index:3;";
+    box.appendChild(frame);
+    box.appendChild(hit);
   });
 });
 </script>
