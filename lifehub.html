@@ -128,6 +128,45 @@ body.lh-pip-float .media-card{display:none;}
 </head>
 <body>
 
+<style>
+#gate{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#111827,#312e81);display:flex;align-items:center;justify-content:center;padding:24px;}
+#gate.ok{display:none;}
+#gate .lock{width:min(360px,100%);background:#fff;border-radius:20px;padding:28px 22px;text-align:center;color:#172033;box-shadow:0 10px 30px rgba(15,23,42,.18);}
+#gate h1{margin:0 0 8px;font-size:22px;}
+#gate p{margin:0 0 16px;color:#6b7280;font-size:14px;}
+#gate input{width:100%;text-align:center;letter-spacing:.4em;font-size:28px;padding:12px;border:1px solid #d1d5db;border-radius:12px;}
+#gate button{margin-top:14px;width:100%;border:0;background:#4f46e5;color:#fff;font-weight:800;padding:12px;border-radius:12px;cursor:pointer;}
+#gate .err{color:#dc2626;font-size:13px;min-height:18px;margin-top:8px;}
+#gate a.back{display:inline-block;margin-top:14px;color:#6b7280;font-size:13px;}
+</style>
+<div id="gate">
+  <div class="lock">
+    <h1>LifeHub</h1>
+    <p>Enter the 6-digit code</p>
+    <input id="gatePin" type="password" inputmode="numeric" maxlength="6" autocomplete="off">
+    <button type="button" onclick="unlockGate()">Enter</button>
+    <div class="err" id="gateErr"></div>
+    <a class="back" href="index.html">Back to portfolio</a>
+  </div>
+</div>
+<script>
+(function(){
+  var PIN="435777";
+  var KEY="jk_gate_ok";
+  function openSite(){ var g=document.getElementById("gate"); if(g) g.classList.add("ok"); }
+  function unlockGate(){
+    var v=(document.getElementById("gatePin").value||"").replace(/\D/g,"");
+    if(v===PIN){ sessionStorage.setItem(KEY,"1"); openSite(); }
+    else { document.getElementById("gateErr").textContent="Wrong code"; }
+  }
+  window.unlockGate=unlockGate;
+  if(sessionStorage.getItem(KEY)==="1") openSite();
+  var inp=document.getElementById("gatePin");
+  if(inp) inp.addEventListener("keydown", function(e){ if(e.key==="Enter") unlockGate(); });
+})();
+</script>
+
+
 <a id="hubHomeBtn" href="/index.html" title="Home" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10.5V20h12v-9.5"/></svg></a>
 
 <header>
