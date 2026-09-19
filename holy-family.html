@@ -56,6 +56,7 @@ html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f
 .cart-x{border:0;background:#fee2e2;color:#b91c1c;width:28px;height:28px;border-radius:8px;font-weight:800;cursor:pointer;line-height:1;}
 .totals{margin-top:12px;}
 .tot-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:14px;}
+#donateAmt{outline:none;}
 .tax-box{background:#eef2ff;color:#3730a3;font-weight:800;border-radius:10px;padding:4px 10px;}
 .tot-row.grand{font-size:18px;font-weight:800;color:#1a1248;border-top:1px solid #e5e7eb;margin-top:6px;padding-top:10px;}
 .order-row{display:flex;justify-content:flex-end;margin-top:12px;}
@@ -103,14 +104,14 @@ html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f
     </div>
     <div class="hf-body">
       <div class="hf-grid">
-        <button class="candy-btn" type="button" data-id="twix" data-item="Twix">
+        <button class="candy-btn" type="button" data-id="twix" data-item="Twix Mini">
           <img src="twix.jpg" alt="Twix">
-          <div class="candy-name">Twix</div>
+          <div class="candy-name">Twix Mini</div>
           <div class="price-tag">$ donation</div>
         </button>
-        <button class="candy-btn" type="button" data-id="snickers" data-item="Snickers">
+        <button class="candy-btn" type="button" data-id="snickers" data-item="Snickers Mini">
           <img src="snickers.jpg" alt="Snickers">
-          <div class="candy-name">Snickers</div>
+          <div class="candy-name">Snickers Mini</div>
           <div class="price-tag">$ donation</div>
         </button>
         <button class="candy-btn" type="button" data-id="milkyway" data-item="Milky Way Minis">
@@ -130,14 +131,14 @@ html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f
           <div class="price-tag">$ donation</div>
           <div class="stock-left"></div>
         </button>
-        <button class="candy-btn" type="button" data-id="twizzler" data-item="Twizzler">
+        <button class="candy-btn" type="button" data-id="twizzler" data-item="Twizzler Mini">
           <img src="twizzler.jpg.JPG" alt="Twizzler">
-          <div class="candy-name">Twizzler</div>
+          <div class="candy-name">Twizzler Mini</div>
           <div class="price-tag">$ donation</div>
         </button>
-        <button class="candy-btn" type="button" data-id="mms" data-item="M&amp;M's">
+        <button class="candy-btn" type="button" data-id="mms" data-item="M&amp;M's Mini">
           <img src="mms.jpg.WEBP" alt="M and Ms">
-          <div class="candy-name">M&amp;M's</div>
+          <div class="candy-name">M&amp;M's Mini</div>
           <div class="price-tag">$ donation</div>
         </button>
         <button class="candy-btn" type="button" data-id="coffee" data-item="Coffee">
@@ -148,6 +149,11 @@ html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f
         <button class="candy-btn" type="button" data-id="coffeehazel" data-item="Coffee Hazelnut">
           <img class="tryimg" alt="Coffee Hazelnut" data-try="coffeehazel.jpg,coffeehazel,jpg,coffeehazel,jpg.jpg,coffehazel.jpg,COFFEEHAZEL.JPG,coffeehazel.jpeg,coffeehazel.jpg.WEBP">
           <div class="candy-name">Coffee Hazelnut</div>
+          <div class="price-tag">$ donation</div>
+        </button>
+        <button class="candy-btn" type="button" data-id="bar" data-item="Granola Bar">
+          <img class="tryimg" alt="Granola Bar" data-try="bar.jpg,bar.JPG,BAR.JPG,bar.jpeg,bar.jpg.WEBP,bar.jpg.JPG">
+          <div class="candy-name">Granola Bar</div>
           <div class="price-tag">$ donation</div>
         </button>
       </div>
@@ -166,6 +172,13 @@ html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f
         <div class="totals">
           <div class="tot-row"><span>Items</span><span id="subtotal">$ donation</span></div>
           <div class="tot-row"><span>Jonathan Tax</span><span class="tax-box" id="taxBox">$0.50 😂</span></div>
+          <div class="tot-row"><span>Total donation</span>
+            <span class="tax-box" style="padding:0">
+              <span style="padding:0 4px 0 10px">$</span>
+              <input id="donateAmt" type="number" min="0" step="0.01" placeholder="0.00" style="width:88px;border:0;background:transparent;font-weight:800;font-size:14px;padding:6px 8px 6px 0;color:#3730a3;">
+            </span>
+          </div>
+          <div class="tot-row grand"><span>Total</span><span id="grandTotal">$0.50</span></div>
         </div>
         <div class="order-row">
           <button class="order-btn" id="orderBtn" type="button" disabled>Order</button>
@@ -285,6 +298,10 @@ document.querySelectorAll(".tryimg").forEach(function(img){
     });
     empty.style.display=cart.length?"none":"block";
     if(subEl) subEl.textContent="$ donation";
+    var d=parseFloat((document.getElementById("donateAmt")||{}).value||"0");
+    if(isNaN(d)||d<0) d=0;
+    var g=document.getElementById("grandTotal");
+    if(g) g.textContent=money(d+TAX);
     orderBtn.disabled=!cart.length;
   }
   document.querySelectorAll(".candy-btn").forEach(function(btn){
@@ -318,7 +335,9 @@ document.querySelectorAll(".tryimg").forEach(function(img){
     var name=(document.getElementById("orderName").value||"").trim();
     if(!name){ alert("Write your name so I know who to deliver to."); return; }
     var lines=cart.map(function(i){ return "- "+i.name; });
-    var body="Name: "+name+"\n\nOrder:\n"+lines.join("\n")+"\n\n$ donation\nJonathan Tax $0.50";
+    var d=parseFloat((document.getElementById("donateAmt")||{}).value||"0");
+    if(isNaN(d)||d<0) d=0;
+    var body="Name: "+name+"\n\nOrder:\n"+lines.join("\n")+"\n\nTotal donation $"+d.toFixed(2)+"\nJonathan Tax $0.50\nGrand total $"+(d+TAX).toFixed(2);
     var sendBtn=document.getElementById("sendOrder");
     sendBtn.disabled=true;
     sendBtn.textContent="Sending...";
@@ -356,6 +375,8 @@ document.querySelectorAll(".tryimg").forEach(function(img){
   document.getElementById("payClose").addEventListener("click", function(){
     pay.classList.remove("show");
   });
+  var da=document.getElementById("donateAmt");
+  if(da) da.addEventListener("input", render);
   loadStock();
   paintStock();
   render();
