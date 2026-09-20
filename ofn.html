@@ -76,7 +76,7 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
 .com-rooms{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .com-rooms button{border:1px solid #cfe7e4;background:#fff;border-radius:10px;padding:8px 10px;font-size:12px;cursor:pointer}
 .com-rooms button.on{background:#0A5B5E;color:#fff;border-color:#0A5B5E}
-.com-post{border:1px solid #e5e7eb;border-radius:12px;padding:10px;margin:8px 0;background:#fff}
+.com-post{border:1px solid #e5e7eb;border-radius:12px;padding:10px;margin:8px 0;background:#fff;cursor:pointer}
 .com-post .who{font-size:12px;color:#6b7280;margin-bottom:4px}
 .com-post .msg{font-size:14px;line-height:1.45}
 .com-actions{display:flex;gap:8px;margin-top:6px}
@@ -903,18 +903,18 @@ function openPostChat(kind,id){
   if(!CHAT_THREADS.some(function(r){ return r[0]===rid; })){
     CHAT_THREADS.unshift([rid, "💬 "+title]);
   }
-  comTab("chat");
-  const saved=localStorage.getItem("ofn_nick")||"";
-  if(saved){
-    const box=document.getElementById("chatNick"); if(box && !box.value) box.value=saved;
-    if(typeof chatNickName==="undefined" || !chatNickName) chatLogin();
-    else { document.getElementById("chatLogin").style.display="none"; document.getElementById("chatHome").style.display=""; document.getElementById("chatWho").textContent=chatNickName||saved; }
-    chatOpenRoom(rid);
-  } else {
-    window._pendingRoom=rid;
-    const nick=document.getElementById("chatNick"); if(nick) nick.focus();
-    alert("Enter a display name and tap Enter chat to join this conversation.");
+  var saved=(localStorage.getItem("ofn_nick")||"").trim();
+  if(saved.length<2){
+    saved=(window.prompt("Type a chat name to join (does not have to be your real name):")||"").trim();
+    if(saved.length<2) return;
   }
+  localStorage.setItem("ofn_nick", saved);
+  var box=document.getElementById("chatNick"); if(box) box.value=saved;
+  comTab("chat");
+  try{ chatLogin(); }catch(e){}
+  try{ chatOpenRoom(rid); }catch(e){ console.log(e); }
+  var room=document.getElementById("chatRoom");
+  if(room) room.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 
