@@ -31,7 +31,7 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:v
 .ht b{display:block;font-size:13px}
 .ht span{display:block;text-decoration:none;font-size:11px;opacity:.9;color:#fff}
 .hn{font-weight:800;font-size:18px}
-.quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.quick{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
 .qb{display:flex;align-items:center;gap:8px;background:#0A5B5E;border:0;border-radius:12px;padding:14px 14px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;text-align:left;line-height:1.3;min-height:52px}
 .qb span{flex:1;white-space:normal;color:#fff}
 .wrap{width:100%;margin:0 auto;padding:12px 12px calc(24px + var(--safe-b))}
@@ -128,7 +128,6 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
     <div class="quick">
       <button class="qb" onclick="show('videos')">▶ <span>Watch Videos</span> ›</button>
       <button class="qb" onclick="show('suggest')">📍 <span>Request Help for Other Cities</span> ›</button>
-      <button class="qb" onclick="show('admin')">🔑 <span>Video Dashboard</span> ›</button>
     </div>
   </div>
   <div class="frame">
@@ -369,13 +368,16 @@ function yt(uri){
 async function loadVideos(){
   let vids=[]; try{const r=await fetch("/api/videos"); if(r.ok) vids=await r.json();}catch{}
   if(!vids.length) vids=JSON.parse(localStorage.getItem("ofn_videos")||"[]");
+  const defaults=[
+    {uri:"https://www.youtube.com/watch?v=XhXTWCofzMo",title:"Different versions",description:"One From Now"},
+    {uri:"https://www.youtube.com/watch?v=iSAq5QqCaFI",title:"BBQ",description:"One From Now"},
+    {uri:"https://www.youtube.com/shorts/6lhyfMfMqyE",title:"Dog",description:"One From Now"}
+  ];
+  const seen=new Set(vids.map(v=>v.uri));
+  defaults.forEach(d=>{ if(!seen.has(d.uri)) vids.push(d); });
   const box=document.getElementById("videos");
   if(!vids.length){
-    vids=[
-      {uri:"https://www.youtube.com/watch?v=XhXTWCofzMo",title:"Different versions",description:"One From Now"},
-      {uri:"https://www.youtube.com/watch?v=iSAq5QqCaFI",title:"BBQ",description:"One From Now"},
-      {uri:"https://www.youtube.com/shorts/6lhyfMfMqyE",title:"Dog",description:"One From Now"}
-    ];
+    vids=defaults.slice();
   }
   vids.sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0));
   box.innerHTML=vids.map(v=>{
