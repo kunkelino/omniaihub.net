@@ -608,6 +608,30 @@ function comBlocked(text){
 function comLoad(key){ try{return JSON.parse(localStorage.getItem(key)||"[]");}catch{return [];} }
 function comSave(key,rows){ localStorage.setItem(key, JSON.stringify(rows)); }
 const CHAT_API="/api/chats";
+function allRoomHist(){
+  const rooms={};
+  try{
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);
+      if(k && k.indexOf("ofn_live_")==0){
+        rooms[k.replace("ofn_live_","")]=JSON.parse(localStorage.getItem(k)||"[]");
+      }
+    }
+  }catch(e){}
+  return rooms;
+}
+function applyRemoteRooms(rooms){
+  if(!rooms) return;
+  Object.keys(rooms).forEach(function(rid){
+    var incoming=rooms[rid]||[];
+    var local=chatHist(rid);
+    var map={};
+    local.concat(incoming).forEach(function(m){ if(m && m.id!=null) map[String(m.id)]=m; });
+    var merged=Object.keys(map).map(function(id){ return map[id]; });
+    merged.sort(function(a,b){ return Number(a.at||0)-Number(b.at||0); });
+    chatSaveHist(rid, merged);
+  });
+}
 async function pullSharedChats(){
   try{
     const r=await fetch(CHAT_API,{cache:"no-store"});
@@ -616,6 +640,7 @@ async function pullSharedChats(){
     if(!data || !Array.isArray(data.info)) return false;
     comSave("ofn_com_info", data.info);
     comSave("ofn_com_story", Array.isArray(data.story)?data.story:[]);
+    applyRemoteRooms(data.rooms||{});
     return true;
   }catch(e){ return false; }
 }
@@ -626,7 +651,8 @@ async function pushSharedChats(){
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
         info:comLoad("ofn_com_info"),
-        story:comLoad("ofn_com_story")
+        story:comLoad("ofn_com_story"),
+        rooms:allRoomHist()
       })
     });
   }catch(e){}
@@ -819,10 +845,11 @@ function chatAdd(m, broadcast){
     return;
   }
   const rows=chatHist(chatRoomId);
-  if(rows.some(function(x){ return x.id===m.id; })) return;
+  if(rows.some(function(x){ return String(x.id)===String(m.id); })) return;
   rows.push(m);
   chatSaveHist(chatRoomId, rows);
   chatPaint();
+  if(!broadcast) pushSharedChats();
 }
 async function chatOpenRoom(id){
   const found=CHAT_THREADS.find(function(r){ return r[0]===id; });
@@ -857,6 +884,14 @@ function chatLeaveRoom(quiet){
   chatRoomObj=null; chatSendLive=null; chatRoomId="";
   document.getElementById("chatRoom").style.display="none";
   if(!quiet && chatNickName) document.getElementById("chatHome").style.display="";
+}
+var chatPollTimer=null;
+function startChatPoll(){
+  if(chatPollTimer) clearInterval(chatPollTimer);
+  chatPollTimer=setInterval(function(){
+    if(!chatRoomId) return;
+    pullSharedChats().then(function(){ chatPaint(); });
+  }, 3000);
 }
 function chatSend(ev){
   ev.preventDefault();
@@ -928,6 +963,7 @@ function openPostChat(kind,id){
   var home=document.getElementById("chatHome"); if(home) home.style.display="none";
   var who=document.getElementById("chatWho"); if(who) who.textContent=saved;
   if(typeof chatOpenRoom==="function") chatOpenRoom(rid);
+  startChatPoll();
   setTimeout(function(){
     var room=document.getElementById("chatRoom");
     if(room){
