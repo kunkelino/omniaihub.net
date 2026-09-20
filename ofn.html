@@ -104,6 +104,11 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
 .chat-compose input{flex:1;border:1px solid #d1d5db;border-radius:20px;padding:10px 12px}
 .chat-compose button{border:0;background:#0D7377;color:#fff;border-radius:20px;padding:10px 14px;font-weight:800;cursor:pointer}
 
+
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.dash-grid .qb{min-height:64px}
+.dash-threads{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.dash-threads button{border:0;background:#e7f4f2;color:#0A5B5E;border-radius:999px;padding:8px 10px;font-size:12px;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
@@ -160,15 +165,22 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
       <a class="hot" href="tel:211"><div class="ico" style="background:#FFD58033">📞</div><div class="ht"><b style="color:#FFD580">Dial 211</b><span>Shelter, food &amp; benefits</span></div><div class="hn" style="color:#FFD580">211</div></a>
       <a class="hot" href="tel:311"><div class="ico" style="background:#A8E6CF33">📞</div><div class="ht"><b style="color:#A8E6CF">Dial 311</b><span>City non-emergency services</span></div><div class="hn" style="color:#A8E6CF">311</div></a>
     </div>
-    <div class="quick">
+    <div class="quick dash-grid">
+      <button class="qb" onclick="document.getElementById('find').scrollIntoView({behavior:'smooth'})">📍 <span>Find Resources</span> ›</button>
       <button class="qb" onclick="show('videos')">▶ <span>Watch Videos</span> ›</button>
-      <button class="qb" onclick="show('community')">💬 <span>Community</span> ›</button>
-      <button class="qb" onclick="show('suggest')">📍 <span>Request Help for Other Cities</span> ›</button>
+      <button class="qb" onclick="show('community');comTab('chat')">💬 <span>Live Chat</span> ›</button>
+      <button class="qb" onclick="show('community');comTab('info')">💡 <span>Share Info</span> ›</button>
+      <button class="qb" onclick="show('community');comTab('story')">❤️ <span>Share Your Story</span> ›</button>
+      <button class="qb" onclick="show('community');comTab('ideas')">📝 <span>Suggestions</span> ›</button>
+    </div>
+    <div style="padding:8px 2px 0">
+      <div style="color:#fff;font-size:12px;font-weight:700;opacity:.9;margin:6px 2px">Chat threads</div>
+      <div class="dash-threads" id="dashThreads"></div>
     </div>
   </div>
   <div class="frame">
   <div class="wrap">
-    <div class="card">
+    <div class="card" id="find">
       <h2>Find Resources</h2>
       <button class="locate" id="locateBtn" onclick="locateMe()">➤ Locate Me — show nearest services</button>
       <label>CHOOSE A STATE</label>
@@ -825,6 +837,30 @@ function openPostChat(kind,id){
   }
 }
 
+
+
+function fillDashThreads(){
+  const box=document.getElementById("dashThreads");
+  if(!box || typeof CHAT_THREADS==="undefined") return;
+  box.innerHTML=CHAT_THREADS.map(function(r){
+    return '<button type="button" onclick="openDashThread(\''+r[0]+'\')">'+r[1]+'</button>';
+  }).join("");
+}
+function openDashThread(id){
+  show("community");
+  comTab("chat");
+  const saved=localStorage.getItem("ofn_nick")||"";
+  if(saved){
+    const n=document.getElementById("chatNick"); if(n && !n.value) n.value=saved;
+    try{ chatLogin(); }catch(e){}
+    chatOpenRoom(id);
+  } else {
+    window._pendingRoom=id;
+    const n=document.getElementById("chatNick"); if(n) n.focus();
+  }
+}
+
+fillDashThreads();
 if(location.hash==="#admin" || location.search.includes("admin=1")) show("admin");
 if(sessionStorage.getItem("ofn_admin")==="1"){ var b=document.getElementById("adminBox"); if(b) b.style.display="block"; }
 </script>
