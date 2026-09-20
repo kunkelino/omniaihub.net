@@ -913,6 +913,7 @@ function chatSend(ev){
 function roomIdForName(name,id){
   const n=(name||"").toLowerCase();
   if(n.includes("francis")) return "stfrancis";
+  if(n.includes("crossing")||n.includes("downtown")||n.includes("down town")) return "downtown";
   if(n.includes("pine street")) return "pinestreet";
   if(n.includes("southampton")||n.includes("112")) return "southampton";
   if(n.includes("woods mullen")) return "woodsmullen";
