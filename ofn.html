@@ -261,7 +261,9 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
         <textarea id="infoText" placeholder="A shelter, pantry, tip, or advice that may help someone."></textarea>
         <button class="btn" onclick="comPost('info')">Post</button>
         <h3 style="margin-top:18px">Current chats — please join</h3>
-        <p class="hint">Tap a conversation below to join.</p>
+        <p class="hint">Type a chat name, then click a conversation.</p>
+        <label>CHAT NAME</label>
+        <input id="infoNick" placeholder="A name others will see"/>
         <div id="infoList"></div>
       </div>
 
@@ -706,8 +708,19 @@ function comRender(){
     const box=document.getElementById(boxId); if(!box) return;
     let rows=comLoad("ofn_com_"+kind);
     box.innerHTML=rows.map(function(p){
-      return '<div class="com-post" onclick="openPostChat(\''+kind+'\','+JSON.stringify(String(p.id))+')"><div class="who">'+esc(p.who)+' · tap to talk</div><div class="msg">'+esc(p.text)+'</div><div class="com-actions"><button type="button" onclick="event.stopPropagation();comReport(\''+kind+'\','+JSON.stringify(String(p.id))+')">Report</button></div></div>';
+      return '<div class="com-post" data-kind="'+kind+'" data-id="'+String(p.id).replace(/"/g,"")+'"><div class="who">'+esc(p.who)+' · tap to join</div><div class="msg">'+esc(p.text)+'</div><div class="com-actions"><button type="button" data-report="1">Report</button><button type="button" data-join="1">Join chat</button></div></div>';
     }).join("") || "<p class='hint'>No posts yet. Be the first.</p>";
+    box.onclick=function(ev){
+      var card=ev.target.closest(".com-post");
+      if(!card) return;
+      if(ev.target.getAttribute("data-report")==="1"){
+        ev.preventDefault();
+        comReport(card.getAttribute("data-kind"), card.getAttribute("data-id"));
+        return;
+      }
+      ev.preventDefault();
+      openPostChat(card.getAttribute("data-kind"), card.getAttribute("data-id"));
+    };
   }
   paintAll();
 }
@@ -903,21 +916,26 @@ function openPostChat(kind,id){
   if(!CHAT_THREADS.some(function(r){ return r[0]===rid; })){
     CHAT_THREADS.unshift([rid, "💬 "+title]);
   }
-  var saved=(localStorage.getItem("ofn_nick")||"").trim();
-  if(saved.length<2){
-    saved=(window.prompt("Type a chat name to join (does not have to be your real name):")||"").trim();
-    if(saved.length<2) return;
-  }
+  var infoNick=document.getElementById("infoNick");
+  var saved=(infoNick && infoNick.value.trim()) || (localStorage.getItem("ofn_nick")||"").trim() || "Guest";
+  if(saved.length<2) saved="Guest";
   localStorage.setItem("ofn_nick", saved);
   var box=document.getElementById("chatNick"); if(box) box.value=saved;
+  if(infoNick && !infoNick.value) infoNick.value=saved;
   comTab("chat");
-  try{ chatLogin(); }catch(e){}
-  try{ chatOpenRoom(rid); }catch(e){ console.log(e); }
-  var room=document.getElementById("chatRoom");
-  if(room) room.scrollIntoView({behavior:"smooth",block:"start"});
+  chatNickName=saved;
+  var login=document.getElementById("chatLogin"); if(login) login.style.display="none";
+  var home=document.getElementById("chatHome"); if(home) home.style.display="none";
+  var who=document.getElementById("chatWho"); if(who) who.textContent=saved;
+  if(typeof chatOpenRoom==="function") chatOpenRoom(rid);
+  setTimeout(function(){
+    var room=document.getElementById("chatRoom");
+    if(room){
+      room.style.display="flex";
+      room.scrollIntoView({behavior:"smooth",block:"start"});
+    }
+  }, 50);
 }
-
-
 
 function fillDashThreads(){
   const box=document.getElementById("dashThreads");
