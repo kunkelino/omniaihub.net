@@ -166,12 +166,12 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
       <a class="hot" href="tel:311"><div class="ico" style="background:#A8E6CF33">📞</div><div class="ht"><b style="color:#A8E6CF">Dial 311</b><span>City non-emergency services</span></div><div class="hn" style="color:#A8E6CF">311</div></a>
     </div>
     <div class="quick dash-grid">
-      <button class="qb" onclick="document.getElementById('find').scrollIntoView({behavior:'smooth'})">📍 <span>Find Resources</span> ›</button>
-      <button class="qb" onclick="show('videos')">▶ <span>Watch Videos</span> ›</button>
-      <button class="qb" onclick="show('community');comTab('chat')">💬 <span>Live Chat</span> ›</button>
-      <button class="qb" onclick="show('community');comTab('info')">💡 <span>Share Info</span> ›</button>
-      <button class="qb" onclick="show('community');comTab('story')">❤️ <span>Share Your Story</span> ›</button>
-      <button class="qb" onclick="show('community');comTab('ideas')">📝 <span>Suggestions</span> ›</button>
+      <button type="button" class="qb" onclick="document.getElementById('find').scrollIntoView({behavior:'smooth'})">📍 <span>Find Resources</span> ›</button>
+      <button type="button" class="qb" onclick="show('videos')">▶ <span>Watch Videos</span> ›</button>
+      <button type="button" class="qb" onclick="show('community');comTab('chat')">💬 <span>Live Chat</span> ›</button>
+      <button type="button" class="qb" onclick="show('community');comTab('info')">💡 <span>Share Info</span> ›</button>
+      <button type="button" class="qb" onclick="show('community');comTab('story')">❤️ <span>Share Your Story</span> ›</button>
+      <button type="button" class="qb" onclick="show('community');comTab('ideas')">📝 <span>Suggestions</span> ›</button>
     </div>
 
   </div>
@@ -212,12 +212,12 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
 </section>
 
 <section id="page-videos" class="page">
-  <div class="hero"><button class="qb" onclick="show('home')">← Back</button></div>
+  <div class="hero"><button type="button" class="qb" onclick="show('home')">← Back</button></div>
   <div class="wrap"><div class="card"><h2>Videos</h2><p class="hint">Plays the full 16:9 video.</p></div><div id="videos"></div></div>
 </section>
 
 <section id="page-suggest" class="page">
-  <div class="hero"><button class="qb" onclick="show('home')">← Back</button></div>
+  <div class="hero"><button type="button" class="qb" onclick="show('home')">← Back</button></div>
   <div class="wrap">
     <div class="card">
       <h2>Request help for other cities</h2>
@@ -234,7 +234,7 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
 
 
 <section id="page-community" class="page">
-  <div class="hero"><button class="qb" onclick="show('home')">← Back</button></div>
+  <div class="hero"><button type="button" class="qb" onclick="show('home')">← Back</button></div>
   <div class="wrap">
     <div class="card">
       <h2>One From Now Community</h2>
@@ -346,7 +346,7 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
 </section>
 
 <section id="page-admin" class="page">
-  <div class="hero"><button class="qb" onclick="show('home')">← Back</button></div>
+  <div class="hero"><button type="button" class="qb" onclick="show('home')">← Back</button></div>
   <div class="wrap">
     <div class="card">
       <h2>Video Dashboard</h2>
@@ -885,7 +885,8 @@ function renderModQueue(){
   if(!box) return;
   const q=comLoad("ofn_mod_queue");
   box.innerHTML=q.map(function(m){
-    return '<div class="res"><b>'+esc(m.who)+'</b> · '+esc(m.room||"")+'<div class="hint">'+esc(m.text)+'</div><button class="btn" type="button" onclick='modKeep('+JSON.stringify(String(m.id))+')'>Keep</button> <button class="btn" type="button" onclick='modDrop('+JSON.stringify(String(m.id))+')'>Delete</button></div>';
+    var id=JSON.stringify(String(m.id));
+    return '<div class="res"><b>'+esc(m.who)+'</b> · '+esc(m.room||"")+'<div class="hint">'+esc(m.text)+'</div><button class="btn" type="button" onclick="modKeep('+id+')">Keep</button> <button class="btn" type="button" onclick="modDrop('+id+')">Delete</button></div>';
   }).join("") || "<p class='hint'>Nothing waiting.</p>";
 }
 function modDrop(id){
