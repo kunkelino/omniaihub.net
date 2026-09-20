@@ -85,6 +85,25 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
 .safe{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.45;margin:8px 0}
 #comText,#storyText,#sugText{width:100%;min-height:90px;border:1px solid #d1d5db;border-radius:12px;padding:10px;font:inherit}
 
+
+.chat-shell{display:flex;flex-direction:column;min-height:70vh;background:#e8f3f2;border-radius:16px;overflow:hidden;border:1px solid #cfe7e4}
+.chat-login{padding:16px}
+.chat-threads{display:flex;flex-direction:column;gap:6px;padding:8px;max-height:55vh;overflow:auto}
+.chat-thread{border:0;background:#fff;border-radius:12px;padding:12px;text-align:left;cursor:pointer}
+.chat-thread b{display:block;color:#0A5B5E}
+.chat-thread span{font-size:12px;color:#6b7280}
+.chat-head{display:flex;align-items:center;gap:8px;background:#0D7377;color:#fff;padding:10px 12px}
+.chat-head button{border:0;background:#0A5B5E;color:#fff;border-radius:10px;padding:6px 10px;cursor:pointer}
+.chat-live{font-size:11px;opacity:.9}
+.chat-msgs{flex:1;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:280px}
+.bub{max-width:82%;padding:8px 10px;border-radius:14px;font-size:14px;line-height:1.4}
+.bub.me{align-self:flex-end;background:#0D7377;color:#fff}
+.bub.them{align-self:flex-start;background:#fff;color:#123}
+.bub .meta{font-size:10px;opacity:.75;margin-bottom:2px}
+.chat-compose{display:flex;gap:6px;padding:8px;background:#fff}
+.chat-compose input{flex:1;border:1px solid #d1d5db;border-radius:20px;padding:10px 12px}
+.chat-compose button{border:0;background:#0D7377;color:#fff;border-radius:20px;padding:10px 14px;font-weight:800;cursor:pointer}
+
 </style>
 </head>
 <body>
@@ -256,14 +275,34 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
 
       <div id="tab-chat" style="display:none">
         <h3>💬 Community Chat</h3>
-        <p class="hint">Talk about what’s happening in your community, share information and resources, ask questions, offer advice, or simply talk with people who understand.</p>
-        <div class="com-rooms" id="comRooms"></div>
-        <label>YOUR NAME (optional)</label>
-        <input id="chatName" placeholder="Anonymous"/>
-        <label><input type="checkbox" id="chatAnon" checked/> Stay anonymous</label>
-        <textarea id="chatText" placeholder="Write a message for this room."></textarea>
-        <button class="btn" onclick="comPost('chat')">Send</button>
-        <div id="chatList"></div>
+        <p class="hint">Pick a display name, open a thread, and talk in real time with other people in that room. You do not need your real name.</p>
+        <div class="notice">This community is for information, advice, and support. Do not solicit money, donations, or financial assistance.</div>
+        <div class="chat-shell">
+          <div id="chatLogin" class="chat-login">
+            <label>DISPLAY NAME</label>
+            <input id="chatNick" placeholder="A name others will see"/>
+            <p class="hint">This is only a chat name. It does not have to be your real name.</p>
+            <button class="btn" type="button" onclick="chatLogin()">Enter chat</button>
+          </div>
+          <div id="chatHome" style="display:none">
+            <div style="padding:10px 12px 0;font-size:13px;color:#0A5B5E">Signed in as <b id="chatWho"></b> · <button type="button" class="search-go" style="padding:4px 8px" onclick="chatLogout()">Log out</button></div>
+            <div class="chat-threads" id="chatThreads"></div>
+          </div>
+          <div id="chatRoom" style="display:none;flex-direction:column;min-height:70vh">
+            <div class="chat-head">
+              <button type="button" onclick="chatLeaveRoom()">Back</button>
+              <div style="flex:1">
+                <b id="chatRoomName"></b>
+                <div class="chat-live" id="chatLive">Connecting…</div>
+              </div>
+            </div>
+            <div class="chat-msgs" id="chatMsgs"></div>
+            <form class="chat-compose" onsubmit="chatSend(event)">
+              <input id="chatInput" autocomplete="off" placeholder="Message this thread"/>
+              <button type="submit">Send</button>
+            </form>
+          </div>
+        </div>
       </div>
 
       <div id="tab-ideas" style="display:none">
@@ -611,6 +650,123 @@ show=function(name){
   _show(name);
   if(name==="community"){ comDrawRooms(); comRender(); }
 };
+
+
+
+const CHAT_THREADS=[
+  ["general","💬 General Conversation"],
+  ["housing","🏠 Housing & Shelters"],
+  ["food","🍽️ Food"],
+  ["clothing","👕 Clothing"],
+  ["ids","🪪 IDs & Documents"],
+  ["jobs","💼 Jobs & Training"],
+  ["transport","🚍 Transportation"],
+  ["benefits","💰 Benefits"],
+  ["health","🏥 Healthcare"],
+  ["hope","❤️ Encouragement"],
+  ["boston","📍 Boston"],
+  ["nyc","📍 New York City"],
+  ["nj","📍 New Jersey"],
+  ["dc","📍 Washington DC"],
+  ["nh","📍 New Hampshire"],
+  ["maine","📍 Maine"]
+];
+let chatNickName="";
+let chatRoomId="";
+let chatRoomObj=null;
+let chatSendLive=null;
+let chatPeers=0;
+function chatKey(id){ return "ofn_live_"+id; }
+function chatHist(id){ try{return JSON.parse(localStorage.getItem(chatKey(id))||"[]");}catch(e){return [];} }
+function chatSaveHist(id,rows){ localStorage.setItem(chatKey(id), JSON.stringify(rows.slice(0,200))); }
+function chatLogin(){
+  const n=(document.getElementById("chatNick").value||"").trim();
+  if(n.length<2) return alert("Enter a display name.");
+  chatNickName=n;
+  localStorage.setItem("ofn_nick", n);
+  document.getElementById("chatLogin").style.display="none";
+  document.getElementById("chatHome").style.display="";
+  document.getElementById("chatWho").textContent=n;
+  chatDrawThreads();
+}
+function chatLogout(){
+  chatLeaveRoom();
+  chatNickName="";
+  document.getElementById("chatHome").style.display="none";
+  document.getElementById("chatLogin").style.display="";
+}
+function chatDrawThreads(){
+  document.getElementById("chatThreads").innerHTML=CHAT_THREADS.map(function(r){
+    return '<button class="chat-thread" type="button" onclick="chatOpenRoom(\''+r[0]+'\',\''+r[1].replace(/'/g,"") +'\')"><b>'+r[1]+'</b><span>Tap to join this live thread</span></button>';
+  }).join("");
+}
+function chatPaint(){
+  const box=document.getElementById("chatMsgs");
+  const rows=chatHist(chatRoomId);
+  box.innerHTML=rows.map(function(m){
+    const mine=m.who===chatNickName;
+    return '<div class="bub '+(mine?"me":"them")+'"><div class="meta">'+esc(m.who)+'</div>'+esc(m.text)+'</div>';
+  }).join("");
+  box.scrollTop=box.scrollHeight;
+}
+function chatAdd(m, broadcast){
+  if(!m || !m.text) return;
+  const bad=comBlocked(m.text);
+  if(bad){ if(!broadcast) alert(bad); return; }
+  const rows=chatHist(chatRoomId);
+  if(rows.some(function(x){ return x.id===m.id; })) return;
+  rows.push(m);
+  chatSaveHist(chatRoomId, rows);
+  chatPaint();
+}
+async function chatOpenRoom(id){
+  const found=CHAT_THREADS.find(function(r){ return r[0]===id; });
+  const label=found?found[1]:id;
+  chatLeaveRoom(true);
+  chatRoomId=id;
+  document.getElementById("chatHome").style.display="none";
+  const room=document.getElementById("chatRoom");
+  room.style.display="flex";
+  document.getElementById("chatRoomName").textContent=label;
+  document.getElementById("chatLive").textContent="Connecting to live thread…";
+  chatPaint();
+  try{
+    const mod=await import("https://esm.sh/trystero@0.20.0");
+    chatRoomObj=mod.joinRoom({appId:"omniaihub-onefromnow"}, "ofn-"+id);
+    const pair=chatRoomObj.makeAction("msg");
+    chatSendLive=pair[0];
+    pair[1](function(data){ chatAdd(data,true); });
+    function syncPeers(){
+      try{ chatPeers=Object.keys(chatRoomObj.getPeers()).length; }catch(e){ chatPeers=0; }
+      document.getElementById("chatLive").textContent = chatPeers ? ("Live · "+chatPeers+" other people here") : "Live · waiting for others to join this thread";
+    }
+    chatRoomObj.onPeerJoin(syncPeers);
+    chatRoomObj.onPeerLeave(syncPeers);
+    syncPeers();
+  }catch(e){
+    document.getElementById("chatLive").textContent="Live link blocked on this network. Messages stay on this phone.";
+  }
+}
+function chatLeaveRoom(quiet){
+  try{ if(chatRoomObj && chatRoomObj.leave) chatRoomObj.leave(); }catch(e){}
+  chatRoomObj=null; chatSendLive=null; chatRoomId="";
+  document.getElementById("chatRoom").style.display="none";
+  if(!quiet && chatNickName) document.getElementById("chatHome").style.display="";
+}
+function chatSend(ev){
+  ev.preventDefault();
+  const input=document.getElementById("chatInput");
+  const text=(input.value||"").trim();
+  if(!text) return;
+  const m={id:Date.now()+"-"+Math.random().toString(16).slice(2), who:chatNickName||"Anonymous", text:text, at:Date.now()};
+  chatAdd(m,false);
+  try{ if(chatSendLive) chatSendLive(m); }catch(e){}
+  input.value="";
+}
+(function(){
+  const saved=localStorage.getItem("ofn_nick")||"";
+  if(saved){ const n=document.getElementById("chatNick"); if(n) n.value=saved; }
+})();
 
 if(location.hash==="#admin" || location.search.includes("admin=1")) show("admin");
 if(sessionStorage.getItem("ofn_admin")==="1"){ var b=document.getElementById("adminBox"); if(b) b.style.display="block"; }
