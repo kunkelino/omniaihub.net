@@ -41,6 +41,9 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:v
 .locate.on{background:#e4f3f3;border-color:var(--teal);color:var(--teal)}
 label{display:block;font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--muted);margin:12px 0 6px}
 select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:#fff;appearance:none}
+.search-row{display:flex;gap:8px;align-items:stretch;}
+.search-row .search{flex:1;}
+.search-go{border:0;background:#0f766e;color:#fff;font-weight:800;border-radius:14px;padding:0 16px;cursor:pointer;}
 .search{margin-top:12px}
 .hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.4}
 .count{font-size:13px;color:var(--muted);margin:10px 0 6px}
@@ -137,8 +140,11 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
       <label>CHOOSE A SERVICE</label>
       <select id="service"></select>
       <label>SEARCH</label>
-      <input class="search" id="q" placeholder="clothing, food pantry, Boston, 02118…"/>
-      <p class="hint">Tap Locate Me for the closest places, or type clothing, food, pantry, showers, a city, or a zip code.</p>
+      <div class="search-row">
+        <input class="search" id="q" placeholder="families, clothing, food, Boston, 02118…"/>
+        <button class="search-go" id="searchBtn" type="button">Search</button>
+      </div>
+      <p class="hint">Type a word like families, clothing, food, showers, a city, or a zip. Then tap Search.</p>
       <div class="count" id="count"></div>
     </div>
     <div id="list"></div>
@@ -211,6 +217,7 @@ const KEYWORDS = {
   medical:["medical"], clinic:["medical"], doctor:["medical"], hospital:["medical"],
   housing:["housing"], apartment:["housing"],
   youth:["youth"], teen:["youth"], lgbtq:["youth"],
+  family:["family"], families:["family"], kids:["family"], children:["family"], child:["family"],
 };
 const STATES=["All States",...[...new Set(RESOURCES.map(r=>r.state))].sort()];
 const SERVICES=[
@@ -223,6 +230,7 @@ const SERVICES=[
   {key:"caseManagement",label:"Case Management"},
   {key:"youth",label:"Youth Services"},
   {key:"clothing",label:"Clothing"},
+  {key:"family",label:"Families"},
 ];
 const LABELS=Object.fromEntries(SERVICES.map(s=>[s.key,s.label]));
 const stateEl=document.getElementById("state");
@@ -251,16 +259,20 @@ function render(){
   const extra=wantedServices(q);
   const locatedState = loc && (gpsInfo && gpsInfo.state && !isZip ? gpsInfo.state : (zipInfo && zipInfo.stateName) || st);
   const active = !!(loc || q || st!=="all" || sv!=="all");
+  const stop=new Set(["for","the","and","a","an","to","of","in","on","help","need","needs","looking"]);
+  const words=q.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w && !stop.has(w) && !/^\d{5}$/.test(w));
   let rows=RESOURCES.filter(r=>{
-    const svcOk = (sv==="all" || r.services.includes(sv)) && (extra.length===0 || extra.some(s=>r.services.includes(s)));
+    const blob=(r.name+" "+r.city+" "+r.state+" "+(r.address||"")+" "+(r.description||"")+" "+(r.services||[]).join(" ")).toLowerCase();
+    const textHit=!words.length || words.some(w=>blob.includes(w));
+    const familyQ=words.some(w=>["family","families","kids","child","children"].includes(w));
+    const familyHit=!familyQ || blob.includes("famil") || blob.includes("child") || blob.includes("kid") || (r.services||[]).includes("family") || (r.services||[]).includes("youth");
+    const svcOk = (sv==="all" || r.services.includes(sv)) && (extra.length===0 || extra.some(s=>r.services.includes(s) || (s==="family" && (blob.includes("famil")||blob.includes("child")||(r.services||[]).includes("youth")))));
     if(loc){
       const inState = !locatedState || locatedState==="all" || r.state===locatedState || (locatedState==="New York" && (r.state==="New York"||r.state==="New York City"));
-      return svcOk && inState;
+      return svcOk && inState && textHit && familyHit;
     }
     const sm=st==="all"||r.state===st;
-    const qq=q.toLowerCase();
-    const textHit=!qq||extra.length>0||r.city.toLowerCase().includes(qq)||r.name.toLowerCase().includes(qq)||(r.zip||"").includes(qq)||(r.address||"").toLowerCase().includes(qq)||r.state.toLowerCase().includes(qq)||r.description.toLowerCase().includes(qq);
-    return svcOk&&sm&&textHit;
+    return svcOk&&sm&&textHit&&familyHit;
   });
   const dist=new Map();
   if(loc){
@@ -284,6 +296,8 @@ function card(r,d){
   </article>`;
 }
 
+document.getElementById("searchBtn").addEventListener("click", function(){ render(); });
+document.getElementById("q").addEventListener("keydown", function(e){ if(e.key==="Enter") render(); });
 document.getElementById("q").addEventListener("input",async e=>{
   const v=e.target.value.trim(); zipInfo=null;
   if(/^\d{5}$/.test(v)) {
