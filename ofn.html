@@ -361,6 +361,9 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
         <button class="btn" onclick="addVideo()">Add video</button>
         <p class="hint">Videos save on this phone. They play on the Videos page.</p>
         <div id="adminVids"></div>
+        <h3 style="margin-top:18px">Held messages</h3>
+        <p class="hint">Money asks and flagged posts wait here until you approve or delete them.</p>
+        <div id="modQueue"></div>
       </div>
     </div>
   </div>
@@ -558,6 +561,7 @@ function loginAdmin(){
   sessionStorage.setItem("ofn_pw",pw);
   adminBox.style.display="block";
   refreshAdminVids();
+  renderModQueue();
 }
 async function addVideo(){
   const body={uri:vurl.value.trim(),title:vtitle.value.trim(),description:vdesc.value.trim(),sortOrder:0};
@@ -577,9 +581,11 @@ const COM_ROOMS=["General Conversation","Housing & Shelters","Food","Clothing","
 let comRoom="General Conversation";
 const COM_BLOCK=/\b(venmo|cashapp|cash app|zelle|paypal\.me|gofundme|send me money|give me money|donate to me|wire me|cash app me)\b/i;
 function comBlocked(text){
-  const s=(text||"");
-  if(COM_BLOCK.test(s)) return "Please do not use this community to solicit money, donations, or financial assistance.";
-  if(/\b(kill yourself|i will kill|bomb threat)\b/i.test(s)) return "That message can’t be posted.";
+  const s=(text||"").toLowerCase();
+  if(/\b(venmo|cashapp|cash app|zelle|paypal|gofundme|donate|donation|spare change)\b/.test(s)) return "hold";
+  if(/\bmoney\b/.test(s) || /\bcash\b/.test(s) || /\$\s*\d/.test(s)) return "hold";
+  if(/can i have/.test(s) || /do you have any/.test(s) || /give me/.test(s) || /send me/.test(s)) return "hold";
+  if(/kill yourself|i will kill|bomb threat/.test(s)) return "block";
   return "";
 }
 function comLoad(key){ try{return JSON.parse(localStorage.getItem(key)||"[]");}catch{return [];} }
@@ -611,7 +617,11 @@ function comPost(kind){
   const text=(document.getElementById(id).value||"").trim();
   if(text.length<3) return alert("Please write a little more.");
   const bad=comBlocked(text);
-  if(bad) return alert(bad);
+  if(bad==="block") return alert("That message can’t be posted.");
+  if(bad==="hold"){
+    holdForMod({id:Date.now(),who:comWho(kind),text:text}, kind);
+    return alert("That post was sent to a moderator to review first.");
+  }
   const row={id:Date.now(),kind:kind,room:kind==="chat"?comRoom:"",prompt:kind==="story"?(document.getElementById("storyPrompt").value||""):"",who:comWho(kind),text:text,at:new Date().toISOString(),reports:0};
   const key="ofn_com_"+kind;
   const all=comLoad(key);
@@ -718,10 +728,20 @@ function chatPaint(){
   }).join("");
   box.scrollTop=box.scrollHeight;
 }
+function holdForMod(m, where){
+  const q=comLoad("ofn_mod_queue");
+  q.unshift({id:m.id||Date.now(), who:m.who, text:m.text, room:chatRoomId||where||"", at:Date.now(), status:"hold"});
+  comSave("ofn_mod_queue", q);
+}
 function chatAdd(m, broadcast){
   if(!m || !m.text) return;
   const bad=comBlocked(m.text);
-  if(bad){ if(!broadcast) alert(bad); return; }
+  if(bad==="block"){ if(!broadcast) alert("That message can’t be posted."); return; }
+  if(bad==="hold"){
+    holdForMod(m, chatRoomId);
+    if(!broadcast) alert("That message was sent to a moderator to review first.");
+    return;
+  }
   const rows=chatHist(chatRoomId);
   if(rows.some(function(x){ return x.id===m.id; })) return;
   rows.push(m);
@@ -858,6 +878,31 @@ function openDashThread(id){
 }
 
 fillDashThreads();
+
+
+function renderModQueue(){
+  const box=document.getElementById("modQueue");
+  if(!box) return;
+  const q=comLoad("ofn_mod_queue");
+  box.innerHTML=q.map(function(m){
+    return '<div class="res"><b>'+esc(m.who)+'</b> · '+esc(m.room||"")+'<div class="hint">'+esc(m.text)+'</div><button class="btn" type="button" onclick="modKeep('+m.id+')">Keep</button> <button class="btn" type="button" onclick="modDrop('+m.id+')">Delete</button></div>';
+  }).join("") || "<p class='hint'>Nothing waiting.</p>";
+}
+function modDrop(id){
+  comSave("ofn_mod_queue", comLoad("ofn_mod_queue").filter(function(m){ return String(m.id)!==String(id); }));
+  renderModQueue();
+}
+function modKeep(id){
+  const q=comLoad("ofn_mod_queue");
+  const m=q.find(function(x){ return String(x.id)===String(id); });
+  if(m && m.room){
+    const rows=chatHist(m.room);
+    rows.push({id:m.id,who:m.who,text:m.text,at:m.at});
+    chatSaveHist(m.room, rows);
+  }
+  modDrop(id);
+}
+
 if(location.hash==="#admin" || location.search.includes("admin=1")) show("admin");
 if(sessionStorage.getItem("ofn_admin")==="1"){ var b=document.getElementById("adminBox"); if(b) b.style.display="block"; }
 </script>
