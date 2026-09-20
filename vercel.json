@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/live", "destination": "/ofn.html" },
+    { "source": "/one-from-now", "destination": "/ofn.html" }
+  ]
+}

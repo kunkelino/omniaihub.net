@@ -31,7 +31,7 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:v
 .ht b{display:block;font-size:13px}
 .ht span{display:block;text-decoration:none;font-size:11px;opacity:.9;color:#fff}
 .hn{font-weight:800;font-size:18px}
-.quick{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .qb{display:flex;align-items:center;gap:8px;background:#0A5B5E;border:0;border-radius:12px;padding:14px 14px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;text-align:left;line-height:1.3;min-height:52px}
 .qb span{flex:1;white-space:normal;color:#fff}
 .wrap{width:100%;margin:0 auto;padding:12px 12px calc(24px + var(--safe-b))}
@@ -41,9 +41,6 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:v
 .locate.on{background:#e4f3f3;border-color:var(--teal);color:var(--teal)}
 label{display:block;font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--muted);margin:12px 0 6px}
 select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:#fff;appearance:none}
-.search-row{display:flex;gap:8px;align-items:stretch;}
-.search-row .search{flex:1;}
-.search-go{border:0;background:#0f766e;color:#fff;font-weight:800;border-radius:14px;padding:0 16px;cursor:pointer;}
 .search{margin-top:12px}
 .hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.4}
 .count{font-size:13px;color:var(--muted);margin:10px 0 6px}
@@ -69,46 +66,6 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
 #hubHomeBtn svg{width:18px;height:18px;display:block;}
 #hubHomeBtn:hover{background:rgba(255,255,255,.5);}
 
-
-.com-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
-.com-tabs button{border:0;background:#e7f4f2;color:#0A5B5E;font-weight:700;padding:8px 10px;border-radius:999px;cursor:pointer;font-size:12px}
-.com-tabs button.on{background:#0D7377;color:#fff}
-.com-rooms{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
-.com-rooms button{border:1px solid #cfe7e4;background:#fff;border-radius:10px;padding:8px 10px;font-size:12px;cursor:pointer}
-.com-rooms button.on{background:#0A5B5E;color:#fff;border-color:#0A5B5E}
-.com-post{border:1px solid #e5e7eb;border-radius:12px;padding:10px;margin:8px 0;background:#fff}
-.com-post .who{font-size:12px;color:#6b7280;margin-bottom:4px}
-.com-post .msg{font-size:14px;line-height:1.45}
-.com-actions{display:flex;gap:8px;margin-top:6px}
-.com-actions button{border:0;background:#eef6f5;border-radius:8px;padding:6px 8px;font-size:11px;cursor:pointer}
-.notice{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.45;margin:8px 0}
-.safe{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.45;margin:8px 0}
-#comText,#storyText,#sugText{width:100%;min-height:90px;border:1px solid #d1d5db;border-radius:12px;padding:10px;font:inherit}
-
-
-.chat-shell{display:flex;flex-direction:column;min-height:70vh;background:#e8f3f2;border-radius:16px;overflow:hidden;border:1px solid #cfe7e4}
-.chat-login{padding:16px}
-.chat-threads{display:flex;flex-direction:column;gap:6px;padding:8px;max-height:55vh;overflow:auto}
-.chat-thread{border:0;background:#fff;border-radius:12px;padding:12px;text-align:left;cursor:pointer}
-.chat-thread b{display:block;color:#0A5B5E}
-.chat-thread span{font-size:12px;color:#6b7280}
-.chat-head{display:flex;align-items:center;gap:8px;background:#0D7377;color:#fff;padding:10px 12px}
-.chat-head button{border:0;background:#0A5B5E;color:#fff;border-radius:10px;padding:6px 10px;cursor:pointer}
-.chat-live{font-size:11px;opacity:.9}
-.chat-msgs{flex:1;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:280px}
-.bub{max-width:82%;padding:8px 10px;border-radius:14px;font-size:14px;line-height:1.4}
-.bub.me{align-self:flex-end;background:#0D7377;color:#fff}
-.bub.them{align-self:flex-start;background:#fff;color:#123}
-.bub .meta{font-size:10px;opacity:.75;margin-bottom:2px}
-.chat-compose{display:flex;gap:6px;padding:8px;background:#fff}
-.chat-compose input{flex:1;border:1px solid #d1d5db;border-radius:20px;padding:10px 12px}
-.chat-compose button{border:0;background:#0D7377;color:#fff;border-radius:20px;padding:10px 14px;font-weight:800;cursor:pointer}
-
-
-.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.dash-grid .qb{min-height:64px}
-.dash-threads{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.dash-threads button{border:0;background:#e7f4f2;color:#0A5B5E;border-radius:999px;padding:8px 10px;font-size:12px;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
@@ -141,11 +98,7 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
   function openSite(){ var g=document.getElementById("gate"); if(g) g.classList.add("ok"); }
   function unlockGate(){
     var v=(document.getElementById("gatePin").value||"").replace(/\D/g,"");
-    if(v===PIN){
-      sessionStorage.setItem(KEY,"1");
-      openSite();
-      if(typeof show==="function" && !location.search.includes("admin=1")) show("home");
-    }
+    if(v===PIN){ sessionStorage.setItem(KEY,"1"); openSite(); }
     else { document.getElementById("gateErr").textContent="Wrong code"; }
   }
   window.unlockGate=unlockGate;
@@ -169,18 +122,14 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
       <a class="hot" href="tel:211"><div class="ico" style="background:#FFD58033">📞</div><div class="ht"><b style="color:#FFD580">Dial 211</b><span>Shelter, food &amp; benefits</span></div><div class="hn" style="color:#FFD580">211</div></a>
       <a class="hot" href="tel:311"><div class="ico" style="background:#A8E6CF33">📞</div><div class="ht"><b style="color:#A8E6CF">Dial 311</b><span>City non-emergency services</span></div><div class="hn" style="color:#A8E6CF">311</div></a>
     </div>
-    <div class="quick dash-grid">
-      <button type="button" class="qb" onclick="document.getElementById('find').scrollIntoView({behavior:'smooth'})">📍 <span>Find Resources</span> ›</button>
-      <button type="button" class="qb" onclick="show('videos')">▶ <span>Watch Videos</span> ›</button>
-      <button type="button" class="qb" onclick="show('community');comTab('info')">💬 <span>Live Chat</span> ›</button>
-      <button type="button" class="qb" onclick="show('community');comTab('story')">❤️ <span>Share Your Story</span> ›</button>
-      <button type="button" class="qb" onclick="show('community');comTab('ideas')">📝 <span>Send moderator additional information and resources</span> ›</button>
+    <div class="quick">
+      <button class="qb" onclick="show('videos')">▶ <span>Watch Videos</span> ›</button>
+      <button class="qb" onclick="show('suggest')">📍 <span>Request Help for Other Cities</span> ›</button>
     </div>
-
   </div>
   <div class="frame">
   <div class="wrap">
-    <div class="card" id="find">
+    <div class="card">
       <h2>Find Resources</h2>
       <button class="locate" id="locateBtn" onclick="locateMe()">➤ Locate Me — show nearest services</button>
       <label>CHOOSE A STATE</label>
@@ -188,11 +137,8 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
       <label>CHOOSE A SERVICE</label>
       <select id="service"></select>
       <label>SEARCH</label>
-      <div class="search-row">
-        <input class="search" id="q" placeholder="families, clothing, food, Boston, 02118…"/>
-        <button class="search-go" id="searchBtn" type="button">Search</button>
-      </div>
-      <p class="hint">Type a word like families, clothing, food, showers, a city, or a zip. Then tap Search.</p>
+      <input class="search" id="q" placeholder="clothing, food pantry, Boston, 02118…"/>
+      <p class="hint">Tap Locate Me for the closest places, or type clothing, food, pantry, showers, a city, or a zip code.</p>
       <div class="count" id="count"></div>
     </div>
     <div id="list"></div>
@@ -215,12 +161,12 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
 </section>
 
 <section id="page-videos" class="page">
-  <div class="hero"><button type="button" class="qb" onclick="show('home')">← Back</button></div>
+  <div class="hero"><button class="qb" onclick="show('home')">← Back</button></div>
   <div class="wrap"><div class="card"><h2>Videos</h2><p class="hint">Plays the full 16:9 video.</p></div><div id="videos"></div></div>
 </section>
 
 <section id="page-suggest" class="page">
-  <div class="hero"><button type="button" class="qb" onclick="show('home')">← Back</button></div>
+  <div class="hero"><button class="qb" onclick="show('home')">← Back</button></div>
   <div class="wrap">
     <div class="card">
       <h2>Request help for other cities</h2>
@@ -235,147 +181,27 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
   </div>
 </section>
 
-
-<section id="page-community" class="page">
-  <div class="hero"><button type="button" class="qb" onclick="show('home')">← Back</button></div>
-  <div class="wrap">
-    <div class="card">
-      <h2>One From Now Community</h2>
-      <p class="hint">Resources + information + community + hope. Where you’ve been doesn’t have to determine where you’re going.</p>
-      <div class="notice">This community is for sharing information, experiences, advice, encouragement, and helpful resources. Please do not use it to solicit money, donations, or financial assistance.</div>
-      <div class="com-tabs">
-        <button class="on" data-tab="info" onclick="comTab('info')">Share Info</button>
-        <button data-tab="story" onclick="comTab('story')">Share Your Story</button>
-        <button data-tab="chat" onclick="comTab('chat')">Community Chat</button>
-        <button data-tab="ideas" onclick="comTab('ideas')">Comments &amp; Suggestions</button>
-        <button data-tab="safety" onclick="comTab('safety')">Safety</button>
-      </div>
-
-      <div id="tab-info">
-        <h3>Share Information &amp; Advice</h3>
-        <p class="hint">Connect with others, share helpful information, give advice, and point people toward resources that may help. You might know about a shelter with available beds, a food pantry, clothing, an ID program, a job opportunity, or simply something that helped you when you needed it. What you know could help someone else.</p>
-        <label>YOUR NAME (optional)</label>
-        <input id="infoName" placeholder="Leave blank to post anonymously"/>
-        <label><input type="checkbox" id="infoAnon"/> Post anonymously</label>
-        <label>WHAT DO YOU WANT TO SHARE?</label>
-        <textarea id="infoText" placeholder="A shelter, pantry, tip, or advice that may help someone."></textarea>
-        <button class="btn" onclick="comPost('info')">Post</button>
-        <h3 style="margin-top:18px">Current chats — please join</h3>
-        <p class="hint">Tap a conversation below to join.</p>
-        <div id="infoList"></div>
-      </div>
-
-      <div id="tab-story" style="display:none">
-        <h3>❤️ Share Your Story</h3>
-        <p class="hint">Everyone has a story. Share your experience, what you’ve been through, what helped you, what you’re working toward, or what you want others to know. You can share as much or as little as you feel comfortable sharing. Your story might give someone else hope.</p>
-        <p class="hint">Do not share another person’s private information without their permission.</p>
-        <label>PROMPT</label>
-        <select id="storyPrompt">
-          <option>How I became homeless</option>
-          <option>What helped me</option>
-          <option>How I got into housing</option>
-          <option>My first night in a shelter</option>
-          <option>Things I wish I knew</option>
-          <option>I’m looking for help</option>
-          <option>Something else</option>
-        </select>
-        <label>YOUR NAME (optional)</label>
-        <input id="storyName" placeholder="Leave blank to post anonymously"/>
-        <label><input type="checkbox" id="storyAnon" checked/> Post anonymously</label>
-        <textarea id="storyText" placeholder="Write your story here."></textarea>
-        <button class="btn" onclick="comPost('story')">Share story</button>
-        <div id="storyList"></div>
-      </div>
-
-      <div id="tab-chat" style="display:none">
-        <h3>💬 Community Chat</h3>
-        <p class="hint">Pick a display name, open a thread, and talk in real time with other people in that room. You do not need your real name.</p>
-        <div class="notice">This community is for information, advice, and support. Do not solicit money, donations, or financial assistance.</div>
-        <div class="chat-shell">
-          <div id="chatLogin" class="chat-login">
-            <label>DISPLAY NAME</label>
-            <input id="chatNick" placeholder="A name others will see"/>
-            <p class="hint">This is only a chat name. It does not have to be your real name.</p>
-            <button class="btn" type="button" onclick="chatLogin()">Enter chat</button>
-          </div>
-          <div id="chatHome" style="display:none">
-            <div style="padding:10px 12px 0;font-size:13px;color:#0A5B5E">Signed in as <b id="chatWho"></b> · <button type="button" class="search-go" style="padding:4px 8px" onclick="chatLogout()">Log out</button></div>
-            <div class="chat-threads" id="chatThreads"></div>
-          </div>
-          <div id="chatRoom" style="display:none;flex-direction:column;min-height:70vh">
-            <div class="chat-head">
-              <button type="button" onclick="chatLeaveRoom()">Back</button>
-              <div style="flex:1">
-                <b id="chatRoomName"></b>
-                <div class="chat-live" id="chatLive">Connecting…</div>
-              </div>
-            </div>
-            <div class="chat-msgs" id="chatMsgs"></div>
-            <form class="chat-compose" onsubmit="chatSend(event)">
-              <input id="chatInput" autocomplete="off" placeholder="Message this thread"/>
-              <button type="submit">Send</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <div id="tab-ideas" style="display:none">
-        <h3>💡 Comments &amp; Suggestions</h3>
-        <p class="hint">Tell us what you would like to see added, changed, or improved. You can also report a problem with a resource, such as an incorrect phone number, address, website, or service.</p>
-        <label>YOUR NAME (optional)</label>
-        <input id="sugName" placeholder="Optional"/>
-        <textarea id="sugText" placeholder="What would you like to tell us?"></textarea>
-        <button class="btn" onclick="comSuggest()">Send to Moderator</button>
-        <p class="hint" id="sugStatus"></p>
-      </div>
-
-      <div id="tab-safety" style="display:none">
-        <h3>🛡️ Community Safety</h3>
-        <div class="safe">One From Now is designed to be a helpful and supportive community. Posts and comments may be reviewed by automated moderation and/or a human moderator.</div>
-        <p class="hint">Please do not post:</p>
-        <ul class="hint">
-          <li>Threats or harassment</li>
-          <li>Hate or hateful attacks</li>
-          <li>Someone else’s private information</li>
-          <li>Scams or fraudulent offers</li>
-          <li>Requests for money, donations, or financial assistance</li>
-          <li>Illegal activity</li>
-          <li>Content intended to harm another person</li>
-          <li>Spam or repeated unwanted messages</li>
-        </ul>
-        <p class="hint">This chat is not a substitute for 911 or emergency services. If you or someone else is in immediate danger, call 911.</p>
-        <p class="hint">If you see something that violates the community guidelines, use Report to let us know.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section id="page-admin" class="page">
-  <div class="hero"><button type="button" class="qb" onclick="show('home')">← Back</button></div>
+  <div class="hero"><button class="qb" onclick="show('home')">← Back</button></div>
   <div class="wrap">
     <div class="card">
-      <h2>Video Dashboard</h2>
-      <p class="hint">Log in to add YouTube videos. Paste a YouTube link, not a file from your phone.</p>
+      <h2>Admin</h2>
       <label>PASSWORD</label>
-      <input id="apw" type="password" placeholder="6-digit code" inputmode="numeric"/>
-      <button class="btn" onclick="loginAdmin()">Log in</button>
+      <input id="apw" type="password"/>
+      <button class="btn" onclick="loginAdmin()">Unlock</button>
       <div id="adminBox" style="display:none">
-        <label>YOUTUBE LINK</label><input id="vurl" placeholder="https://youtu.be/..."/>
-        <label>TITLE</label><input id="vtitle" placeholder="Video title"/>
-        <label>DESCRIPTION</label><input id="vdesc" placeholder="Short description"/>
+        <label>VIDEO URL</label><input id="vurl" placeholder="YouTube or mp4"/>
+        <label>TITLE</label><input id="vtitle"/>
+        <label>DESCRIPTION</label><input id="vdesc"/>
         <button class="btn" onclick="addVideo()">Add video</button>
-        <p class="hint">Videos save on this phone. They play on the Videos page.</p>
         <div id="adminVids"></div>
-        <h3 style="margin-top:18px">Held messages</h3>
-        <p class="hint">Money asks and flagged posts wait here until you approve or delete them.</p>
-        <div id="modQueue"></div>
       </div>
     </div>
   </div>
 </section>
 
 <script>
-const RESOURCES = [{"id":"1","name":"The Lamb Center","state":"Virginia","city":"Fairfax","zip":"22030","address":"3160 Campbell Dr, Fairfax, VA 22030","phone":"(703) 691-3178","website":"https://www.thelambcenter.org","services":["shelter","meals","medical","showers","housing"],"description":"Showers, laundry, meals, medical care, and housing assistance. Call 211 for local help.","lat":38.846,"lng":-77.306},{"id":"2","name":"FACETS","state":"Virginia","city":"Fairfax","zip":"22030","address":"10700 Page Ave, Fairfax, VA 22030","phone":"(703) 352-5090","website":"https://www.facetscares.org","services":["meals","shelter","housing"],"description":"Emergency assistance, food, and shelter referrals.","lat":38.846,"lng":-77.306},{"id":"3","name":"New Hope Housing","state":"Virginia","city":"Alexandria","zip":"22314","address":"Multiple locations in Alexandria, VA 22314","phone":"(703) 799-2293","website":"https://www.newhopehousing.org","services":["shelter","housing"],"description":"Shelter and housing assistance.","lat":38.804,"lng":-77.047},{"id":"4","name":"Bailey's Shelter","state":"Virginia","city":"Falls Church","zip":"22041","address":"5914 Seminary Rd, Falls Church, VA 22041","phone":"(703) 820-7621","services":["shelter","meals"],"description":"Emergency shelter and meals.","lat":38.846,"lng":-77.147},{"id":"5","name":"Falls Church Homeless Shelter","state":"Virginia","city":"Falls Church","zip":"22046","address":"217 Gordon Rd, Falls Church, VA 22046","phone":"(703) 237-0868","website":"https://fcshelter.org","services":["shelter","meals","showers"],"description":"Shelter, meals, and showers.","lat":38.88,"lng":-77.171},{"id":"6","name":"Carpenter's Shelter","state":"Virginia","city":"Alexandria","zip":"22314","address":"930 N Henry St, Alexandria, VA 22314","phone":"(703) 548-7500","website":"https://carpentersshelter.org","services":["shelter","housing"],"description":"Emergency shelter and housing support.","lat":38.804,"lng":-77.047},{"id":"7","name":"Miriam's Kitchen","state":"Washington DC","city":"Washington DC","zip":"20037","address":"2401 Virginia Ave NW, Washington, DC 20037","phone":"(202) 452-8926","website":"https://www.miriamskitchen.org","services":["meals","housing"],"description":"Meals and housing assistance. DC 211 or (202) 211.","lat":38.9,"lng":-77.055},{"id":"8","name":"Thrive DC","state":"Washington DC","city":"Washington DC","zip":"20010","address":"1525 Newton St NW, Washington, DC 20010","phone":"(202) 503-1527","website":"https://www.thrivedc.org","services":["showers","meals","medical"],"description":"Showers, meals, and medical care.","lat":38.93,"lng":-77.036},{"id":"9","name":"Central Union Mission","state":"Washington DC","city":"Washington DC","zip":"20001","address":"65 Massachusetts Ave NW, Washington, DC 20001","phone":"(202) 745-7118","website":"https://www.missiondc.org","services":["shelter","meals","showers"],"description":"Shelter, food, and showers.","lat":38.9,"lng":-77.012},{"id":"10","name":"The Bowery Mission","state":"New York City","city":"New York","zip":"10002","address":"227 Bowery, New York, NY 10002","phone":"(212) 674-3456","website":"https://www.bowery.org","services":["meals","shelter"],"description":"Meals and shelter. NYC 311 or 211.","lat":40.716,"lng":-73.99},{"id":"11","name":"Project Renewal","state":"New York City","city":"New York","zip":"10001","address":"200 Varick St, New York, NY 10001","phone":"(212) 533-8400","website":"https://www.projectrenewal.org","services":["shelter","medical","meals"],"description":"Shelter, medical care, and meals.","lat":40.728,"lng":-74.008},{"id":"12","name":"Coalition for the Homeless","state":"New York City","city":"New York","zip":"10038","address":"129 Fulton St, New York, NY 10038","phone":"(212) 776-2000","website":"https://www.coalitionforthehomeless.org","services":["shelter","housing"],"description":"Crisis services and housing.","lat":40.708,"lng":-74.007},{"id":"13","name":"Ali Forney Center (LGBTQ)","state":"New York City","city":"New York","zip":"10027","address":"321 W 125th St, New York, NY 10027","phone":"(212) 222-3427","website":"https://www.aliforneycenter.org","services":["shelter","youth"],"description":"Youth shelter for LGBTQ individuals.","lat":40.81,"lng":-73.95},{"id":"14","name":"The Bridge","state":"Texas","city":"Dallas","zip":"75235","address":"5302 Harry Hines Blvd, Dallas, TX 75235","phone":"(214) 670-1100","website":"https://www.thebridgenorthtexas.org","services":["shelter","meals","caseManagement"],"description":"Emergency shelter, food, and case management. Texas SNAP: YourTexasBenefits.com.","lat":32.803,"lng":-96.826},{"id":"15","name":"Austin Street Center","state":"Texas","city":"Dallas","zip":"75215","address":"2929 Hickory St, Dallas, TX 75215","phone":"(214) 428-4242","website":"https://austinstreet.org","services":["shelter","meals"],"description":"Shelter and meals.","lat":32.773,"lng":-96.761},{"id":"16","name":"The Stewpot","state":"Texas","city":"Dallas","zip":"75201","address":"1835 Young St, Dallas, TX 75201","phone":"(214) 746-2785","website":"https://www.thestewpot.org","services":["meals"],"description":"Meals and services.","lat":32.779,"lng":-96.797},{"id":"17","name":"Covenant House Illinois","state":"Illinois","city":"Chicago","zip":"60612","address":"2934 W Lake St, Chicago, IL 60612","phone":"(773) 572-7474","website":"https://covenanthouseillinois.org","services":["shelter","youth"],"description":"Youth shelter. Chicago 311. Illinois SNAP: (800) 843-6154.","lat":41.885,"lng":-87.718},{"id":"18","name":"Lincoln Park Community Services","state":"Illinois","city":"Chicago","zip":"60614","address":"600 W Fullerton Ave, Chicago, IL 60614","phone":"(773) 248-5278","website":"https://lpcs.org","services":["shelter","meals"],"description":"Shelter and food assistance.","lat":41.924,"lng":-87.648},{"id":"19","name":"Los Angeles Mission","state":"California","city":"Los Angeles","zip":"90013","address":"303 E 5th St, Los Angeles, CA 90013","phone":"(213) 629-1227","website":"https://www.losangelesmission.org","services":["meals","shelter"],"description":"Meals and shelter. LA 211.","lat":34.043,"lng":-118.244},{"id":"20","name":"Union Rescue Mission","state":"California","city":"Los Angeles","zip":"90012","address":"545 S San Pedro St, Los Angeles, CA 90013","phone":"(213) 347-6300","website":"https://urm.org","services":["shelter"],"description":"Shelter and services.","lat":34.042,"lng":-118.247},{"id":"21","name":"Light of Life Rescue Mission","state":"Pennsylvania","city":"Pittsburgh","zip":"15212","address":"913 Isabella St, Pittsburgh, PA 15212","phone":"(412) 789-0133","website":"https://lightoflife.org","services":["shelter","meals"],"description":"Shelter and meals. PA 211.","lat":40.464,"lng":-79.991},{"id":"22","name":"Capital City Rescue Mission","state":"New York","city":"Albany","zip":"12202","address":"259 South Pearl St, Albany, NY 12202","phone":"(518) 462-0459","website":"https://capitalcityrescuemission.org","services":["shelter","meals"],"description":"Shelter and food.","lat":42.647,"lng":-73.754},{"id":"23","name":"Rescue Mission Syracuse","state":"New York","city":"Syracuse","zip":"13202","address":"305 S Salina St, Syracuse, NY 13202","phone":"(315) 701-3500","website":"https://rescue-mission.org","services":["shelter","meals"],"description":"Shelter and meals.","lat":43.048,"lng":-76.148},{"id":"24","name":"YMCA Van Buren Center","state":"Ohio","city":"Columbus","zip":"43215","address":"40 W Long St, Columbus, OH 43215","phone":"(614) 224-1144","website":"https://ymcacolumbus.org","services":["shelter"],"description":"Shelter services. Ohio 211.","lat":39.958,"lng":-83},{"id":"25","name":"Austin Blessings Co-op","state":"Texas","city":"Austin","zip":"78752","address":"7000 Cameron Rd, Austin, TX 78752","website":"https://www.austinblessings.org","services":["meals","family"],"description":"Food pantry, clothing assistance, and diapers for families and individuals in need.","lat":30.3635,"lng":-97.697},{"id":"26","name":"Austin Blessings Outreach Center","state":"Texas","city":"Austin","zip":"78745","address":"4403 Russell Drive, Austin, TX 78745","website":"https://www.austinblessings.org","services":["meals"],"description":"Food pantry and resource assistance for people in need in south Austin.","lat":30.2169,"lng":-97.7869},{"id":"27","name":"Presbyterian Night Shelter","state":"Texas","city":"Fort Worth","zip":"76102","address":"2400 Cypress Street, Fort Worth, TX 76102","phone":"(817) 632-7415","website":"https://www.journeytoahome.org","services":["shelter","meals","housing","caseManagement"],"description":"Emergency shelter, food, clothing, counseling, and housing and employment assistance.","lat":32.7553,"lng":-97.3283},{"id":"28","name":"Salvation Army Mabee Social Services Center","state":"Texas","city":"Fort Worth","zip":"76103","address":"1855 E. Lancaster Ave., Fort Worth, TX 76103","phone":"(817) 344-1800","website":"https://www.salvationarmytexas.org","services":["shelter","meals","family"],"description":"Food pantry, emergency family shelter, and daily meals for those in need.","lat":32.7462,"lng":-97.2993},{"id":"29","name":"Eastside Community Assistance","state":"Texas","city":"Fort Worth","zip":"76112","address":"5929 E Lancaster Ave, Fort Worth, TX 76112","phone":"(817) 446-3278","website":"https://www.ecafw.org","services":["meals","shelter"],"description":"Food pantry, clothing closet, and homeless services on the east side of Fort Worth.","lat":32.7394,"lng":-97.2298},{"id":"30","name":"The Bridge Homeless Recovery Center","state":"Texas","city":"Dallas","zip":"75201","address":"1818 Corsicana St., Dallas, TX 75201","phone":"(214) 670-1100","services":["shelter","meals","showers","medical","housing"],"description":"Day and night shelter, meals, showers, laundry, healthcare, and housing assistance in downtown Dallas.","lat":32.7844,"lng":-96.7946},{"id":"31","name":"Carr P. Collins Social Service Center","state":"Texas","city":"Dallas","zip":"75235","address":"5302 Harry Hines Blvd., Dallas, TX 75235","phone":"(214) 424-7050","website":"https://www.salvationarmytexas.org","services":["shelter","meals"],"description":"Salvation Army center offering shelter, food pantry, and emergency assistance.","lat":32.8323,"lng":-96.8392},{"id":"32","name":"White Rock Center of Hope","state":"Texas","city":"Dallas","zip":"75218","address":"10021 Garland Road, Dallas, TX 75218","phone":"(214) 324-8996","website":"https://www.wrchope.org","services":["meals"],"description":"Food pantry, clothing closet, and financial assistance for Dallas residents in need.","lat":32.8258,"lng":-96.6976},{"id":"33","name":"Mission Oak Cliff","state":"Texas","city":"Dallas","zip":"75208","address":"125 Sunset Ave, Dallas, TX 75208","phone":"(214) 942-8601","website":"https://www.missionoakcliff.org","services":["meals"],"description":"Emergency food, clothing, hot lunch, hygiene packs, and referrals to additional services.","lat":32.7388,"lng":-96.8337},{"id":"34","name":"Hoboken Shelter","state":"New Jersey","city":"Hoboken","zip":"07030","address":"300 Bloomfield St., Hoboken, NJ 07030","phone":"(201) 656-5069","website":"https://www.hobokenshelter.org","services":["shelter","meals","showers","housing","caseManagement"],"description":"Shelter, meals, clothing, showers, housing assistance, and counseling for those in need in Hoboken.","lat":40.744,"lng":-74.0324},{"id":"35","name":"Boston Public Health Commission \u2013 Emergency Shelter","state":"Massachusetts","city":"Boston","zip":"02118","address":"1010 Massachusetts Ave, Boston, MA 02118","phone":"(617) 534-6100","website":"https://www.boston.gov/departments/public-health-commission","services":["shelter","caseManagement","housing"],"description":"Emergency shelter placement, case management, and housing referrals.","lat":42.335,"lng":-71.082},{"id":"36","name":"Pine Street Inn \u2014 Emergency Shelter","state":"Massachusetts","city":"Boston","zip":"02118","address":"Men's Inn: 444 Harrison Ave, Boston, MA 02118; Women's: Yawkey House, 363 Albany St, Boston, MA","phone":"(617) 892-9207","website":"https://www.pinestreetinn.org","services":["shelter","meals","showers","housing","clothing"],"description":"Men's Inn 617-892-9207. Women's shelter Yawkey House 617-892-9321. General shelter/triage 617-892-9228. Meals, showers, toiletries, and connections to other services.","lat":42.3434,"lng":-71.0631},{"id":"37","name":"St. Francis House \u2014 Food, Showers & Basic Needs","state":"Massachusetts","city":"Boston","zip":"02116","address":"39 Boylston St, Boston, MA 02116","phone":"(617) 542-4211","website":"https://stfrancishouse.org","services":["meals","showers","clothing","housing"],"description":"Food/meals, showers, toiletries, clothing, daytime services, computers, mail and ID assistance.","lat":42.3522,"lng":-71.0644},{"id":"38","name":"Greater Boston Food Bank","state":"Massachusetts","city":"Boston","zip":"02118","address":"70 South Bay Ave, Boston, MA 02118","phone":"(617) 427-5200","website":"https://www.gbfb.org","services":["meals"],"description":"Food distribution network and pantry referrals.","lat":42.332,"lng":-71.07},{"id":"39","name":"St. Anthony Shrine \u2013 Franciscans Food Program","state":"Massachusetts","city":"Boston","zip":"02110","address":"100 Arch St, Boston, MA 02110","phone":"(617) 542-6440","website":"https://www.stanthonyshrine.org","services":["meals"],"description":"Hot meals served daily.","lat":42.357,"lng":-71.057},{"id":"40","name":"The Gray House","state":"Massachusetts","city":"Springfield","zip":"01107","address":"22 Sheldon St, Springfield, MA 01107","phone":"(413) 734-6696","website":"https://www.gray-house.org","services":["shelter","meals","clothing"],"description":"Shelter support, food pantry, and clothing assistance.","lat":42.105,"lng":-72.598},{"id":"41","name":"Friends of the Homeless","state":"Massachusetts","city":"Springfield","zip":"01105","address":"769 Worthington St, Springfield, MA 01105","phone":"(413) 732-3069","website":"https://www.friendsofthehomeless.org","services":["shelter","meals","caseManagement"],"description":"Emergency shelter, meals, and case management.","lat":42.101,"lng":-72.589},{"id":"42","name":"Open Pantry Community Services","state":"Massachusetts","city":"Springfield","zip":"01105","address":"287 State St, Springfield, MA 01105","phone":"(413) 731-5668","website":"https://www.openpantry.org","services":["meals"],"description":"Food pantry, soup kitchen, and emergency assistance.","lat":42.103,"lng":-72.591},{"id":"43","name":"Food Bank of Western Massachusetts","state":"Massachusetts","city":"Springfield","zip":"01038","address":"97 N Hatfield Rd, Hatfield, MA (serves Springfield area)","phone":"(413) 247-9738","website":"https://www.foodbankwma.org","services":["meals"],"description":"Regional food distribution serving the Springfield area.","lat":42.374,"lng":-72.605},{"id":"44","name":"Inspirica","state":"Connecticut","city":"Stamford","zip":"06901","address":"141 Franklin St, Stamford, CT 06901","phone":"(203) 388-0100","website":"https://www.inspirica.org","services":["shelter","housing","caseManagement"],"description":"Emergency shelter, housing programs, and case management.","lat":41.055,"lng":-73.541},{"id":"45","name":"Pacific House","state":"Connecticut","city":"Stamford","zip":"06902","address":"597 Pacific St, Stamford, CT 06902","phone":"(203) 348-2792","website":"https://www.pacifichousect.org","services":["shelter","meals","housing"],"description":"Men's shelter, meals, and housing support.","lat":41.051,"lng":-73.535},{"id":"46","name":"New Covenant House of Hospitality","state":"Connecticut","city":"Stamford","zip":"06902","address":"90 Fairfield Ave, Stamford, CT 06902","phone":"(203) 964-8228","website":"https://www.newcovenantcenter.org","services":["shelter","meals"],"description":"Shelter, soup kitchen, and food pantry.","lat":41.049,"lng":-73.538},{"id":"47","name":"New Covenant Center","state":"Connecticut","city":"Stamford","zip":"06902","address":"174 Richmond Hill Ave, Stamford, CT 06902","phone":"(203) 964-8228","website":"https://www.newcovenantcenter.org","services":["meals"],"description":"Meals, pantry, and emergency food.","lat":41.047,"lng":-73.532},{"id":"48","name":"Food Bank of Lower Fairfield County","state":"Connecticut","city":"Stamford","zip":"06906","address":"461 Glenbrook Rd, Stamford, CT 06906","phone":"(203) 358-8898","website":"https://ctfoodshare.org","services":["meals"],"description":"Supplies food to local pantries throughout lower Fairfield County.","lat":41.066,"lng":-73.521},{"id":"49","name":"New London Homeless Hospitality Center","state":"Connecticut","city":"New London","zip":"06320","address":"325 Huntington St, New London, CT 06320","phone":"(860) 439-1573","website":"https://www.nlhhc.org","services":["shelter","caseManagement","housing"],"description":"Emergency shelter, case management, and housing help.","lat":41.356,"lng":-72.103},{"id":"50","name":"TVCCA Food Pantry \u2013 New London","state":"Connecticut","city":"New London","zip":"06360","address":"401 W Thames St, Norwich, CT (serves New London area)","phone":"(860) 425-6681","website":"https://www.tvcca.org","services":["meals"],"description":"Food pantry and SNAP assistance.","lat":41.355,"lng":-72.099},{"id":"51","name":"New London Community Meal Center","state":"Connecticut","city":"New London","zip":"06320","address":"37 Garfield Ave, New London, CT 06320","phone":"(860) 442-4463","services":["meals"],"description":"Hot meals and food support.","lat":41.352,"lng":-72.097},{"id":"52","name":"Immaculate Conception Shelter","state":"Connecticut","city":"Hartford","zip":"06106","address":"34 Wyllys St, Hartford, CT 06106","phone":"(860) 728-0500","website":"https://www.ccaoh.org","services":["shelter","meals"],"description":"Emergency shelter and meals.","lat":41.762,"lng":-72.682},{"id":"53","name":"Shelter for the Homeless \u2013 Hartford","state":"Connecticut","city":"Hartford","zip":"06101","phone":"(860) 724-4823","services":["shelter"],"description":"Coordinated shelter placement across the Hartford area.","lat":41.763,"lng":-72.685},{"id":"54","name":"Foodshare","state":"Connecticut","city":"Hartford","zip":"06002","address":"450 Woodland Ave, Bloomfield, CT (serves Hartford)","phone":"(860) 286-9999","website":"https://www.foodshare.org","services":["meals"],"description":"Food distribution for Hartford County.","lat":41.802,"lng":-72.731},{"id":"55","name":"Hands On Hartford","state":"Connecticut","city":"Hartford","zip":"06106","address":"55 Bartholomew Ave, Hartford, CT 06106","phone":"(860) 728-3201","website":"https://www.handsonhartford.org","services":["meals","housing"],"description":"Meals, pantry, and housing support.","lat":41.759,"lng":-72.69},{"id":"56","name":"New London Homeless Hospitality Center \u2013 Norwich","state":"Connecticut","city":"Norwich","zip":"06360","address":"401 W Thames St, Norwich, CT 06360","phone":"(860) 439-1573","website":"https://www.nlhhc.org","services":["shelter"],"description":"Shelter placement and outreach.","lat":41.524,"lng":-72.076},{"id":"57","name":"TVCCA Norwich Food Pantry","state":"Connecticut","city":"Norwich","zip":"06360","address":"401 W Thames St, Norwich, CT 06360","phone":"(860) 425-6681","website":"https://www.tvcca.org","services":["meals"],"description":"Food pantry and SNAP help.","lat":41.524,"lng":-72.076},{"id":"58","name":"St. Vincent de Paul Place \u2013 Norwich","state":"Connecticut","city":"Norwich","zip":"06360","address":"120 Cliff St, Norwich, CT 06360","phone":"(860) 889-7374","website":"https://www.svdpnorwich.org","services":["meals","clothing"],"description":"Meals, pantry, and clothing.","lat":41.521,"lng":-72.073},{"id":"59","name":"The Open Door Shelter","state":"Connecticut","city":"Norwalk","zip":"06854","address":"4 Merritt St, Norwalk, CT 06854","phone":"(203) 866-1057","website":"https://www.opendoorshelternorwalk.com","services":["shelter","meals","caseManagement"],"description":"Emergency shelter, meals, and case management.","lat":41.118,"lng":-73.412},{"id":"60","name":"Homes with Hope","state":"Connecticut","city":"Norwalk","zip":"06880","address":"45 Jesup Rd, Westport, CT (serves Norwalk)","phone":"(203) 226-3426","website":"https://www.homeswithope.org","services":["shelter","housing"],"description":"Shelter and housing transition services.","lat":41.117,"lng":-73.408},{"id":"61","name":"Person-to-Person (P2P)","state":"Connecticut","city":"Norwalk","zip":"06854","address":"76 South Main St, Norwalk, CT 06854","phone":"(203) 939-1650","website":"https://www.p2phelps.org","services":["meals","clothing"],"description":"Food pantry, clothing closet, and emergency assistance.","lat":41.115,"lng":-73.41},{"id":"62","name":"Salvation Army Norwalk","state":"Connecticut","city":"Norwalk","zip":"06853","address":"160 Rowayton Ave, Norwalk, CT 06853","phone":"(203) 866-2125","website":"https://www.salvationarmy.org","services":["meals","clothing"],"description":"Food, clothing, and emergency aid.","lat":41.103,"lng":-73.435},{"id":"63","name":"ATR \u2014 Access to Recovery","state":"Massachusetts","city":"Boston","zip":"02111","address":"105 Chauncy St, Suite 602, Boston, MA 02111","phone":"(617) 661-3991","website":"https://www.mass.gov","services":["housing","clothing","caseManagement"],"description":"Connects people with recovery, employment/training, housing support, transportation, clothing, IDs and other supportive services.","lat":42.3524,"lng":-71.0605},{"id":"64","name":"Massachusetts Emergency Assistance (EA) Family Shelter","state":"Massachusetts","city":"Boston","zip":"02108","address":"Statewide \u2014 call for placement","phone":"(866) 584-0653","website":"https://www.mass.gov/emergency-assistance-ea-family-shelter","services":["shelter","housing","youth","family"],"description":"Monday\u2013Friday, 8 AM\u20135 PM. For eligible families who are pregnant or have children under 21 and are experiencing homelessness. Best place to start for a family with a baby or children.","lat":42.3601,"lng":-71.0589},{"id":"65","name":"SNAP (Food Assistance) \u2014 DTA Connect","state":"Massachusetts","city":"Boston","zip":"02108","address":"Apply online at DTAConnect.com or by phone","phone":"(877) 382-2363","website":"https://dtaconnect.com","services":["meals"],"description":"Apply online through DTA Connect. Phone: press 7 to apply. Line open Monday\u2013Friday 8:15 AM\u20134:45 PM. Interpreters available. You can also apply at a local DTA office or get help from ABCD.","lat":42.3601,"lng":-71.0589},{"id":"66","name":"MassHealth (Health Insurance)","state":"Massachusetts","city":"Boston","zip":"02108","address":"Apply online through Mass.gov MassHealth application","phone":"(800) 841-2900","website":"https://www.mass.gov/masshealth","services":["medical"],"description":"Apply online with an MA Login account. Phone Monday\u2013Friday 8 AM\u20135 PM. TTY 711. Enrollment assisters and MassHealth Enrollment Centers can help complete an application. Appointments encouraged.","lat":42.3601,"lng":-71.0589},{"id":"67","name":"ABCD South End Neighborhood Service Center","state":"Massachusetts","city":"Boston","zip":"02118","address":"554 Columbus Ave, Boston, MA 02118","phone":"(617) 267-7400","website":"https://bostonabcd.org","services":["meals","caseManagement","housing"],"description":"In-person SNAP and benefits assistance and other basic-needs services. Call ahead to confirm hours.","lat":42.337,"lng":-71.081},{"id":"new-1","name":"Downtown Day Services Center","state":"Washington DC","city":"Washington","zip":"20005","address":"1313 New York Ave NW, Washington, DC 20005","phone":"202-383-8810","website":"https://dhs.dc.gov/page/day-services-centers","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Showers; laundry; clothing; computers/phones; charging; case management; benefits; healthcare; mail Check current hours People experiencing homelessness DC DHS day-services center","lat":38.907,"lng":-77.037},{"id":"new-2","name":"Adams Place Day Center","state":"Washington DC","city":"Washington","zip":"20018","address":"2210 Adams Place NE, Washington, DC 20018","phone":"202-374-6846","website":"https://dhs.dc.gov/page/day-services-centers","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Day services; shelter connection; case management; basic needs Check current hours People experiencing homelessness DC DHS resource","lat":38.907,"lng":-77.037},{"id":"new-3","name":"801 East Day Center","state":"Washington DC","city":"Washington","zip":"20032","address":"2722 Martin Luther King Jr Ave SE, Washington, DC 20032","phone":"202-561-4014","website":"https://dhs.dc.gov/page/day-services-centers","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Day services; shelter connection; case management; basic needs Check current hours People experiencing homelessness DC DHS resource","lat":38.907,"lng":-77.037},{"id":"new-4","name":"SOME","state":"Washington DC","city":"Washington","zip":"20001","address":"71 O St NW, Washington, DC 20001","phone":"202-797-8806","website":"https://some.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Food; clothing; showers; hygiene; supportive services Check current hours People experiencing homelessness Services vary by program","lat":38.907,"lng":-77.037},{"id":"new-5","name":"Father McKenna Center","state":"Washington DC","city":"Washington","zip":"20001","address":"19 I St NW, Washington, DC 20001","phone":"202-842-1112","website":"https://fathermckennacenter.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Food; clothing; showers; case management; supportive services Check current hours People experiencing homelessness Verify program availability","lat":38.907,"lng":-77.037},{"id":"new-6","name":"Miriam's Kitchen","state":"Washington DC","city":"Washington","zip":"20037","address":"2401 Virginia Ave NW, Washington, DC 20037","phone":"202-452-8926","website":"https://www.miriamskitchen.org/","services":["shelter","meals","clothing","housing","medical","caseManagement"],"description":"Meals; benefits/document assistance; housing navigation Check current hours People experiencing homelessness Verify intake requirements","lat":38.907,"lng":-77.037},{"id":"new-7","name":"Thrive DC","state":"Washington DC","city":"Washington","zip":"20010","address":"1525 Newton St NW, Washington, DC 20010","phone":"202-360-9772","website":"https://www.thrivedc.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Food; clothing; showers; laundry; mail; ID assistance; housing referrals Check current hours Adults experiencing homelessness Verify current service schedule","lat":38.907,"lng":-77.037},{"id":"new-8","name":"DC Homeless Services Hotline","state":"Washington DC","city":"Washington","zip":"","address":"Washington, DC","phone":"202-399-7093 / 311","website":"https://dhs.dc.gov/page/accessing-low-barrier-shelter","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Shelter referrals; transportation; homeless-services navigation 24/7 hotline People experiencing homelessness Call 311 or hotline","lat":38.907,"lng":-77.037},{"id":"new-9","name":"Single Adult Men's Intake","state":"New York","city":"New York City","zip":"10003","address":"8 E 3rd St, New York, NY 10003","phone":"311","website":"https://www.nyc.gov/site/dhs/index.page","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Emergency shelter intake for single adult men 24/7 Single adult men 18+ ID not required to apply","lat":40.713,"lng":-74.006},{"id":"new-10","name":"Adult Families Intake","state":"New York","city":"New York City","zip":"10003","address":"333 Bowery, New York, NY 10003","phone":"311","website":"https://www.nyc.gov/site/dhs/index.page","services":["shelter","meals","clothing","showers","housing","medical","caseManagement","family"],"description":"Emergency shelter intake for adult families 24/7 Adult families Verify current intake rules","lat":40.713,"lng":-74.006},{"id":"new-11","name":"PATH Family Intake","state":"New York","city":"Bronx","zip":"10451","address":"151 E 151st St, Bronx, NY 10451","phone":"718-503-6400","website":"https://www.nyc.gov/site/dhs/index.page","services":["shelter","meals","clothing","showers","housing","medical","caseManagement","family"],"description":"Emergency shelter intake for families with children 24/7 Families with children Verify current intake rules","lat":40.845,"lng":-73.865},{"id":"new-12","name":"NYC Homeless Drop-In Centers","state":"New York","city":"New York City","zip":"","address":"Citywide; multiple locations","phone":"311","website":"https://www.nyc.gov/site/dhs/outreach/drop-in-centers.page","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Hot meals; clothing; showers; laundry; counseling; case management; healthcare; jobs; benefits 24/7 network People experiencing homelessness Location-specific services vary","lat":40.713,"lng":-74.006},{"id":"new-13","name":"New York Common Pantry","state":"New York","city":"New York City","zip":"10029","address":"8 E 109th St, New York, NY 10029","phone":"917-720-9700","website":"https://nycommonpantry.org/","services":["meals","clothing","housing","medical","caseManagement"],"description":"Food pantry; groceries; meals; social-service support Check current hours People needing food assistance Verify eligibility","lat":40.713,"lng":-74.006},{"id":"new-14","name":"Holy Apostles Soup Kitchen","state":"New York","city":"New York City","zip":"10001","address":"296 9th Ave, New York, NY 10001","phone":"212-924-0167","website":"https://holyapostlessoupkitchen.org/","services":["meals","clothing","housing","medical","caseManagement"],"description":"Hot meals; food; clothing/toiletries when available; support Check current hours People needing food assistance Services vary","lat":40.713,"lng":-74.006},{"id":"new-15","name":"West Side Campaign Against Hunger","state":"New York","city":"New York City","zip":"10024","address":"263 W 86th St, New York, NY 10024","phone":"212-362-3662","website":"https://www.wscah.org/","services":["meals","housing","medical","caseManagement"],"description":"Choice-style food pantry; benefits assistance Check current hours People needing food assistance Verify eligibility","lat":40.713,"lng":-74.006},{"id":"new-16","name":"NJ 211","state":"New Jersey","city":"Statewide","zip":"","address":"New Jersey","phone":"211 / 1-877-652-1148","website":"https://nj211.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Shelter; food; clothing; transportation; healthcare; legal; benefits; housing referrals 24/7 Anyone seeking NJ resources Text ZIP to 898-211","lat":40.221,"lng":-74.756},{"id":"new-17","name":"Newark Office of Homeless Services","state":"New Jersey","city":"Newark","zip":"","address":"Newark, NJ","phone":"311 / city services","website":"https://www.newarknj.gov/250/Office-of-Homeless-Services","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Housing; employment; medical/behavioral health; supportive services Check current hours People experiencing homelessness Text PATH HOME to 855-11","lat":40.736,"lng":-74.172},{"id":"new-18","name":"Newly Destined, Inc.","state":"New Jersey","city":"Newark","zip":"07114","address":"1114 Broad St, Newark, NJ 07114","phone":"973-242-8088","website":"https://newlydestined.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Emergency shelter; homeless services Verify intake hours Homeless men 18+ Shelter/program eligibility should be confirmed","lat":40.736,"lng":-74.172},{"id":"new-19","name":"Bessie Green Community","state":"New Jersey","city":"Newark","zip":"07102","address":"510 Broad St, Newark, NJ 07102","phone":"973-803-6015","website":"https://www.facebook.com/bessiegreencommunity/","services":["meals","clothing","housing","medical","caseManagement"],"description":"Food pantry; meals; clothing; community support Check current hours Community members Verify current programs","lat":40.736,"lng":-74.172},{"id":"new-20","name":"Saint James Social Service Corp Food Pantry","state":"New Jersey","city":"Newark","zip":"07102","address":"604 Dr Martin Luther King Jr Blvd, Newark, NJ 07102","phone":"973-624-4007","website":"https://stjamesnewark.org/","services":["meals","clothing","housing","medical","caseManagement"],"description":"Food pantry; prepared meals; community assistance Eligibility may apply Check current hours","lat":40.736,"lng":-74.172},{"id":"new-21","name":"Saint John's Soup Kitchen","state":"New Jersey","city":"Newark","zip":"07102","address":"871 McCarter Hwy, Newark, NJ 07102","phone":"973-623-0822","website":"https://newarkcatholic.org/","services":["shelter","meals","clothing","housing","medical","caseManagement"],"description":"Meals; clothing; toiletries Check current hours People experiencing poverty/homelessness Verify current schedule","lat":40.736,"lng":-74.172},{"id":"new-22","name":"Catholic Charities Newark","state":"New Jersey","city":"Newark","zip":"07102","address":"47 Miller St, Newark, NJ 07102","phone":"800-227-7413","website":"https://www.ccannj.com/","services":["shelter","meals","clothing","housing","medical","caseManagement","family"],"description":"Housing; food; utilities; SNAP/Medicaid; supportive services Check current hours Low-income individuals/families Program eligibility varies","lat":40.736,"lng":-74.172},{"id":"new-23","name":"United Community Corporation","state":"New Jersey","city":"Newark","zip":"","address":"Newark, NJ","phone":"973-642-0181","website":"https://uccnewark.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Food; utilities; housing; emergency services Check current hours Low-income/community residents Verify current programs","lat":40.736,"lng":-74.172},{"id":"new-24","name":"Apostles' House","state":"New Jersey","city":"Newark","zip":"07104","address":"24 Grant St, Newark, NJ 07104","phone":"973-482-0625","website":"https://apostleshouse.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement","family"],"description":"Shelter; food; housing; family services Check current hours Women/families with children; eligibility varies Verify intake","lat":40.736,"lng":-74.172},{"id":"new-25","name":"Rescue Mission of Trenton","state":"New Jersey","city":"Trenton","zip":"08609","address":"98 Carroll St, Trenton, NJ 08609","phone":"609-695-1436","website":"https://rescuemissionoftrenton.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Shelter; meals; food pantry; clothing; outreach; housing Check current intake People experiencing homelessness Verify current eligibility","lat":40.217,"lng":-74.743},{"id":"new-26","name":"Trenton Area Soup Kitchen","state":"New Jersey","city":"Trenton","zip":"08609","address":"72\u00bd Escher St, Trenton, NJ 08609","phone":"609-695-5456","website":"https://www.trentonsoupkitchen.org/","services":["meals","clothing","housing","medical","caseManagement"],"description":"Meals; food assistance; supportive services Multiple meal sites Check current hours","lat":40.217,"lng":-74.743},{"id":"new-27","name":"HomeFront","state":"New Jersey","city":"Lawrence Township","zip":"08648","address":"1880 Princeton Ave, Lawrence Township, NJ 08648","phone":"609-989-9417","website":"https://www.homefrontnj.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement","family"],"description":"Food pantry; housing; family services; homeless support Check current hours Families/individuals; program-specific Verify current services","lat":40.297,"lng":-74.73},{"id":"new-28","name":"211 New Hampshire","state":"New Hampshire","city":"Statewide","zip":"","address":"New Hampshire","phone":"211","website":"https://www.211nh.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Shelter; food; clothing; housing; transportation; healthcare; emergency resources 24/7 Anyone seeking NH resources Statewide referral","lat":43.194,"lng":-71.572},{"id":"new-29","name":"Families in Transition Food Pantry","state":"New Hampshire","city":"Manchester","zip":"03103","address":"176 Lake Ave, Manchester, NH 03103","phone":"603-641-9441","website":"https://www.fitnh.org/","services":["shelter","meals","clothing","housing","medical","caseManagement","family"],"description":"Food pantry; groceries; homeless/housing support Check current hours Low-income/housing-insecure people Verify pantry eligibility","lat":42.996,"lng":-71.455},{"id":"new-30","name":"1269 Caf\u00e9","state":"New Hampshire","city":"Manchester","zip":"03103","address":"456 Union St, Manchester, NH 03103","phone":"603-512-1571","website":"https://www.1269cafe.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Hot meals; pantry; coffee; showers; clothing; laundry/community support Check current schedule People experiencing homelessness/poverty Verify current service availability","lat":42.996,"lng":-71.455},{"id":"new-31","name":"New Horizons Shelter","state":"New Hampshire","city":"Manchester","zip":"03103","address":"199 Manchester St, Manchester, NH 03103","phone":"603-668-1877","website":"https://newhorizonsfornh.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Adult emergency shelter; meals; food pantry; supportive services Verify current bed availability Check current intake","lat":42.996,"lng":-71.455},{"id":"new-32","name":"Nashua Soup Kitchen & Shelter","state":"New Hampshire","city":"Nashua","zip":"03060","address":"2 Quincy St, Nashua, NH 03060","phone":"603-889-7770","website":"https://www.nsks.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Meals; food pantry; shelter; supportive services Verify shelter intake Check current hours","lat":42.765,"lng":-71.468},{"id":"new-33","name":"Nashua Family Shelter","state":"New Hampshire","city":"Nashua","zip":"03060","address":"29 Kinsley St, Nashua, NH 03060","phone":"603-598-2544","website":"https://www.fitnh.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement","family"],"description":"Family shelter and housing support Verify current program Check current intake","lat":42.765,"lng":-71.468},{"id":"new-34","name":"Southern NH Rescue Mission","state":"New Hampshire","city":"Nashua","zip":"03060","address":"40 Chestnut St, Nashua, NH 03060","phone":"603-889-3421","website":"https://www.snhrm.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Shelter; food; clothing; supportive services Check current intake Adults experiencing homelessness Verify current services","lat":42.765,"lng":-71.468},{"id":"new-35","name":"Concord Coalition to End Homelessness","state":"New Hampshire","city":"Concord","zip":"03301","address":"238 N Main St, Concord, NH 03301","phone":"603-290-3375","website":"https://www.ccenh.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Homeless resource center; housing assistance; case management Verify current services Check current hours","lat":43.208,"lng":-71.538},{"id":"new-36","name":"McKenna House","state":"New Hampshire","city":"Concord","zip":"03301","address":"100 S Fruit St, Concord, NH 03301","phone":"603-228-3505","website":"https://www.mckennahouse.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Emergency shelter; meals; toiletries; laundry; clothing; case management Verify current services Check current intake","lat":43.208,"lng":-71.538},{"id":"new-37","name":"Friends of Forgotten Children","state":"New Hampshire","city":"Concord","zip":"03303","address":"224 Bog Rd, Concord, NH 03303","phone":"603-753-4801","website":"https://www.friendsofforgottenchildren.org/","services":["meals","clothing","housing","medical","caseManagement","family"],"description":"Food pantry; clothing; basic needs Verify eligibility Check current hours","lat":43.208,"lng":-71.538},{"id":"new-38","name":"Friendly Kitchen","state":"New Hampshire","city":"Concord","zip":"03301","address":"2 S Commercial St, Concord, NH 03301","phone":"603-224-7678","website":"https://friendlykitchen.org/","services":["meals","clothing","housing","medical","caseManagement"],"description":"Free meals; food assistance Check current hours People needing meals Verify meal schedule","lat":43.208,"lng":-71.538},{"id":"new-39","name":"211 Maine","state":"Maine","city":"Statewide","zip":"","address":"Maine","phone":"211","website":"https://211maine.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Shelter; food; clothing; transportation; household goods; financial assistance; utilities 24/7 Anyone seeking Maine resources Text ZIP to 898-211","lat":45.254,"lng":-69.445},{"id":"new-40","name":"MaineHousing Emergency Shelter Directory","state":"Maine","city":"Statewide","zip":"","address":"Statewide Maine","phone":"866-351-2276","website":"https://www.mainehousing.org/programs-services/homeless/emergency-shelters","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Statewide emergency shelter listings by location/program Check individual shelter People experiencing homelessness Use current MaineHousing directory","lat":45.254,"lng":-69.445},{"id":"new-41","name":"Bangor Area Homeless Shelter","state":"Maine","city":"Bangor","zip":"04401","address":"263 Main St, Bangor, ME 04401","phone":"207-947-0092","website":"https://www.bangorareashelter.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Adult shelter; food; basic needs; housing support Verify bed availability Check current intake","lat":44.801,"lng":-68.771},{"id":"new-42","name":"Salvation Army Bangor","state":"Maine","city":"Bangor","zip":"04401","address":"65 S Park St, Bangor, ME 04401","phone":"207-941-2990","website":"https://easternusa.salvationarmy.org/","services":["meals","clothing","showers","housing","medical","caseManagement"],"description":"Food pantry; meals; clothing/hygiene assistance Programs vary Check current hours","lat":44.801,"lng":-68.771},{"id":"new-43","name":"The Storehouse","state":"Maine","city":"Bangor","zip":"04401","address":"126 Union St, Bangor, ME 04401","phone":"207-307-7848","website":"https://www.thestorehousebangor.org/","services":["meals","clothing","housing","medical","caseManagement"],"description":"Clothing; toiletries; blankets; food; basic supplies Check current hours People needing basic supplies Verify current availability","lat":44.801,"lng":-68.771},{"id":"new-44","name":"Hope House Health & Living Center","state":"Maine","city":"Bangor","zip":"04401","address":"179 Corporate Dr, Bangor, ME 04401","phone":"207-404-8100","website":"https://hopehousebangor.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Shelter; healthcare; mental health; transitional housing Program eligibility varies Check current intake","lat":44.801,"lng":-68.771},{"id":"new-45","name":"Hope Haven Gospel Mission","state":"Maine","city":"Lewiston","zip":"04240","address":"209 Bates St, Lewiston, ME 04240","phone":"207-783-6086","website":"https://hopehavengospelmission.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Emergency shelter; meals; clothing; basic needs; recovery/housing support Check current intake Adults experiencing homelessness Verify current services","lat":44.1,"lng":-70.215},{"id":"new-46","name":"St. Martin de Porres Residence","state":"Maine","city":"Lewiston","zip":"04240","address":"1020 Lisbon St, Lewiston, ME 04240","phone":"207-786-4690","website":"https://ccmaine.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Adult shelter/housing and supportive services Check current intake Adults; eligibility varies Verify current program","lat":44.1,"lng":-70.215},{"id":"new-47","name":"New Beginnings","state":"Maine","city":"Lewiston","zip":"04240","address":"134 College St, Lewiston, ME 04240","phone":"207-795-4070","website":"https://newbeginmaine.org/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement","youth"],"description":"Youth shelter; outreach; case management; housing support Youth-focused services Check current hours","lat":44.1,"lng":-70.215},{"id":"new-48","name":"Portland Homeless Services Center","state":"Maine","city":"Portland","zip":"04101","address":"208 Anderson St, Portland, ME 04101","phone":"207-761-2072","website":"https://www.portlandmaine.gov/","services":["shelter","meals","clothing","showers","housing","medical","caseManagement"],"description":"Emergency shelter; housing services; basic needs Verify current shelter location/intake Check current intake","lat":43.659,"lng":-70.257},{"id":"bos-112","name":"112 Southampton Street Shelter (Men)","state":"Massachusetts","city":"Boston","zip":"02118","address":"112 Southampton Street, Boston, MA 02118","phone":"(617) 534-4440","website":"https://www.boston.gov/departments/housing/services-those-experiencing-homeless","services":["shelter","meals","clothing","showers"],"description":"City of Boston overnight emergency shelter for men. 112 Southampton Street. First come, first served. Open any time of day or night. Meals and basic needs.","lat":42.3317,"lng":-71.0636},{"id":"bos-woods","name":"Woods Mullen Shelter (Women)","state":"Massachusetts","city":"Boston","zip":"02118","address":"794 Massachusetts Ave, Boston, MA 02118","phone":"(617) 534-7100","website":"https://www.boston.gov/departments/housing/services-those-experiencing-homeless","services":["shelter","meals","clothing","showers"],"description":"City of Boston overnight emergency shelter for women. 794 Massachusetts Avenue. Open any time of day or night.","lat":42.3363,"lng":-71.0742},{"id":"bos-psi-w","name":"Pine Street Inn \u2014 Yawkey House (Women)","state":"Massachusetts","city":"Boston","zip":"02118","address":"363 Albany St, Boston, MA 02118","phone":"(617) 892-9321","website":"https://www.pinestreetinn.org/","services":["shelter","meals","housing","caseManagement"],"description":"Pine Street Inn women's overnight shelter. Yawkey House.","lat":42.3448,"lng":-71.0626},{"id":"bos-shattuck","name":"Pine Street Inn \u2014 Shattuck Shelter (Men)","state":"Massachusetts","city":"Boston","zip":"02130","address":"170 Morton St, Boston, MA 02130","phone":"(617) 892-7917","website":"https://www.pinestreetinn.org/","services":["shelter","meals"],"description":"Pine Street Inn men's shelter at the Shattuck campus, Jamaica Plain.","lat":42.3006,"lng":-71.1073},{"id":"bos-night","name":"Boston Night Center","state":"Massachusetts","city":"Boston","zip":"02114","address":"31 Bowker St, Boston, MA 02114","phone":"(857) 296-0322","website":"https://www.boston.gov/departments/housing/services-those-experiencing-homeless","services":["shelter","meals"],"description":"Overnight drop-in for men and women. No beds. 8:30 PM\u20136:30 AM.","lat":42.3616,"lng":-71.0603},{"id":"bos-nechv","name":"New England Center and Home for Veterans","state":"Massachusetts","city":"Boston","zip":"02108","address":"17 Court St, Boston, MA 02108","phone":"(617) 371-1800","website":"https://www.nechv.org/","services":["shelter","housing","meals","caseManagement"],"description":"Overnight shelter and services for veterans.","lat":42.3594,"lng":-71.0598},{"id":"bos-botw","name":"Bridge Over Troubled Waters","state":"Massachusetts","city":"Boston","zip":"02111","address":"47 West Street, Boston, MA 02111","phone":"(617) 423-9575","website":"https://www.bridgeotw.org/","services":["shelter","youth","family","meals","caseManagement"],"description":"Shelter and support for youth ages 14\u201324.","lat":42.3553,"lng":-71.0617},{"id":"bos-y2y","name":"Y2Y Harvard Square","state":"Massachusetts","city":"Cambridge","zip":"02138","address":"1 Church St (middle entrance), Cambridge, MA 02138","phone":"(617) 864-0795","website":"https://www.y2yharvardsquare.org/","services":["shelter","youth","family"],"description":"Overnight shelter for ages 18\u201324.","lat":42.3736,"lng":-71.119},{"id":"bos-rosie","name":"Rosie's Place","state":"Massachusetts","city":"Boston","zip":"02118","address":"889 Harrison Ave, Boston, MA 02118","phone":"(617) 442-9322","website":"https://www.rosiesplace.org/","services":["shelter","meals","clothing","caseManagement"],"description":"Sanctuary for poor and homeless women. Meals, emergency overnight beds, clothing, and support.","lat":42.3356,"lng":-71.0785},{"id":"bos-kingston","name":"Boston Rescue Mission \u2014 Kingston House","state":"Massachusetts","city":"Boston","zip":"02111","address":"39 Kingston St, Boston, MA 02111","phone":"(617) 338-9000","website":"https://www.brm.org/","services":["shelter","meals"],"description":"Emergency shelter and meals.","lat":42.3516,"lng":-71.0589},{"id":"bos-crossroads","name":"Crossroads Family Shelter","state":"Massachusetts","city":"Boston","zip":"02128","address":"56 Havre St, Boston, MA 02128","phone":"(617) 567-5926","website":"https://www.crossroads-shelter.org/","services":["shelter","family","housing","meals"],"description":"Family shelter in East Boston.","lat":42.3708,"lng":-71.038}];
+const RESOURCES = [{"id":"1","name":"The Lamb Center","state":"Virginia","city":"Fairfax","zip":"22030","address":"3160 Campbell Dr, Fairfax, VA 22030","phone":"(703) 691-3178","website":"https://www.thelambcenter.org","services":["shelter","meals","medical","showers","housing"],"description":"Showers, laundry, meals, medical care, and housing assistance. Call 211 for local help.","lat":38.846,"lng":-77.306},{"id":"2","name":"FACETS","state":"Virginia","city":"Fairfax","zip":"22030","address":"10700 Page Ave, Fairfax, VA 22030","phone":"(703) 352-5090","website":"https://www.facetscares.org","services":["meals","shelter","housing"],"description":"Emergency assistance, food, and shelter referrals.","lat":38.846,"lng":-77.306},{"id":"3","name":"New Hope Housing","state":"Virginia","city":"Alexandria","zip":"22314","address":"Multiple locations in Alexandria, VA 22314","phone":"(703) 799-2293","website":"https://www.newhopehousing.org","services":["shelter","housing"],"description":"Shelter and housing assistance.","lat":38.804,"lng":-77.047},{"id":"4","name":"Bailey's Shelter","state":"Virginia","city":"Falls Church","zip":"22041","address":"5914 Seminary Rd, Falls Church, VA 22041","phone":"(703) 820-7621","services":["shelter","meals"],"description":"Emergency shelter and meals.","lat":38.846,"lng":-77.147},{"id":"5","name":"Falls Church Homeless Shelter","state":"Virginia","city":"Falls Church","zip":"22046","address":"217 Gordon Rd, Falls Church, VA 22046","phone":"(703) 237-0868","website":"https://fcshelter.org","services":["shelter","meals","showers"],"description":"Shelter, meals, and showers.","lat":38.88,"lng":-77.171},{"id":"6","name":"Carpenter's Shelter","state":"Virginia","city":"Alexandria","zip":"22314","address":"930 N Henry St, Alexandria, VA 22314","phone":"(703) 548-7500","website":"https://carpentersshelter.org","services":["shelter","housing"],"description":"Emergency shelter and housing support.","lat":38.804,"lng":-77.047},{"id":"7","name":"Miriam's Kitchen","state":"Washington DC","city":"Washington DC","zip":"20037","address":"2401 Virginia Ave NW, Washington, DC 20037","phone":"(202) 452-8926","website":"https://www.miriamskitchen.org","services":["meals","housing"],"description":"Meals and housing assistance. DC 211 or (202) 211.","lat":38.9,"lng":-77.055},{"id":"8","name":"Thrive DC","state":"Washington DC","city":"Washington DC","zip":"20010","address":"1525 Newton St NW, Washington, DC 20010","phone":"(202) 503-1527","website":"https://www.thrivedc.org","services":["showers","meals","medical"],"description":"Showers, meals, and medical care.","lat":38.93,"lng":-77.036},{"id":"9","name":"Central Union Mission","state":"Washington DC","city":"Washington DC","zip":"20001","address":"65 Massachusetts Ave NW, Washington, DC 20001","phone":"(202) 745-7118","website":"https://www.missiondc.org","services":["shelter","meals","showers"],"description":"Shelter, food, and showers.","lat":38.9,"lng":-77.012},{"id":"10","name":"The Bowery Mission","state":"New York City","city":"New York","zip":"10002","address":"227 Bowery, New York, NY 10002","phone":"(212) 674-3456","website":"https://www.bowery.org","services":["meals","shelter"],"description":"Meals and shelter. NYC 311 or 211.","lat":40.716,"lng":-73.99},{"id":"11","name":"Project Renewal","state":"New York City","city":"New York","zip":"10001","address":"200 Varick St, New York, NY 10001","phone":"(212) 533-8400","website":"https://www.projectrenewal.org","services":["shelter","medical","meals"],"description":"Shelter, medical care, and meals.","lat":40.728,"lng":-74.008},{"id":"12","name":"Coalition for the Homeless","state":"New York City","city":"New York","zip":"10038","address":"129 Fulton St, New York, NY 10038","phone":"(212) 776-2000","website":"https://www.coalitionforthehomeless.org","services":["shelter","housing"],"description":"Crisis services and housing.","lat":40.708,"lng":-74.007},{"id":"13","name":"Ali Forney Center (LGBTQ)","state":"New York City","city":"New York","zip":"10027","address":"321 W 125th St, New York, NY 10027","phone":"(212) 222-3427","website":"https://www.aliforneycenter.org","services":["shelter","youth"],"description":"Youth shelter for LGBTQ individuals.","lat":40.81,"lng":-73.95},{"id":"14","name":"The Bridge","state":"Texas","city":"Dallas","zip":"75235","address":"5302 Harry Hines Blvd, Dallas, TX 75235","phone":"(214) 670-1100","website":"https://www.thebridgenorthtexas.org","services":["shelter","meals","caseManagement"],"description":"Emergency shelter, food, and case management. Texas SNAP: YourTexasBenefits.com.","lat":32.803,"lng":-96.826},{"id":"15","name":"Austin Street Center","state":"Texas","city":"Dallas","zip":"75215","address":"2929 Hickory St, Dallas, TX 75215","phone":"(214) 428-4242","website":"https://austinstreet.org","services":["shelter","meals"],"description":"Shelter and meals.","lat":32.773,"lng":-96.761},{"id":"16","name":"The Stewpot","state":"Texas","city":"Dallas","zip":"75201","address":"1835 Young St, Dallas, TX 75201","phone":"(214) 746-2785","website":"https://www.thestewpot.org","services":["meals"],"description":"Meals and services.","lat":32.779,"lng":-96.797},{"id":"17","name":"Covenant House Illinois","state":"Illinois","city":"Chicago","zip":"60612","address":"2934 W Lake St, Chicago, IL 60612","phone":"(773) 572-7474","website":"https://covenanthouseillinois.org","services":["shelter","youth"],"description":"Youth shelter. Chicago 311. Illinois SNAP: (800) 843-6154.","lat":41.885,"lng":-87.718},{"id":"18","name":"Lincoln Park Community Services","state":"Illinois","city":"Chicago","zip":"60614","address":"600 W Fullerton Ave, Chicago, IL 60614","phone":"(773) 248-5278","website":"https://lpcs.org","services":["shelter","meals"],"description":"Shelter and food assistance.","lat":41.924,"lng":-87.648},{"id":"19","name":"Los Angeles Mission","state":"California","city":"Los Angeles","zip":"90013","address":"303 E 5th St, Los Angeles, CA 90013","phone":"(213) 629-1227","website":"https://www.losangelesmission.org","services":["meals","shelter"],"description":"Meals and shelter. LA 211.","lat":34.043,"lng":-118.244},{"id":"20","name":"Union Rescue Mission","state":"California","city":"Los Angeles","zip":"90012","address":"545 S San Pedro St, Los Angeles, CA 90013","phone":"(213) 347-6300","website":"https://urm.org","services":["shelter"],"description":"Shelter and services.","lat":34.042,"lng":-118.247},{"id":"21","name":"Light of Life Rescue Mission","state":"Pennsylvania","city":"Pittsburgh","zip":"15212","address":"913 Isabella St, Pittsburgh, PA 15212","phone":"(412) 789-0133","website":"https://lightoflife.org","services":["shelter","meals"],"description":"Shelter and meals. PA 211.","lat":40.464,"lng":-79.991},{"id":"22","name":"Capital City Rescue Mission","state":"New York","city":"Albany","zip":"12202","address":"259 South Pearl St, Albany, NY 12202","phone":"(518) 462-0459","website":"https://capitalcityrescuemission.org","services":["shelter","meals"],"description":"Shelter and food.","lat":42.647,"lng":-73.754},{"id":"23","name":"Rescue Mission Syracuse","state":"New York","city":"Syracuse","zip":"13202","address":"305 S Salina St, Syracuse, NY 13202","phone":"(315) 701-3500","website":"https://rescue-mission.org","services":["shelter","meals"],"description":"Shelter and meals.","lat":43.048,"lng":-76.148},{"id":"24","name":"YMCA Van Buren Center","state":"Ohio","city":"Columbus","zip":"43215","address":"40 W Long St, Columbus, OH 43215","phone":"(614) 224-1144","website":"https://ymcacolumbus.org","services":["shelter"],"description":"Shelter services. Ohio 211.","lat":39.958,"lng":-83},{"id":"25","name":"Austin Blessings Co-op","state":"Texas","city":"Austin","zip":"78752","address":"7000 Cameron Rd, Austin, TX 78752","website":"https://www.austinblessings.org","services":["meals"],"description":"Food pantry, clothing assistance, and diapers for families and individuals in need.","lat":30.3635,"lng":-97.697},{"id":"26","name":"Austin Blessings Outreach Center","state":"Texas","city":"Austin","zip":"78745","address":"4403 Russell Drive, Austin, TX 78745","website":"https://www.austinblessings.org","services":["meals"],"description":"Food pantry and resource assistance for people in need in south Austin.","lat":30.2169,"lng":-97.7869},{"id":"27","name":"Presbyterian Night Shelter","state":"Texas","city":"Fort Worth","zip":"76102","address":"2400 Cypress Street, Fort Worth, TX 76102","phone":"(817) 632-7415","website":"https://www.journeytoahome.org","services":["shelter","meals","housing","caseManagement"],"description":"Emergency shelter, food, clothing, counseling, and housing and employment assistance.","lat":32.7553,"lng":-97.3283},{"id":"28","name":"Salvation Army Mabee Social Services Center","state":"Texas","city":"Fort Worth","zip":"76103","address":"1855 E. Lancaster Ave., Fort Worth, TX 76103","phone":"(817) 344-1800","website":"https://www.salvationarmytexas.org","services":["shelter","meals"],"description":"Food pantry, emergency family shelter, and daily meals for those in need.","lat":32.7462,"lng":-97.2993},{"id":"29","name":"Eastside Community Assistance","state":"Texas","city":"Fort Worth","zip":"76112","address":"5929 E Lancaster Ave, Fort Worth, TX 76112","phone":"(817) 446-3278","website":"https://www.ecafw.org","services":["meals","shelter"],"description":"Food pantry, clothing closet, and homeless services on the east side of Fort Worth.","lat":32.7394,"lng":-97.2298},{"id":"30","name":"The Bridge Homeless Recovery Center","state":"Texas","city":"Dallas","zip":"75201","address":"1818 Corsicana St., Dallas, TX 75201","phone":"(214) 670-1100","services":["shelter","meals","showers","medical","housing"],"description":"Day and night shelter, meals, showers, laundry, healthcare, and housing assistance in downtown Dallas.","lat":32.7844,"lng":-96.7946},{"id":"31","name":"Carr P. Collins Social Service Center","state":"Texas","city":"Dallas","zip":"75235","address":"5302 Harry Hines Blvd., Dallas, TX 75235","phone":"(214) 424-7050","website":"https://www.salvationarmytexas.org","services":["shelter","meals"],"description":"Salvation Army center offering shelter, food pantry, and emergency assistance.","lat":32.8323,"lng":-96.8392},{"id":"32","name":"White Rock Center of Hope","state":"Texas","city":"Dallas","zip":"75218","address":"10021 Garland Road, Dallas, TX 75218","phone":"(214) 324-8996","website":"https://www.wrchope.org","services":["meals"],"description":"Food pantry, clothing closet, and financial assistance for Dallas residents in need.","lat":32.8258,"lng":-96.6976},{"id":"33","name":"Mission Oak Cliff","state":"Texas","city":"Dallas","zip":"75208","address":"125 Sunset Ave, Dallas, TX 75208","phone":"(214) 942-8601","website":"https://www.missionoakcliff.org","services":["meals"],"description":"Emergency food, clothing, hot lunch, hygiene packs, and referrals to additional services.","lat":32.7388,"lng":-96.8337},{"id":"34","name":"Hoboken Shelter","state":"New Jersey","city":"Hoboken","zip":"07030","address":"300 Bloomfield St., Hoboken, NJ 07030","phone":"(201) 656-5069","website":"https://www.hobokenshelter.org","services":["shelter","meals","showers","housing","caseManagement"],"description":"Shelter, meals, clothing, showers, housing assistance, and counseling for those in need in Hoboken.","lat":40.744,"lng":-74.0324},{"id":"35","name":"Boston Public Health Commission \u2013 Emergency Shelter","state":"Massachusetts","city":"Boston","zip":"02118","address":"1010 Massachusetts Ave, Boston, MA 02118","phone":"(617) 534-6100","website":"https://www.boston.gov/departments/public-health-commission","services":["shelter","caseManagement","housing"],"description":"Emergency shelter placement, case management, and housing referrals.","lat":42.335,"lng":-71.082},{"id":"36","name":"Pine Street Inn \u2014 Emergency Shelter","state":"Massachusetts","city":"Boston","zip":"02118","address":"Men's Inn: 444 Harrison Ave, Boston, MA 02118; Women's: Yawkey House, 363 Albany St, Boston, MA","phone":"(617) 892-9207","website":"https://www.pinestreetinn.org","services":["shelter","meals","showers","housing","clothing"],"description":"Men's Inn 617-892-9207. Women's shelter Yawkey House 617-892-9321. General shelter/triage 617-892-9228. Meals, showers, toiletries, and connections to other services.","lat":42.3434,"lng":-71.0631},{"id":"37","name":"St. Francis House \u2014 Food, Showers & Basic Needs","state":"Massachusetts","city":"Boston","zip":"02116","address":"39 Boylston St, Boston, MA 02116","phone":"(617) 542-4211","website":"https://stfrancishouse.org","services":["meals","showers","clothing","housing"],"description":"Food/meals, showers, toiletries, clothing, daytime services, computers, mail and ID assistance.","lat":42.3522,"lng":-71.0644},{"id":"38","name":"Greater Boston Food Bank","state":"Massachusetts","city":"Boston","zip":"02118","address":"70 South Bay Ave, Boston, MA 02118","phone":"(617) 427-5200","website":"https://www.gbfb.org","services":["meals"],"description":"Food distribution network and pantry referrals.","lat":42.332,"lng":-71.07},{"id":"39","name":"St. Anthony Shrine \u2013 Franciscans Food Program","state":"Massachusetts","city":"Boston","zip":"02110","address":"100 Arch St, Boston, MA 02110","phone":"(617) 542-6440","website":"https://www.stanthonyshrine.org","services":["meals"],"description":"Hot meals served daily.","lat":42.357,"lng":-71.057},{"id":"40","name":"The Gray House","state":"Massachusetts","city":"Springfield","zip":"01107","address":"22 Sheldon St, Springfield, MA 01107","phone":"(413) 734-6696","website":"https://www.gray-house.org","services":["shelter","meals","clothing"],"description":"Shelter support, food pantry, and clothing assistance.","lat":42.105,"lng":-72.598},{"id":"41","name":"Friends of the Homeless","state":"Massachusetts","city":"Springfield","zip":"01105","address":"769 Worthington St, Springfield, MA 01105","phone":"(413) 732-3069","website":"https://www.friendsofthehomeless.org","services":["shelter","meals","caseManagement"],"description":"Emergency shelter, meals, and case management.","lat":42.101,"lng":-72.589},{"id":"42","name":"Open Pantry Community Services","state":"Massachusetts","city":"Springfield","zip":"01105","address":"287 State St, Springfield, MA 01105","phone":"(413) 731-5668","website":"https://www.openpantry.org","services":["meals"],"description":"Food pantry, soup kitchen, and emergency assistance.","lat":42.103,"lng":-72.591},{"id":"43","name":"Food Bank of Western Massachusetts","state":"Massachusetts","city":"Springfield","zip":"01038","address":"97 N Hatfield Rd, Hatfield, MA (serves Springfield area)","phone":"(413) 247-9738","website":"https://www.foodbankwma.org","services":["meals"],"description":"Regional food distribution serving the Springfield area.","lat":42.374,"lng":-72.605},{"id":"44","name":"Inspirica","state":"Connecticut","city":"Stamford","zip":"06901","address":"141 Franklin St, Stamford, CT 06901","phone":"(203) 388-0100","website":"https://www.inspirica.org","services":["shelter","housing","caseManagement"],"description":"Emergency shelter, housing programs, and case management.","lat":41.055,"lng":-73.541},{"id":"45","name":"Pacific House","state":"Connecticut","city":"Stamford","zip":"06902","address":"597 Pacific St, Stamford, CT 06902","phone":"(203) 348-2792","website":"https://www.pacifichousect.org","services":["shelter","meals","housing"],"description":"Men's shelter, meals, and housing support.","lat":41.051,"lng":-73.535},{"id":"46","name":"New Covenant House of Hospitality","state":"Connecticut","city":"Stamford","zip":"06902","address":"90 Fairfield Ave, Stamford, CT 06902","phone":"(203) 964-8228","website":"https://www.newcovenantcenter.org","services":["shelter","meals"],"description":"Shelter, soup kitchen, and food pantry.","lat":41.049,"lng":-73.538},{"id":"47","name":"New Covenant Center","state":"Connecticut","city":"Stamford","zip":"06902","address":"174 Richmond Hill Ave, Stamford, CT 06902","phone":"(203) 964-8228","website":"https://www.newcovenantcenter.org","services":["meals"],"description":"Meals, pantry, and emergency food.","lat":41.047,"lng":-73.532},{"id":"48","name":"Food Bank of Lower Fairfield County","state":"Connecticut","city":"Stamford","zip":"06906","address":"461 Glenbrook Rd, Stamford, CT 06906","phone":"(203) 358-8898","website":"https://ctfoodshare.org","services":["meals"],"description":"Supplies food to local pantries throughout lower Fairfield County.","lat":41.066,"lng":-73.521},{"id":"49","name":"New London Homeless Hospitality Center","state":"Connecticut","city":"New London","zip":"06320","address":"325 Huntington St, New London, CT 06320","phone":"(860) 439-1573","website":"https://www.nlhhc.org","services":["shelter","caseManagement","housing"],"description":"Emergency shelter, case management, and housing help.","lat":41.356,"lng":-72.103},{"id":"50","name":"TVCCA Food Pantry \u2013 New London","state":"Connecticut","city":"New London","zip":"06360","address":"401 W Thames St, Norwich, CT (serves New London area)","phone":"(860) 425-6681","website":"https://www.tvcca.org","services":["meals"],"description":"Food pantry and SNAP assistance.","lat":41.355,"lng":-72.099},{"id":"51","name":"New London Community Meal Center","state":"Connecticut","city":"New London","zip":"06320","address":"37 Garfield Ave, New London, CT 06320","phone":"(860) 442-4463","services":["meals"],"description":"Hot meals and food support.","lat":41.352,"lng":-72.097},{"id":"52","name":"Immaculate Conception Shelter","state":"Connecticut","city":"Hartford","zip":"06106","address":"34 Wyllys St, Hartford, CT 06106","phone":"(860) 728-0500","website":"https://www.ccaoh.org","services":["shelter","meals"],"description":"Emergency shelter and meals.","lat":41.762,"lng":-72.682},{"id":"53","name":"Shelter for the Homeless \u2013 Hartford","state":"Connecticut","city":"Hartford","zip":"06101","phone":"(860) 724-4823","services":["shelter"],"description":"Coordinated shelter placement across the Hartford area.","lat":41.763,"lng":-72.685},{"id":"54","name":"Foodshare","state":"Connecticut","city":"Hartford","zip":"06002","address":"450 Woodland Ave, Bloomfield, CT (serves Hartford)","phone":"(860) 286-9999","website":"https://www.foodshare.org","services":["meals"],"description":"Food distribution for Hartford County.","lat":41.802,"lng":-72.731},{"id":"55","name":"Hands On Hartford","state":"Connecticut","city":"Hartford","zip":"06106","address":"55 Bartholomew Ave, Hartford, CT 06106","phone":"(860) 728-3201","website":"https://www.handsonhartford.org","services":["meals","housing"],"description":"Meals, pantry, and housing support.","lat":41.759,"lng":-72.69},{"id":"56","name":"New London Homeless Hospitality Center \u2013 Norwich","state":"Connecticut","city":"Norwich","zip":"06360","address":"401 W Thames St, Norwich, CT 06360","phone":"(860) 439-1573","website":"https://www.nlhhc.org","services":["shelter"],"description":"Shelter placement and outreach.","lat":41.524,"lng":-72.076},{"id":"57","name":"TVCCA Norwich Food Pantry","state":"Connecticut","city":"Norwich","zip":"06360","address":"401 W Thames St, Norwich, CT 06360","phone":"(860) 425-6681","website":"https://www.tvcca.org","services":["meals"],"description":"Food pantry and SNAP help.","lat":41.524,"lng":-72.076},{"id":"58","name":"St. Vincent de Paul Place \u2013 Norwich","state":"Connecticut","city":"Norwich","zip":"06360","address":"120 Cliff St, Norwich, CT 06360","phone":"(860) 889-7374","website":"https://www.svdpnorwich.org","services":["meals","clothing"],"description":"Meals, pantry, and clothing.","lat":41.521,"lng":-72.073},{"id":"59","name":"The Open Door Shelter","state":"Connecticut","city":"Norwalk","zip":"06854","address":"4 Merritt St, Norwalk, CT 06854","phone":"(203) 866-1057","website":"https://www.opendoorshelternorwalk.com","services":["shelter","meals","caseManagement"],"description":"Emergency shelter, meals, and case management.","lat":41.118,"lng":-73.412},{"id":"60","name":"Homes with Hope","state":"Connecticut","city":"Norwalk","zip":"06880","address":"45 Jesup Rd, Westport, CT (serves Norwalk)","phone":"(203) 226-3426","website":"https://www.homeswithope.org","services":["shelter","housing"],"description":"Shelter and housing transition services.","lat":41.117,"lng":-73.408},{"id":"61","name":"Person-to-Person (P2P)","state":"Connecticut","city":"Norwalk","zip":"06854","address":"76 South Main St, Norwalk, CT 06854","phone":"(203) 939-1650","website":"https://www.p2phelps.org","services":["meals","clothing"],"description":"Food pantry, clothing closet, and emergency assistance.","lat":41.115,"lng":-73.41},{"id":"62","name":"Salvation Army Norwalk","state":"Connecticut","city":"Norwalk","zip":"06853","address":"160 Rowayton Ave, Norwalk, CT 06853","phone":"(203) 866-2125","website":"https://www.salvationarmy.org","services":["meals","clothing"],"description":"Food, clothing, and emergency aid.","lat":41.103,"lng":-73.435},{"id":"63","name":"ATR \u2014 Access to Recovery","state":"Massachusetts","city":"Boston","zip":"02111","address":"105 Chauncy St, Suite 602, Boston, MA 02111","phone":"(617) 661-3991","website":"https://www.mass.gov","services":["housing","clothing","caseManagement"],"description":"Connects people with recovery, employment/training, housing support, transportation, clothing, IDs and other supportive services.","lat":42.3524,"lng":-71.0605},{"id":"64","name":"Massachusetts Emergency Assistance (EA) Family Shelter","state":"Massachusetts","city":"Boston","zip":"02108","address":"Statewide \u2014 call for placement","phone":"(866) 584-0653","website":"https://www.mass.gov/emergency-assistance-ea-family-shelter","services":["shelter","housing","youth"],"description":"Monday\u2013Friday, 8 AM\u20135 PM. For eligible families who are pregnant or have children under 21 and are experiencing homelessness. Best place to start for a family with a baby or children.","lat":42.3601,"lng":-71.0589},{"id":"65","name":"SNAP (Food Assistance) \u2014 DTA Connect","state":"Massachusetts","city":"Boston","zip":"02108","address":"Apply online at DTAConnect.com or by phone","phone":"(877) 382-2363","website":"https://dtaconnect.com","services":["meals"],"description":"Apply online through DTA Connect. Phone: press 7 to apply. Line open Monday\u2013Friday 8:15 AM\u20134:45 PM. Interpreters available. You can also apply at a local DTA office or get help from ABCD.","lat":42.3601,"lng":-71.0589},{"id":"66","name":"MassHealth (Health Insurance)","state":"Massachusetts","city":"Boston","zip":"02108","address":"Apply online through Mass.gov MassHealth application","phone":"(800) 841-2900","website":"https://www.mass.gov/masshealth","services":["medical"],"description":"Apply online with an MA Login account. Phone Monday\u2013Friday 8 AM\u20135 PM. TTY 711. Enrollment assisters and MassHealth Enrollment Centers can help complete an application. Appointments encouraged.","lat":42.3601,"lng":-71.0589},{"id":"67","name":"ABCD South End Neighborhood Service Center","state":"Massachusetts","city":"Boston","zip":"02118","address":"554 Columbus Ave, Boston, MA 02118","phone":"(617) 267-7400","website":"https://bostonabcd.org","services":["meals","caseManagement","housing"],"description":"In-person SNAP and benefits assistance and other basic-needs services. Call ahead to confirm hours.","lat":42.337,"lng":-71.081}];
 const KEYWORDS = {
   clothing:["clothing"], clothes:["clothing"], closet:["clothing"], goodwill:["clothing"],
   food:["meals"], pantry:["meals"], pantries:["meals"], meal:["meals"], meals:["meals"], soup:["meals"], kitchen:["meals"],
@@ -384,7 +210,6 @@ const KEYWORDS = {
   medical:["medical"], clinic:["medical"], doctor:["medical"], hospital:["medical"],
   housing:["housing"], apartment:["housing"],
   youth:["youth"], teen:["youth"], lgbtq:["youth"],
-  family:["family"], families:["family"], kids:["family"], children:["family"], child:["family"],
 };
 const STATES=["All States",...[...new Set(RESOURCES.map(r=>r.state))].sort()];
 const SERVICES=[
@@ -397,7 +222,6 @@ const SERVICES=[
   {key:"caseManagement",label:"Case Management"},
   {key:"youth",label:"Youth Services"},
   {key:"clothing",label:"Clothing"},
-  {key:"family",label:"Families"},
 ];
 const LABELS=Object.fromEntries(SERVICES.map(s=>[s.key,s.label]));
 const stateEl=document.getElementById("state");
@@ -426,20 +250,16 @@ function render(){
   const extra=wantedServices(q);
   const locatedState = loc && (gpsInfo && gpsInfo.state && !isZip ? gpsInfo.state : (zipInfo && zipInfo.stateName) || st);
   const active = !!(loc || q || st!=="all" || sv!=="all");
-  const stop=new Set(["for","the","and","a","an","to","of","in","on","help","need","needs","looking"]);
-  const words=q.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w && !stop.has(w) && !/^\d{5}$/.test(w));
   let rows=RESOURCES.filter(r=>{
-    const blob=(r.name+" "+r.city+" "+r.state+" "+(r.address||"")+" "+(r.description||"")+" "+(r.services||[]).join(" ")).toLowerCase();
-    const textHit=!words.length || words.some(w=>blob.includes(w));
-    const familyQ=words.some(w=>["family","families","kids","child","children"].includes(w));
-    const familyHit=!familyQ || blob.includes("famil") || blob.includes("child") || blob.includes("kid") || (r.services||[]).includes("family") || (r.services||[]).includes("youth");
-    const svcOk = (sv==="all" || r.services.includes(sv)) && (extra.length===0 || extra.some(s=>r.services.includes(s) || (s==="family" && (blob.includes("famil")||blob.includes("child")||(r.services||[]).includes("youth")))));
+    const svcOk = (sv==="all" || r.services.includes(sv)) && (extra.length===0 || extra.some(s=>r.services.includes(s)));
     if(loc){
       const inState = !locatedState || locatedState==="all" || r.state===locatedState || (locatedState==="New York" && (r.state==="New York"||r.state==="New York City"));
-      return svcOk && inState && textHit && familyHit;
+      return svcOk && inState;
     }
     const sm=st==="all"||r.state===st;
-    return svcOk&&sm&&textHit&&familyHit;
+    const qq=q.toLowerCase();
+    const textHit=!qq||extra.length>0||r.city.toLowerCase().includes(qq)||r.name.toLowerCase().includes(qq)||(r.zip||"").includes(qq)||(r.address||"").toLowerCase().includes(qq)||r.state.toLowerCase().includes(qq)||r.description.toLowerCase().includes(qq);
+    return svcOk&&sm&&textHit;
   });
   const dist=new Map();
   if(loc){
@@ -449,13 +269,6 @@ function render(){
   document.getElementById("list").innerHTML = active ? (rows.map(r=>card(r,dist.get(r.id))).join("")||"<p class='hint'>No results found. Try another state or service.</p>") : "";
 }
 
-function mapLink(r){
-  const q=encodeURIComponent(r.address || ((r.city||"")+", "+(r.state||"")));
-  const ua=navigator.userAgent||"";
-  if(/iPhone|iPad|iPod/i.test(ua)) return "https://maps.apple.com/?q="+q;
-  if(/Android/i.test(ua)) return "geo:0,0?q="+q;
-  return "https://maps.google.com/?q="+q;
-}
 function card(r,d){
   return `<article class="res">
     <h3>${esc(r.name)}</h3>
@@ -464,14 +277,12 @@ function card(r,d){
     <p class="hint">${esc(r.description)}</p>
     <div class="actions">
       ${r.phone?`<a href="tel:${r.phone.replace(/[^\d+]/g,"")}">Call</a>`:""}
-      ${(r.address||r.city)?`<a href="${mapLink(r)}">Map</a>`:""}
+      ${r.address?`<a target="_blank" href="https://maps.google.com/?q=${encodeURIComponent(r.address)}">Map</a>`:""}
       ${r.website?`<a target="_blank" href="${esc(r.website)}">Site</a>`:""}
     </div>
   </article>`;
 }
 
-document.getElementById("searchBtn").addEventListener("click", function(){ render(); });
-document.getElementById("q").addEventListener("keydown", function(e){ if(e.key==="Enter") render(); });
 document.getElementById("q").addEventListener("input",async e=>{
   const v=e.target.value.trim(); zipInfo=null;
   if(/^\d{5}$/.test(v)) {
@@ -533,17 +344,8 @@ function yt(uri){
 async function loadVideos(){
   let vids=[]; try{const r=await fetch("/api/videos"); if(r.ok) vids=await r.json();}catch{}
   if(!vids.length) vids=JSON.parse(localStorage.getItem("ofn_videos")||"[]");
-  const defaults=[
-    {uri:"https://www.youtube.com/watch?v=XhXTWCofzMo",title:"Different versions",description:"One From Now"},
-    {uri:"https://www.youtube.com/watch?v=iSAq5QqCaFI",title:"BBQ",description:"One From Now"},
-    {uri:"https://www.youtube.com/shorts/6lhyfMfMqyE",title:"Dog",description:"One From Now"}
-  ];
-  const seen=new Set(vids.map(v=>v.uri));
-  defaults.forEach(d=>{ if(!seen.has(d.uri)) vids.push(d); });
   const box=document.getElementById("videos");
-  if(!vids.length){
-    vids=defaults.slice();
-  }
+  if(!vids.length){box.innerHTML="<p class='hint' style='padding:12px'>No videos yet. Add them in Admin (?admin=1).</p>";return;}
   vids.sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0));
   box.innerHTML=vids.map(v=>{
     const e=yt(v.uri);
@@ -554,30 +356,12 @@ async function loadVideos(){
 async function sendSuggest(){
   const name=sname.value.trim(), message=smsg.value.trim(), st=sstatus;
   if(message.length<5){st.innerHTML="<div class='err'>Please write a little more.</div>";return;}
-  let ok=false;
-  try{
-    const r=await fetch("https://formsubmit.co/ajax/jonathan@omniaihub.net",{
-      method:"POST",
-      headers:{"Content-Type":"application/json","Accept":"application/json"},
-      body:JSON.stringify({_subject:"One From Now — other city / resource",name:name||"Anonymous",message:message})
-    });
-    ok=r.ok;
-  }catch(e){}
-  const all=JSON.parse(localStorage.getItem("ofn_suggestions")||"[]");
-  all.push({name,message,at:Date.now()});
-  localStorage.setItem("ofn_suggestions",JSON.stringify(all));
-  st.innerHTML=ok?"<div class='ok'>Thank you. We received it.</div>":"<div class='err'>Could not send. Check that jonathan@omniaihub.net confirmed FormSubmit.</div>";
+  let ok=false; try{const r=await fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,message})}); ok=r.ok;}catch{}
+  if(!ok){const all=JSON.parse(localStorage.getItem("ofn_suggestions")||"[]"); all.push({name,message,at:Date.now()}); localStorage.setItem("ofn_suggestions",JSON.stringify(all)); ok=true;}
+  st.innerHTML=ok?"<div class='ok'>Thank you. We received it.</div>":"<div class='err'>Could not send.</div>";
   if(ok){sname.value=smsg.value="";}
 }
-function loginAdmin(){
-  const pw=(apw.value||"").replace(/\D/g,"");
-  if(pw!=="435777"){ alert("Wrong code"); return; }
-  sessionStorage.setItem("ofn_admin","1");
-  sessionStorage.setItem("ofn_pw",pw);
-  adminBox.style.display="block";
-  refreshAdminVids();
-  renderModQueue();
-}
+function loginAdmin(){ if(!apw.value) return alert("Enter password"); sessionStorage.setItem("ofn_admin","1"); sessionStorage.setItem("ofn_pw",apw.value); adminBox.style.display="block"; refreshAdminVids();}
 async function addVideo(){
   const body={uri:vurl.value.trim(),title:vtitle.value.trim(),description:vdesc.value.trim(),sortOrder:0};
   if(!body.uri||!body.title) return alert("URL and title required");
@@ -590,392 +374,7 @@ async function refreshAdminVids(){
   if(!vids.length) vids=JSON.parse(localStorage.getItem("ofn_videos")||"[]");
   adminVids.innerHTML=vids.map(v=>`<div class="res"><b>${esc(v.title)}</b><div class="hint">${esc(v.uri)}</div></div>`).join("")||"<p class='hint'>None yet.</p>";
 }
-
-
-const COM_ROOMS=["General Conversation","Housing & Shelters","Food","Clothing","IDs & Documents","Jobs & Training","Transportation","Benefits","Healthcare","Encouragement","Local Resources"];
-let comRoom="General Conversation";
-const COM_BLOCK=/\b(venmo|cashapp|cash app|zelle|paypal\.me|gofundme|send me money|give me money|donate to me|wire me|cash app me)\b/i;
-function comBlocked(text){
-  const s=(text||"").toLowerCase();
-  if(/\b(venmo|cashapp|cash app|zelle|paypal|gofundme|donate|donation|spare change)\b/.test(s)) return "hold";
-  if(/\bmoney\b/.test(s) || /\bcash\b/.test(s) || /\$\s*\d/.test(s)) return "hold";
-  if(/can i have/.test(s) || /do you have any/.test(s) || /give me/.test(s) || /send me/.test(s)) return "hold";
-  if(/kill yourself|i will kill|bomb threat/.test(s)) return "block";
-  return "";
-}
-function comLoad(key){ try{return JSON.parse(localStorage.getItem(key)||"[]");}catch{return [];} }
-function comSave(key,rows){ localStorage.setItem(key, JSON.stringify(rows)); }
-const CHAT_API="/api/chats";
-async function pullSharedChats(){
-  try{
-    const r=await fetch(CHAT_API,{cache:"no-store"});
-    if(!r.ok) return false;
-    const data=await r.json();
-    if(!data || !Array.isArray(data.info)) return false;
-    comSave("ofn_com_info", data.info);
-    comSave("ofn_com_story", Array.isArray(data.story)?data.story:[]);
-    return true;
-  }catch(e){ return false; }
-}
-async function pushSharedChats(){
-  try{
-    await fetch(CHAT_API,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        info:comLoad("ofn_com_info"),
-        story:comLoad("ofn_com_story")
-      })
-    });
-  }catch(e){}
-}
-function comTab(name){
-  ["info","story","chat","ideas","safety"].forEach(function(id){
-    const el=document.getElementById("tab-"+id);
-    if(el) el.style.display=id===name?"":"none";
-  });
-  document.querySelectorAll(".com-tabs button").forEach(function(b){ b.classList.toggle("on", b.getAttribute("data-tab")===name); });
-  if(name==="chat") comDrawRooms();
-  comRender();
-}
-function comDrawRooms(){
-  const box=document.getElementById("comRooms");
-  if(!box) return;
-  box.innerHTML=COM_ROOMS.map(function(r){ return '<button type="button" class="'+(r===comRoom?"on":"")+'" onclick="comSetRoom(this.textContent)">'+r+"</button>"; }).join("");
-}
-function comSetRoom(r){ comRoom=r; comDrawRooms(); comRender(); }
-function comWho(kind){
-  const anon=document.getElementById(kind+"Anon");
-  const name=document.getElementById(kind==="chat"?"chatName":kind==="story"?"storyName":"infoName");
-  if(anon && anon.checked) return "Anonymous";
-  const n=(name && name.value || "").trim();
-  return n || "Anonymous";
-}
-function comPost(kind){
-  const id=kind==="chat"?"chatText":kind==="story"?"storyText":"infoText";
-  const text=(document.getElementById(id).value||"").trim();
-  if(text.length<3) return alert("Please write a little more.");
-  const bad=comBlocked(text);
-  if(bad==="block") return alert("That message can’t be posted.");
-  if(bad==="hold"){
-    holdForMod({id:Date.now(),who:comWho(kind),text:text}, kind);
-    return alert("That post was sent to a moderator to review first.");
-  }
-  const row={id:Date.now(),kind:kind,room:kind==="chat"?comRoom:"",prompt:kind==="story"?(document.getElementById("storyPrompt").value||""):"",who:comWho(kind),text:text,at:new Date().toISOString(),reports:0};
-  const key="ofn_com_"+kind;
-  const all=comLoad(key);
-  all.unshift(row);
-  comSave(key,all);
-  document.getElementById(id).value="";
-  pushSharedChats().then(function(){ comRender(); });
-}
-function comReport(kind,id){
-  const key="ofn_com_"+kind;
-  const all=comLoad(key).map(function(p){ if(p.id===id) p.reports=(p.reports||0)+1; return p; }).filter(function(p){ return (p.reports||0)<3; });
-  comSave(key,all);
-  alert("Reported. Thank you.");
-  comRender();
-}
-function ensureSeedChats(){
-  const key="ofn_com_info";
-  const seeds=[
-    {id:"seed-dtc",who:"Anonymous",text:"down town crossing area",at:"2026-09-19T00:00:00.000Z",reports:0},
-    {id:"seed-sf",who:"Anonymous",text:"St Francis help full",at:"2026-09-19T00:00:00.000Z",reports:0}
-  ];
-  let all=comLoad(key);
-  seeds.forEach(function(s){
-    var exists=all.some(function(p){
-      var txt=(p.text||"").replace(/\s+/g," ").trim().toLowerCase();
-      var seed=s.text.toLowerCase();
-      return String(p.id)===String(s.id) || txt===seed;
-    });
-    if(!exists) all.push(s);
-  });
-  comSave(key, all);
-}
-function comRender(){
-  ensureSeedChats();
-  pullSharedChats().then(function(ok){
-    if(ok) paintAll();
-  });
-  function paintAll(){
-    paint("info","infoList");
-    paint("story","storyList");
-  }
-  function paint(kind, boxId){
-    const box=document.getElementById(boxId); if(!box) return;
-    let rows=comLoad("ofn_com_"+kind);
-    box.innerHTML=rows.map(function(p){
-      return '<div class="com-post" onclick="openPostChat(\''+kind+'\','+p.id+')"><div class="who">'+esc(p.who)+' · tap to talk</div><div class="msg">'+esc(p.text)+'</div><div class="com-actions"><button type="button" onclick="event.stopPropagation();comReport(\''+kind+'\','+p.id+')">Report</button></div></div>';
-    }).join("") || "<p class='hint'>No posts yet. Be the first.</p>";
-  }
-  paintAll();
-}
-async function comSuggest(){
-  const name=(document.getElementById("sugName").value||"").trim();
-  const message=(document.getElementById("sugText").value||"").trim();
-  const st=document.getElementById("sugStatus");
-  if(message.length<5){ st.textContent="Please write a little more."; return; }
-  const bad=comBlocked(message);
-  if(bad){ st.textContent=bad; return; }
-  const all=comLoad("ofn_suggestions");
-  all.push({name:name||"Anonymous",message:message,at:Date.now()});
-  comSave("ofn_suggestions", all);
-  try{ await fetch("https://formsubmit.co/ajax/jonathan@omniaihub.net",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({_subject:"One From Now suggestion",name:name||"Anonymous",message:message})}); }catch(e){}
-  document.getElementById("sugText").value="";
-  st.textContent="Sent to the moderator. Thank you.";
-}
-const _show=show;
-show=function(name){
-  _show(name);
-  if(name==="community"){ comDrawRooms(); comRender(); }
-};
-
-
-
-const CHAT_THREADS=[
-  ["general","💬 General Conversation"],
-  ["stfrancis","⛪ St. Francis House"],
-  ["housing","🏠 Housing & Shelters"],
-  ["food","🍽️ Food"],
-  ["clothing","👕 Clothing"],
-  ["ids","🪪 IDs & Documents"],
-  ["jobs","💼 Jobs & Training"],
-  ["transport","🚍 Transportation"],
-  ["benefits","💰 Benefits"],
-  ["health","🏥 Healthcare"],
-  ["hope","❤️ Encouragement"],
-  ["boston","📍 Boston"],
-  ["nyc","📍 New York City"],
-  ["nj","📍 New Jersey"],
-  ["dc","📍 Washington DC"],
-  ["nh","📍 New Hampshire"],
-  ["maine","📍 Maine"]
-];
-let chatNickName="";
-let chatRoomId="";
-let chatRoomObj=null;
-let chatSendLive=null;
-let chatPeers=0;
-function chatKey(id){ return "ofn_live_"+id; }
-function chatHist(id){ try{return JSON.parse(localStorage.getItem(chatKey(id))||"[]");}catch(e){return [];} }
-function chatSaveHist(id,rows){ localStorage.setItem(chatKey(id), JSON.stringify(rows.slice(0,200))); }
-function chatLogin(){
-  const n=(document.getElementById("chatNick").value||"").trim();
-  if(n.length<2) return alert("Enter a display name.");
-  chatNickName=n;
-  localStorage.setItem("ofn_nick", n);
-  document.getElementById("chatLogin").style.display="none";
-  document.getElementById("chatHome").style.display="";
-  document.getElementById("chatWho").textContent=n;
-  chatDrawThreads();
-  if(window._pendingRoom){ const r=window._pendingRoom; window._pendingRoom=null; chatOpenRoom(r); }
-}
-function chatLogout(){
-  chatLeaveRoom();
-  chatNickName="";
-  document.getElementById("chatHome").style.display="none";
-  document.getElementById("chatLogin").style.display="";
-}
-function chatDrawThreads(){
-  document.getElementById("chatThreads").innerHTML=CHAT_THREADS.map(function(r){
-    return '<button class="chat-thread" type="button" onclick="chatOpenRoom(\''+r[0]+'\',\''+r[1].replace(/'/g,"") +'\')"><b>'+r[1]+'</b><span>Tap to join this live thread</span></button>';
-  }).join("");
-}
-function chatPaint(){
-  const box=document.getElementById("chatMsgs");
-  const rows=chatHist(chatRoomId);
-  box.innerHTML=rows.map(function(m){
-    const mine=m.who===chatNickName;
-    return '<div class="bub '+(mine?"me":"them")+'"><div class="meta">'+esc(m.who)+'</div>'+esc(m.text)+'</div>';
-  }).join("");
-  box.scrollTop=box.scrollHeight;
-}
-function holdForMod(m, where){
-  const q=comLoad("ofn_mod_queue");
-  q.unshift({id:m.id||Date.now(), who:m.who, text:m.text, room:chatRoomId||where||"", at:Date.now(), status:"hold"});
-  comSave("ofn_mod_queue", q);
-}
-function chatAdd(m, broadcast){
-  if(!m || !m.text) return;
-  const bad=comBlocked(m.text);
-  if(bad==="block"){ if(!broadcast) alert("That message can’t be posted."); return; }
-  if(bad==="hold"){
-    holdForMod(m, chatRoomId);
-    if(!broadcast) alert("That message was sent to a moderator to review first.");
-    return;
-  }
-  const rows=chatHist(chatRoomId);
-  if(rows.some(function(x){ return x.id===m.id; })) return;
-  rows.push(m);
-  chatSaveHist(chatRoomId, rows);
-  chatPaint();
-}
-async function chatOpenRoom(id){
-  const found=CHAT_THREADS.find(function(r){ return r[0]===id; });
-  const label=found?found[1]:id;
-  chatLeaveRoom(true);
-  chatRoomId=id;
-  document.getElementById("chatHome").style.display="none";
-  const room=document.getElementById("chatRoom");
-  room.style.display="flex";
-  document.getElementById("chatRoomName").textContent=label;
-  document.getElementById("chatLive").textContent="Connecting to live thread…";
-  chatPaint();
-  try{
-    const mod=await import("https://esm.sh/trystero@0.20.0");
-    chatRoomObj=mod.joinRoom({appId:"omniaihub-onefromnow"}, "ofn-"+id);
-    const pair=chatRoomObj.makeAction("msg");
-    chatSendLive=pair[0];
-    pair[1](function(data){ chatAdd(data,true); });
-    function syncPeers(){
-      try{ chatPeers=Object.keys(chatRoomObj.getPeers()).length; }catch(e){ chatPeers=0; }
-      document.getElementById("chatLive").textContent = chatPeers ? ("Live · "+chatPeers+" other people here") : "Live · waiting for others to join this thread";
-    }
-    chatRoomObj.onPeerJoin(syncPeers);
-    chatRoomObj.onPeerLeave(syncPeers);
-    syncPeers();
-  }catch(e){
-    document.getElementById("chatLive").textContent="Live link blocked on this network. Messages stay on this phone.";
-  }
-}
-function chatLeaveRoom(quiet){
-  try{ if(chatRoomObj && chatRoomObj.leave) chatRoomObj.leave(); }catch(e){}
-  chatRoomObj=null; chatSendLive=null; chatRoomId="";
-  document.getElementById("chatRoom").style.display="none";
-  if(!quiet && chatNickName) document.getElementById("chatHome").style.display="";
-}
-function chatSend(ev){
-  ev.preventDefault();
-  const input=document.getElementById("chatInput");
-  const text=(input.value||"").trim();
-  if(!text) return;
-  const m={id:Date.now()+"-"+Math.random().toString(16).slice(2), who:chatNickName||"Anonymous", text:text, at:Date.now()};
-  chatAdd(m,false);
-  try{ if(chatSendLive) chatSendLive(m); }catch(e){}
-  input.value="";
-}
-(function(){
-  const saved=localStorage.getItem("ofn_nick")||"";
-  if(saved){ const n=document.getElementById("chatNick"); if(n) n.value=saved; }
-})();
-
-
-
-function roomIdForName(name,id){
-  const n=(name||"").toLowerCase();
-  if(n.includes("francis")) return "stfrancis";
-  if(n.includes("pine street")) return "pinestreet";
-  if(n.includes("southampton")||n.includes("112")) return "southampton";
-  if(n.includes("woods mullen")) return "woodsmullen";
-  return "res-"+(id||name||"talk").toString().toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,40);
-}
-function openResourceChat(id, name){
-  const rid=roomIdForName(name,id);
-  if(!CHAT_THREADS.some(function(r){ return r[0]===rid; })){
-    CHAT_THREADS.unshift([rid, "💬 "+(name||"This place")]);
-  }
-  show("community");
-  comTab("chat");
-  const saved=localStorage.getItem("ofn_nick")||"";
-  if(saved){
-    const box=document.getElementById("chatNick"); if(box) box.value=saved;
-    chatLogin();
-    chatOpenRoom(rid);
-  } else {
-    const live=document.getElementById("chatLive");
-    const nick=document.getElementById("chatNick");
-    if(nick) nick.focus();
-    alert("Enter a display name, tap Enter chat, then you will be in the "+(name||"")+" thread.");
-    window._pendingRoom=rid;
-  }
-}
-const _chatLogin=typeof chatLogin==="function"?chatLogin:null;
-
-
-
-function openPostChat(kind,id){
-  const rows=comLoad("ofn_com_"+kind)||[];
-  const post=rows.find(function(p){ return p.id===id; });
-  const text=post?(post.text||""):"";
-  const rid=roomIdForName(text, id);
-  const title=(text.length>40?text.slice(0,40)+"…":text)||"Conversation";
-  if(!CHAT_THREADS.some(function(r){ return r[0]===rid; })){
-    CHAT_THREADS.unshift([rid, "💬 "+title]);
-  }
-  comTab("chat");
-  const saved=localStorage.getItem("ofn_nick")||"";
-  if(saved){
-    const box=document.getElementById("chatNick"); if(box && !box.value) box.value=saved;
-    if(typeof chatNickName==="undefined" || !chatNickName) chatLogin();
-    else { document.getElementById("chatLogin").style.display="none"; document.getElementById("chatHome").style.display=""; document.getElementById("chatWho").textContent=chatNickName||saved; }
-    chatOpenRoom(rid);
-  } else {
-    window._pendingRoom=rid;
-    const nick=document.getElementById("chatNick"); if(nick) nick.focus();
-    alert("Enter a display name and tap Enter chat to join this conversation.");
-  }
-}
-
-
-
-function fillDashThreads(){
-  const box=document.getElementById("dashThreads");
-  if(!box || typeof CHAT_THREADS==="undefined") return;
-  box.innerHTML=CHAT_THREADS.map(function(r){
-    return '<button type="button" onclick="openDashThread(\''+r[0]+'\')">'+r[1]+'</button>';
-  }).join("");
-}
-function openDashThread(id){
-  show("community");
-  comTab("chat");
-  const saved=localStorage.getItem("ofn_nick")||"";
-  if(saved){
-    const n=document.getElementById("chatNick"); if(n && !n.value) n.value=saved;
-    try{ chatLogin(); }catch(e){}
-    chatOpenRoom(id);
-  } else {
-    window._pendingRoom=id;
-    const n=document.getElementById("chatNick"); if(n) n.focus();
-  }
-}
-
-fillDashThreads();
-
-
-function renderModQueue(){
-  const box=document.getElementById("modQueue");
-  if(!box) return;
-  const q=comLoad("ofn_mod_queue");
-  box.innerHTML=q.map(function(m){
-    var id=JSON.stringify(String(m.id));
-    return '<div class="res"><b>'+esc(m.who)+'</b> · '+esc(m.room||"")+'<div class="hint">'+esc(m.text)+'</div><button class="btn" type="button" onclick="modKeep('+id+')">Keep</button> <button class="btn" type="button" onclick="modDrop('+id+')">Delete</button></div>';
-  }).join("") || "<p class='hint'>Nothing waiting.</p>";
-}
-function modDrop(id){
-  comSave("ofn_mod_queue", comLoad("ofn_mod_queue").filter(function(m){ return String(m.id)!==String(id); }));
-  renderModQueue();
-}
-function modKeep(id){
-  const q=comLoad("ofn_mod_queue");
-  const m=q.find(function(x){ return String(x.id)===String(id); });
-  if(m && m.room){
-    const rows=chatHist(m.room);
-    rows.push({id:m.id,who:m.who,text:m.text,at:m.at});
-    chatSaveHist(m.room, rows);
-  }
-  modDrop(id);
-}
-
-if(location.search.includes("admin=1")){
-  show("admin");
-} else {
-  show("home");
-  if(location.hash==="#admin" || location.hash==="#videos"){
-    try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){}
-  }
-}
-if(sessionStorage.getItem("ofn_admin")==="1"){ var b=document.getElementById("adminBox"); if(b) b.style.display="block"; }
+if(location.hash==="#admin" || location.search.includes("admin=1")) show("admin");
 </script>
 
 </body>
