@@ -706,7 +706,7 @@ function comRender(){
     const box=document.getElementById(boxId); if(!box) return;
     let rows=comLoad("ofn_com_"+kind);
     box.innerHTML=rows.map(function(p){
-      return '<div class="com-post" onclick="openPostChat(\''+kind+'\','+p.id+')"><div class="who">'+esc(p.who)+' · tap to talk</div><div class="msg">'+esc(p.text)+'</div><div class="com-actions"><button type="button" onclick="event.stopPropagation();comReport(\''+kind+'\','+p.id+')">Report</button></div></div>';
+      return '<div class="com-post" onclick="openPostChat(\''+kind+'\','+JSON.stringify(String(p.id))+')"><div class="who">'+esc(p.who)+' · tap to talk</div><div class="msg">'+esc(p.text)+'</div><div class="com-actions"><button type="button" onclick="event.stopPropagation();comReport(\''+kind+'\','+JSON.stringify(String(p.id))+')">Report</button></div></div>';
     }).join("") || "<p class='hint'>No posts yet. Be the first.</p>";
   }
   paintAll();
@@ -896,7 +896,7 @@ const _chatLogin=typeof chatLogin==="function"?chatLogin:null;
 
 function openPostChat(kind,id){
   const rows=comLoad("ofn_com_"+kind)||[];
-  const post=rows.find(function(p){ return p.id===id; });
+  const post=rows.find(function(p){ return String(p.id)===String(id); });
   const text=post?(post.text||""):"";
   const rid=roomIdForName(text, id);
   const title=(text.length>40?text.slice(0,40)+"…":text)||"Conversation";
