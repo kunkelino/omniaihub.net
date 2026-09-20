@@ -622,14 +622,12 @@ function comRender(){
   function paint(kind, boxId){
     const box=document.getElementById(boxId); if(!box) return;
     let rows=comLoad("ofn_com_"+kind);
-    if(kind==="chat") rows=rows.filter(function(p){ return p.room===comRoom; });
     box.innerHTML=rows.map(function(p){
-      return '<div class="com-post"><div class="who">'+esc(p.who)+(p.prompt?" · "+esc(p.prompt):"")+(p.room?" · "+esc(p.room):"")+'</div><div class="msg">'+esc(p.text)+'</div><div class="com-actions"><button type="button" onclick="comReport(\''+kind+'\','+p.id+')">Report</button></div></div>';
+      return '<div class="com-post" onclick="openPostChat(\''+kind+'\','+p.id+')"><div class="who">'+esc(p.who)+' · tap to talk</div><div class="msg">'+esc(p.text)+'</div><div class="com-actions"><button type="button" onclick="event.stopPropagation();comReport(\''+kind+'\','+p.id+')">Report</button></div></div>';
     }).join("") || "<p class='hint'>No posts yet. Be the first.</p>";
   }
   paint("info","infoList");
   paint("story","storyList");
-  paint("chat","chatList");
 }
 async function comSuggest(){
   const name=(document.getElementById("sugName").value||"").trim();
@@ -655,6 +653,7 @@ show=function(name){
 
 const CHAT_THREADS=[
   ["general","💬 General Conversation"],
+  ["stfrancis","⛪ St. Francis House"],
   ["housing","🏠 Housing & Shelters"],
   ["food","🍽️ Food"],
   ["clothing","👕 Clothing"],
@@ -688,6 +687,7 @@ function chatLogin(){
   document.getElementById("chatHome").style.display="";
   document.getElementById("chatWho").textContent=n;
   chatDrawThreads();
+  if(window._pendingRoom){ const r=window._pendingRoom; window._pendingRoom=null; chatOpenRoom(r); }
 }
 function chatLogout(){
   chatLeaveRoom();
@@ -767,6 +767,63 @@ function chatSend(ev){
   const saved=localStorage.getItem("ofn_nick")||"";
   if(saved){ const n=document.getElementById("chatNick"); if(n) n.value=saved; }
 })();
+
+
+
+function roomIdForName(name,id){
+  const n=(name||"").toLowerCase();
+  if(n.includes("francis")) return "stfrancis";
+  if(n.includes("pine street")) return "pinestreet";
+  if(n.includes("southampton")||n.includes("112")) return "southampton";
+  if(n.includes("woods mullen")) return "woodsmullen";
+  return "res-"+(id||name||"talk").toString().toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,40);
+}
+function openResourceChat(id, name){
+  const rid=roomIdForName(name,id);
+  if(!CHAT_THREADS.some(function(r){ return r[0]===rid; })){
+    CHAT_THREADS.unshift([rid, "💬 "+(name||"This place")]);
+  }
+  show("community");
+  comTab("chat");
+  const saved=localStorage.getItem("ofn_nick")||"";
+  if(saved){
+    const box=document.getElementById("chatNick"); if(box) box.value=saved;
+    chatLogin();
+    chatOpenRoom(rid);
+  } else {
+    const live=document.getElementById("chatLive");
+    const nick=document.getElementById("chatNick");
+    if(nick) nick.focus();
+    alert("Enter a display name, tap Enter chat, then you will be in the "+(name||"")+" thread.");
+    window._pendingRoom=rid;
+  }
+}
+const _chatLogin=typeof chatLogin==="function"?chatLogin:null;
+
+
+
+function openPostChat(kind,id){
+  const rows=comLoad("ofn_com_"+kind)||[];
+  const post=rows.find(function(p){ return p.id===id; });
+  const text=post?(post.text||""):"";
+  const rid=roomIdForName(text, id);
+  const title=(text.length>40?text.slice(0,40)+"…":text)||"Conversation";
+  if(!CHAT_THREADS.some(function(r){ return r[0]===rid; })){
+    CHAT_THREADS.unshift([rid, "💬 "+title]);
+  }
+  comTab("chat");
+  const saved=localStorage.getItem("ofn_nick")||"";
+  if(saved){
+    const box=document.getElementById("chatNick"); if(box && !box.value) box.value=saved;
+    if(typeof chatNickName==="undefined" || !chatNickName) chatLogin();
+    else { document.getElementById("chatLogin").style.display="none"; document.getElementById("chatHome").style.display=""; document.getElementById("chatWho").textContent=chatNickName||saved; }
+    chatOpenRoom(rid);
+  } else {
+    window._pendingRoom=rid;
+    const nick=document.getElementById("chatNick"); if(nick) nick.focus();
+    alert("Enter a display name and tap Enter chat to join this conversation.");
+  }
+}
 
 if(location.hash==="#admin" || location.search.includes("admin=1")) show("admin");
 if(sessionStorage.getItem("ofn_admin")==="1"){ var b=document.getElementById("adminBox"); if(b) b.style.display="block"; }
