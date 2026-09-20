@@ -141,7 +141,11 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
   function openSite(){ var g=document.getElementById("gate"); if(g) g.classList.add("ok"); }
   function unlockGate(){
     var v=(document.getElementById("gatePin").value||"").replace(/\D/g,"");
-    if(v===PIN){ sessionStorage.setItem(KEY,"1"); openSite(); }
+    if(v===PIN){
+      sessionStorage.setItem(KEY,"1");
+      openSite();
+      if(typeof show==="function" && !location.search.includes("admin=1")) show("home");
+    }
     else { document.getElementById("gateErr").textContent="Wrong code"; }
   }
   window.unlockGate=unlockGate;
@@ -258,7 +262,6 @@ select,input,textarea{width:100%;border:1px solid var(--line);border-radius:12px
         <button class="btn" onclick="comPost('info')">Post</button>
         <h3 style="margin-top:18px">Current chats — please join</h3>
         <p class="hint">Tap a conversation below to join.</p>
-        <div id="dashThreads" class="dash-threads"></div>
         <div id="infoList"></div>
       </div>
 
@@ -551,9 +554,19 @@ async function loadVideos(){
 async function sendSuggest(){
   const name=sname.value.trim(), message=smsg.value.trim(), st=sstatus;
   if(message.length<5){st.innerHTML="<div class='err'>Please write a little more.</div>";return;}
-  let ok=false; try{const r=await fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,message})}); ok=r.ok;}catch{}
-  if(!ok){const all=JSON.parse(localStorage.getItem("ofn_suggestions")||"[]"); all.push({name,message,at:Date.now()}); localStorage.setItem("ofn_suggestions",JSON.stringify(all)); ok=true;}
-  st.innerHTML=ok?"<div class='ok'>Thank you. We received it.</div>":"<div class='err'>Could not send.</div>";
+  let ok=false;
+  try{
+    const r=await fetch("https://formsubmit.co/ajax/jonathan@omniaihub.net",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify({_subject:"One From Now — other city / resource",name:name||"Anonymous",message:message})
+    });
+    ok=r.ok;
+  }catch(e){}
+  const all=JSON.parse(localStorage.getItem("ofn_suggestions")||"[]");
+  all.push({name,message,at:Date.now()});
+  localStorage.setItem("ofn_suggestions",JSON.stringify(all));
+  st.innerHTML=ok?"<div class='ok'>Thank you. We received it.</div>":"<div class='err'>Could not send. Check that jonathan@omniaihub.net confirmed FormSubmit.</div>";
   if(ok){sname.value=smsg.value="";}
 }
 function loginAdmin(){
@@ -592,6 +605,30 @@ function comBlocked(text){
 }
 function comLoad(key){ try{return JSON.parse(localStorage.getItem(key)||"[]");}catch{return [];} }
 function comSave(key,rows){ localStorage.setItem(key, JSON.stringify(rows)); }
+const CHAT_API="/api/chats";
+async function pullSharedChats(){
+  try{
+    const r=await fetch(CHAT_API,{cache:"no-store"});
+    if(!r.ok) return false;
+    const data=await r.json();
+    if(!data || !Array.isArray(data.info)) return false;
+    comSave("ofn_com_info", data.info);
+    comSave("ofn_com_story", Array.isArray(data.story)?data.story:[]);
+    return true;
+  }catch(e){ return false; }
+}
+async function pushSharedChats(){
+  try{
+    await fetch(CHAT_API,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        info:comLoad("ofn_com_info"),
+        story:comLoad("ofn_com_story")
+      })
+    });
+  }catch(e){}
+}
 function comTab(name){
   ["info","story","chat","ideas","safety"].forEach(function(id){
     const el=document.getElementById("tab-"+id);
@@ -630,7 +667,7 @@ function comPost(kind){
   all.unshift(row);
   comSave(key,all);
   document.getElementById(id).value="";
-  comRender();
+  pushSharedChats().then(function(){ comRender(); });
 }
 function comReport(kind,id){
   const key="ofn_com_"+kind;
@@ -639,7 +676,32 @@ function comReport(kind,id){
   alert("Reported. Thank you.");
   comRender();
 }
+function ensureSeedChats(){
+  const key="ofn_com_info";
+  const seeds=[
+    {id:"seed-dtc",who:"Anonymous",text:"down town crossing area",at:"2026-09-19T00:00:00.000Z",reports:0},
+    {id:"seed-sf",who:"Anonymous",text:"St Francis help full",at:"2026-09-19T00:00:00.000Z",reports:0}
+  ];
+  let all=comLoad(key);
+  seeds.forEach(function(s){
+    var exists=all.some(function(p){
+      var txt=(p.text||"").replace(/\s+/g," ").trim().toLowerCase();
+      var seed=s.text.toLowerCase();
+      return String(p.id)===String(s.id) || txt===seed;
+    });
+    if(!exists) all.push(s);
+  });
+  comSave(key, all);
+}
 function comRender(){
+  ensureSeedChats();
+  pullSharedChats().then(function(ok){
+    if(ok) paintAll();
+  });
+  function paintAll(){
+    paint("info","infoList");
+    paint("story","storyList");
+  }
   function paint(kind, boxId){
     const box=document.getElementById(boxId); if(!box) return;
     let rows=comLoad("ofn_com_"+kind);
@@ -647,8 +709,7 @@ function comRender(){
       return '<div class="com-post" onclick="openPostChat(\''+kind+'\','+p.id+')"><div class="who">'+esc(p.who)+' · tap to talk</div><div class="msg">'+esc(p.text)+'</div><div class="com-actions"><button type="button" onclick="event.stopPropagation();comReport(\''+kind+'\','+p.id+')">Report</button></div></div>';
     }).join("") || "<p class='hint'>No posts yet. Be the first.</p>";
   }
-  paint("info","infoList");
-  paint("story","storyList");
+  paintAll();
 }
 async function comSuggest(){
   const name=(document.getElementById("sugName").value||"").trim();
@@ -660,7 +721,7 @@ async function comSuggest(){
   const all=comLoad("ofn_suggestions");
   all.push({name:name||"Anonymous",message:message,at:Date.now()});
   comSave("ofn_suggestions", all);
-  try{ await fetch("https://formsubmit.co/ajax/info@omniaihub.net",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({_subject:"One From Now suggestion",name:name||"Anonymous",message:message})}); }catch(e){}
+  try{ await fetch("https://formsubmit.co/ajax/jonathan@omniaihub.net",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({_subject:"One From Now suggestion",name:name||"Anonymous",message:message})}); }catch(e){}
   document.getElementById("sugText").value="";
   st.textContent="Sent to the moderator. Thank you.";
 }
@@ -906,7 +967,14 @@ function modKeep(id){
   modDrop(id);
 }
 
-if(location.hash==="#admin" || location.search.includes("admin=1")) show("admin");
+if(location.search.includes("admin=1")){
+  show("admin");
+} else {
+  show("home");
+  if(location.hash==="#admin" || location.hash==="#videos"){
+    try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){}
+  }
+}
 if(sessionStorage.getItem("ofn_admin")==="1"){ var b=document.getElementById("adminBox"); if(b) b.style.display="block"; }
 </script>
 
