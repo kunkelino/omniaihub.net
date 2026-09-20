@@ -885,7 +885,7 @@ function renderModQueue(){
   if(!box) return;
   const q=comLoad("ofn_mod_queue");
   box.innerHTML=q.map(function(m){
-    return '<div class="res"><b>'+esc(m.who)+'</b> · '+esc(m.room||"")+'<div class="hint">'+esc(m.text)+'</div><button class="btn" type="button" onclick="modKeep('+m.id+')">Keep</button> <button class="btn" type="button" onclick="modDrop('+m.id+')">Delete</button></div>';
+    return '<div class="res"><b>'+esc(m.who)+'</b> · '+esc(m.room||"")+'<div class="hint">'+esc(m.text)+'</div><button class="btn" type="button" onclick='modKeep('+JSON.stringify(String(m.id))+')'>Keep</button> <button class="btn" type="button" onclick='modDrop('+JSON.stringify(String(m.id))+')'>Delete</button></div>';
   }).join("") || "<p class='hint'>Nothing waiting.</p>";
 }
 function modDrop(id){
