@@ -419,8 +419,23 @@ function initializeTodayData(){
   selectedCalDate=getTodayString();
   const ed=document.getElementById("eventDate"); if(ed&&!ed.value) ed.value=getTodayString();
   const td=document.getElementById("taskDue"); if(td&&!td.value) td.value=getTodayString();
-  if(!Array.isArray(tasks)||!tasks.length) tasks=[{id:crypto.randomUUID(),title:"Build portfolio",due:getTodayString(),notes:"",done:false},{id:crypto.randomUUID(),title:"Work on Speak4",due:getTodayString(),notes:"",done:false},{id:crypto.randomUUID(),title:"Work on RAP",due:getTodayString(),notes:"",done:false}];
-  if(!Array.isArray(buy)||!buy.length) buy=["Locker organizer","Bag for pajamas","Shampoo","Water bottle","Bluetooth earbuds","Phone case","Charging cable","Wall charger","CapCut Pro","$20 for B cards","2 protective hard glasses cases"].map(item=>({id:crypto.randomUUID(),item,price:"",notes:"",bought:false}));
+  
+  if(tasks === null){
+    tasks=[
+      {id:crypto.randomUUID(),title:"Build portfolio",due:getTodayString(),notes:"",done:false},
+      {id:crypto.randomUUID(),title:"Work on Speak4",due:getTodayString(),notes:"",done:false},
+      {id:crypto.randomUUID(),title:"Work on RAP",due:getTodayString(),notes:"",done:false}
+    ];
+  }
+  
+  if(buy === null){
+    buy=[
+      "Locker organizer","Bag for pajamas","Shampoo","Water bottle","Bluetooth earbuds",
+      "Phone case","Charging cable","Wall charger","CapCut Pro","$20 for B cards",
+      "2 protective hard glasses cases"
+    ].map(item=>({id:crypto.randomUUID(),item,price:"",notes:"",bought:false}));
+  }
+  
   saveAll();
 }
 function saveAll(){
