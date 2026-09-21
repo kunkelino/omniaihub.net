@@ -1,38 +1,155 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Holy Family Snack Center</title><style>*{box-sizing:border-box;margin:0;padding:0;}html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f5fb;color:#172033;}#gate{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#111827,#312e81);display:flex;align-items:center;justify-content:center;padding:24px;}#gate.ok{display:none;}#gate .lock{width:min(360px,100%);background:#fff;border-radius:20px;padding:28px 22px;text-align:center;color:#172033;box-shadow:0 10px 30px rgba(15,23,42,.18);}#gate h1{margin:0 0 8px;font-size:22px;}#gate p{margin:0 0 16px;color:#6b7280;font-size:14px;}#gate input{width:100%;text-align:center;letter-spacing:.35em;font-size:28px;padding:12px;border:1px solid #d1d5db;border-radius:12px;}#gate button{margin-top:14px;width:100%;border:0;background:#4f46e5;color:#fff;font-weight:800;padding:12px;border-radius:12px;cursor:pointer;}#gate .err{color:#dc2626;font-size:13px;min-height:18px;margin-top:8px;}#gate a.back{display:inline-block;margin-top:14px;color:#6b7280;font-size:13px;}
-.wrap{max-width:980px;margin:0 auto;padding:18px 16px 40px;}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}.top a{color:#312e81;font-weight:700;text-decoration:none;}.hf-app{background:#fff;border-radius:28px;overflow:hidden;box-shadow:0 16px 40px rgba(40,20,90,.10);}.hf-header{background:linear-gradient(180deg,#1a1248 0%,#2a1868 55%,#3a2480 100%);color:#fff;text-align:center;padding:36px 20px 28px;position:relative;}.hf-title-wrap{display:inline-block;position:relative;padding-top:42px;}.hf-un{position:absolute;left:-8px;top:-8px;color:#4da3ff;font-family:"Segoe Script","Bradley Hand","Comic Sans MS",cursive;font-size:52px;font-weight:700;transform:rotate(-18deg);letter-spacing:2px;line-height:1;opacity:0;animation:unIn 0.2s ease 1s forwards, hfBlink 1.05s step-end 1s infinite;}@keyframes unIn{to{opacity:1}}.hf-title{font-size:48px;font-weight:800;letter-spacing:-.03em;line-height:1;}.hf-sub{margin-top:10px;font-size:20px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#d7ccff;}.hf-help{margin:0 0 14px;font-size:18px;font-weight:800;color:#ffe36a;line-height:1.35;position:relative;display:inline-block;}.hf-blink{margin-top:16px;font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#ffe36a;animation:hfBlink 1.05s step-end infinite;}.funny-overlap-emoji{display:inline-block;margin-left:6px;font-size:24px;vertical-align:middle;animation:bounceEmoji 2s infinite ease-in-out;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));}@keyframes bounceEmoji{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}.special-wrap{margin-top:14px;background:#fff;border-radius:22px;padding:14px;box-shadow:0 8px 22px rgba(40,20,90,.08);}.special-btn{width:100%;border:0;background:#1a1248;color:#fff;font-weight:800;padding:14px;border-radius:16px;cursor:pointer;font-size:16px;}.special-box{display:none;margin-top:12px;}.special-box.show{display:block;}.special-box textarea{width:100%;min-height:90px;border:1px solid #d1d5db;border-radius:12px;padding:10px;font:inherit;}.special-add{margin-top:8px;border:0;background:#6d4aff;color:#fff;font-weight:800;padding:10px 16px;border-radius:12px;cursor:pointer;}@keyframes hfBlink{0%,49%{opacity:1}50%,100%{opacity:.15}}.hf-body{background:linear-gradient(180deg,#f6f3ff 0%,#eef1fb 100%);padding:22px 18px 26px;}.hf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}@media(min-width:900px){.hf-grid{grid-template-columns:repeat(4,minmax(0,1fr));}}.candy-btn{appearance:none;border:0;background:#fff;border-radius:22px;padding:14px 12px 16px;cursor:pointer;box-shadow:0 8px 22px rgba(40,20,90,.08);text-align:center;color:#2a1f55;}.candy-btn:hover{transform:translateY(-3px);}.candy-btn.sold{opacity:.45;cursor:not-allowed;}.candy-btn img{width:100%;height:140px;object-fit:contain;display:block;margin-bottom:10px;}.candy-name{font-size:14px;font-weight:700;}.price-tag{margin-top:8px;font-size:15px;font-weight:800;color:#2a1f55;}.stock-left{margin-top:8px;font-size:13px;font-weight:800;color:#b45309;}.hf-note{text-align:center;margin-top:16px;color:#6b7280;font-size:13px;}.cart{margin-top:18px;background:#fff;border-radius:22px;padding:16px 16px 14px;box-shadow:0 8px 22px rgba(40,20,90,.08);}.cart h3{margin:0 0 10px;font-size:16px;color:#2a1f55;}.cart-empty{color:#6b7280;font-size:13px;padding:6px 0 10px;}.cart-list{list-style:none;}.cart-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #eee;}.cart-item span{font-size:14px;font-weight:700;color:#2a1f55;}.cart-x{border:0;background:#fee2e2;color:#b91c1c;width:28px;height:28px;border-radius:8px;font-weight:800;cursor:pointer;line-height:1;}.totals{margin-top:12px;}.tot-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:14px;}#donateAmt{outline:none;}.tax-box{background:#eef2ff;color:#3730a3;font-weight:800;border-radius:10px;padding:4px 10px;}.tot-row.grand{font-size:18px;font-weight:800;color:#1a1248;border-top:1px solid #e5e7eb;margin-top:6px;padding-top:10px;}.order-row{display:flex;justify-content:flex-end;margin-top:12px;}.order-btn{border:0;background:#6d4aff;color:#fff;font-weight:800;padding:12px 22px;border-radius:14px;cursor:pointer;font-size:16px;}.order-btn:disabled{opacity:.45;cursor:not-allowed;}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holy Family Snack Center</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f5fb;color:#172033;}
+#gate{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#111827,#312e81);display:flex;align-items:center;justify-content:center;padding:24px;}
+#gate.ok{display:none;}
+#gate .lock{width:min(360px,100%);background:#fff;border-radius:20px;padding:28px 22px;text-align:center;color:#172033;box-shadow:0 10px 30px rgba(15,23,42,.18);}
+#gate h1{margin:0 0 8px;font-size:22px;}
+#gate p{margin:0 0 16px;color:#6b7280;font-size:14px;}
+#gate input{width:100%;text-align:center;letter-spacing:.35em;font-size:28px;padding:12px;border:1px solid #d1d5db;border-radius:12px;}
+#gate button{margin-top:14px;width:100%;border:0;background:#4f46e5;color:#fff;font-weight:800;padding:12px;border-radius:12px;cursor:pointer;}
+#gate .err{color:#dc2626;font-size:13px;min-height:18px;margin-top:8px;}
+#gate a.back{display:inline-block;margin-top:14px;color:#6b7280;font-size:13px;}
 
-.pay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(17,24,39,.72);align-items:center;justify-content:center;padding:12px;}
+.wrap{max-width:980px;margin:0 auto;padding:18px 16px 40px;}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.top a{color:#312e81;font-weight:700;text-decoration:none;}
+.hf-app{background:#fff;border-radius:28px;overflow:hidden;box-shadow:0 16px 40px rgba(40,20,90,.10);}
+.hf-header{background:linear-gradient(180deg,#1a1248 0%,#2a1868 55%,#3a2480 100%);color:#fff;text-align:center;padding:36px 20px 28px;}
+.hf-title-wrap{display:inline-block;position:relative;padding-top:42px;}
+.hf-un{position:absolute;left:-8px;top:-8px;color:#4da3ff;font-family:"Segoe Script","Bradley Hand","Comic Sans MS",cursive;font-size:52px;font-weight:700;transform:rotate(-18deg);letter-spacing:2px;line-height:1;opacity:0;animation:unIn 0.2s ease 1s forwards, hfBlink 1.05s step-end 1s infinite;}
+@keyframes unIn{to{opacity:1}}
+.hf-title{font-size:48px;font-weight:800;letter-spacing:-.03em;line-height:1;}
+.hf-sub{margin-top:10px;font-size:20px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#d7ccff;}
+.hf-help{margin:0 0 14px;font-size:18px;font-weight:800;color:#ffe36a;line-height:1.35;}
+.hf-blink{margin-top:16px;font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#ffe36a;animation:hfBlink 1.05s step-end infinite;}
+.special-wrap{margin-top:14px;background:#fff;border-radius:22px;padding:14px;box-shadow:0 8px 22px rgba(40,20,90,.08);}
+.special-btn{width:100%;border:0;background:#1a1248;color:#fff;font-weight:800;padding:14px;border-radius:16px;cursor:pointer;font-size:16px;}
+.special-box{display:none;margin-top:12px;}
+.special-box.show{display:block;}
+.special-box textarea{width:100%;min-height:90px;border:1px solid #d1d5db;border-radius:12px;padding:10px;font:inherit;}
+.special-add{margin-top:8px;border:0;background:#6d4aff;color:#fff;font-weight:800;padding:10px 16px;border-radius:12px;cursor:pointer;}
+@keyframes hfBlink{0%,49%{opacity:1}50%,100%{opacity:.15}}
+.hf-body{background:linear-gradient(180deg,#f6f3ff 0%,#eef1fb 100%);padding:22px 18px 26px;}
+.hf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+@media(min-width:900px){.hf-grid{grid-template-columns:repeat(4,minmax(0,1fr));}}
+.candy-btn{appearance:none;border:0;background:#fff;border-radius:22px;padding:14px 12px 16px;cursor:pointer;box-shadow:0 8px 22px rgba(40,20,90,.08);text-align:center;color:#2a1f55;}
+.candy-btn:hover{transform:translateY(-3px);}
+.candy-btn.sold{opacity:.45;cursor:not-allowed;}
+.candy-btn img{width:100%;height:140px;object-fit:contain;display:block;margin-bottom:10px;}
+.candy-name{font-size:14px;font-weight:700;}
+.price-tag{margin-top:8px;font-size:15px;font-weight:800;color:#2a1f55;}
+.stock-left{margin-top:8px;font-size:13px;font-weight:800;color:#b45309;}
+.hf-note{text-align:center;margin-top:16px;color:#6b7280;font-size:13px;}
+.cart{margin-top:18px;background:#fff;border-radius:22px;padding:16px 16px 14px;box-shadow:0 8px 22px rgba(40,20,90,.08);}
+.cart h3{margin:0 0 10px;font-size:16px;color:#2a1f55;}
+.cart-empty{color:#6b7280;font-size:13px;padding:6px 0 10px;}
+.cart-list{list-style:none;}
+.cart-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #eee;}
+.cart-item span{font-size:14px;font-weight:700;color:#2a1f55;}
+.cart-x{border:0;background:#fee2e2;color:#b91c1c;width:28px;height:28px;border-radius:8px;font-weight:800;cursor:pointer;line-height:1;}
+.totals{margin-top:12px;}
+.tot-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:14px;}
+.tax-box{background:#eef2ff;color:#3730a3;font-weight:800;border-radius:10px;padding:4px 10px;}
+.tot-row.grand{font-size:18px;font-weight:800;color:#1a1248;border-top:1px solid #e5e7eb;margin-top:6px;padding-top:10px;}
+.order-row{display:flex;justify-content:flex-end;margin-top:12px;}
+.order-btn{border:0;background:#6d4aff;color:#fff;font-weight:800;padding:12px 22px;border-radius:14px;cursor:pointer;font-size:16px;}
+.order-btn:disabled{opacity:.45;cursor:not-allowed;}
+.pay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(17,24,39,.72);align-items:center;justify-content:center;padding:18px;}
 .pay.show{display:flex;}
-.pay-box{width:min(480px,94vw);max-height:90vh;overflow-y:auto;background:#fff;border-radius:22px;padding:18px 14px;text-align:center;}
-.pay-box h2{margin:0 0 4px;font-size:20px;}
-.pay-scan{font-size:15px;font-weight:800;color:#4f46e5;margin:6px 0 12px;animation:hfBlink 1.05s step-end infinite;}
-
-/* QR CODES LAYOUT: SIDE-BY-SIDE ON LAPTOP, STACKED & BIGGER ON MOBILE */
-.pay-qrs{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch;}
-.pay-qrs div{background:#f6f3ff;border-radius:14px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;}
-.pay-qrs img{width:110px;height:110px;object-fit:contain;background:#fff;border-radius:10px;padding:4px;}
-.pay-qrs p{margin-top:6px;font-weight:800;font-size:13px;}
-
-@media(max-width:800px){
-  .pay-qrs{display:flex;flex-direction:column;align-items:center;gap:16px;}
-  .pay-qrs img{width:220px;height:220px;}
-}
-
-.pay-total{margin:10px 0;font-size:16px;font-weight:800;}
-.pay-name{width:100%;margin:6px 0 10px;padding:10px;border:1px solid #d1d5db;border-radius:12px;font-size:15px;text-align:center;}
+.pay-box{width:min(560px,100%);background:#fff;border-radius:22px;padding:22px 18px;text-align:center;}
+.pay-box h2{margin:0 0 6px;font-size:22px;}
+.pay-scan{font-size:20px;font-weight:800;color:#4f46e5;margin:8px 0 16px;animation:hfBlink 1.05s step-end infinite;}
+.pay-qrs{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;}
+.pay-qrs div{background:#f6f3ff;border-radius:16px;padding:12px;display:flex;flex-direction:column;align-items:center;}
+.pay-qrs img{width:160px;height:160px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;}
+.pay-qrs p{margin-top:8px;font-weight:800;}
+.pay-total{margin:14px 0;font-size:18px;font-weight:800;}
+.pay-name{width:100%;margin:8px 0 12px;padding:12px;border:1px solid #d1d5db;border-radius:12px;font-size:16px;text-align:center;}
 .pay-close{border:0;background:#111827;color:#fff;font-weight:800;padding:10px 18px;border-radius:12px;cursor:pointer;}
+@media(max-width:800px){.hf-grid{grid-template-columns:1fr;}.hf-title{font-size:36px;}.hf-un{font-size:40px;}}
+</style>
+</head>
+<body>
 
-@media(max-width:800px){.hf-grid{grid-template-columns:1fr;}.hf-title{font-size:36px;}.hf-un{font-size:40px;}}</style></head><body>
-<div id="gate">  <div class="lock">    <h1>Snack Center</h1>    <p>Enter the 3-digit code</p>    <input id="gatePin" type="password" inputmode="numeric" maxlength="3" autocomplete="off">    <button type="button" onclick="unlockGate()">Enter</button>    <div class="err" id="gateErr"></div>    <a class="back" href="index.html">Back to portfolio</a>  </div></div>
-<div class="wrap">  <div class="top"><a href="index.html">← Portfolio</a></div>  <section class="hf-app">    <div class="hf-header">      <div class="hf-title-wrap">        <span class="hf-un">UN</span>        <div class="hf-title">Holy Family</div>      </div>      <div class="hf-sub">Snack Center</div>      <div class="hf-help">For less than a cup of coffee a day, you can help support the homeless<span class="funny-overlap-emoji">😭😂</span></div>      <div class="hf-blink">Donations strongly suggested</div>    </div>    <div class="hf-body">      <div class="hf-grid">        <button class="candy-btn" type="button" data-id="twix" data-item="Twix Mini">          <img src="twix.jpg" alt="Twix">          <div class="candy-name">Twix Mini</div>          <div class="price-tag">$ donation</div>        </button>
-        <button class="candy-btn" type="button" data-id="snickers" data-item="Snickers Mini">          <img src="snickers.jpg" alt="Snickers">          <div class="candy-name">Snickers Mini</div>          <div class="price-tag">$ donation</div>        </button>
-        <button class="candy-btn" type="button" data-id="hotchocolate" data-item="Hot Chocolate" data-start="7">          <img src="hotchoc.jpg" alt="Hot chocolate">          <div class="candy-name">Hot Chocolate</div>          <div class="price-tag">$ donation</div>          <div class="stock-left"></div>        </button>
-        <button class="candy-btn" type="button" data-id="ramen" data-item="Ramen" data-start="4">          <img src="ramen.jpg.WEBP" alt="Ramen">          <div class="candy-name">Ramen</div>          <div class="price-tag">$ donation</div>          <div class="stock-left"></div>        </button>
-        <button class="candy-btn" type="button" data-id="twizzler" data-item="Twizzler Mini">          <img src="twizzler.jpg.JPG" alt="Twizzler">          <div class="candy-name">Twizzler Mini</div>          <div class="price-tag">$ donation</div>        </button>
-        <button class="candy-btn" type="button" data-id="mms" data-item="M&amp;M's Mini">          <img src="mms.jpg.WEBP" alt="M and Ms">          <div class="candy-name">M&amp;M's Mini</div>          <div class="price-tag">$ donation</div>        </button>
-        <button class="candy-btn" type="button" data-id="coffee" data-item="Coffee" data-start="12">          <img class="tryimg" alt="Coffee" data-try="coffee.jpg,COFFEE.JPG,COFFEE.jpg,coffee.JPG,coffee.jpeg,coffee.jpg.WEBP,coffee.jpg.JPG">          <div class="candy-name">Coffee</div>          <div class="price-tag">$ donation</div>          <div class="stock-left"></div>        </button>
-        <button class="candy-btn" type="button" data-id="coffeehazel" data-item="Coffee Hazelnut" data-start="12">          <img class="tryimg" alt="Coffee Hazelnut" data-try="coffeehazel.jpg,coffeehazel,jpg,coffeehazel,jpg.jpg,coffehazel.jpg,COFFEEHAZEL.JPG,coffeehazel.jpeg,coffeehazel.jpg.WEBP">          <div class="candy-name">Coffee Hazelnut</div>          <div class="price-tag">$ donation</div>          <div class="stock-left"></div>        </button>
-        <button class="candy-btn" type="button" data-id="bar" data-item="Granola Bar" data-start="10">          <img class="tryimg" alt="Granola Bar" data-try="bar.jpg,bar.JPG,BAR.JPG,bar.jpeg,bar.jpg.WEBP,bar.jpg.JPG">          <div class="candy-name">Granola Bar</div>          <div class="price-tag">$ donation</div>          <div class="stock-left"></div>        </button>
+<div id="gate">
+  <div class="lock">
+    <h1>Snack Center</h1>
+    <p>Enter the 3-digit code</p>
+    <input id="gatePin" type="password" inputmode="numeric" maxlength="3" autocomplete="off">
+    <button type="button" onclick="unlockGate()">Enter</button>
+    <div class="err" id="gateErr"></div>
+    <a class="back" href="index.html">Back to portfolio</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="top"><a href="index.html">← Portfolio</a></div>
+  <section class="hf-app">
+    <div class="hf-header">
+      <div class="hf-title-wrap">
+        <span class="hf-un">UN</span>
+        <div class="hf-title">Holy Family</div>
+      </div>
+      <div class="hf-sub">Snack Center</div>
+      <div class="hf-help">For less than a cup of coffee a day, you can help support the homeless.</div>
+      <div class="hf-blink">Donations strongly suggested</div>
+    </div>
+    <div class="hf-body">
+      <div class="hf-grid">
+        <button class="candy-btn" type="button" data-id="twix" data-item="Twix">
+          <img src="twix.jpg" alt="Twix">
+          <div class="candy-name">Twix</div>
+          <div class="price-tag">$ donation</div>
+        </button>
+        <button class="candy-btn" type="button" data-id="snickers" data-item="Snickers">
+          <img src="snickers.jpg" alt="Snickers">
+          <div class="candy-name">Snickers</div>
+          <div class="price-tag">$ donation</div>
+        </button>
+        <button class="candy-btn" type="button" data-id="milkyway" data-item="Milky Way Minis">
+          <img src="milkyway.jpg" alt="Milky Way minis">
+          <div class="candy-name">Milky Way Minis</div>
+          <div class="price-tag">$ donation</div>
+        </button>
+        <button class="candy-btn" type="button" data-id="hotchocolate" data-item="Hot Chocolate" data-start="7">
+          <img src="hotchoc.jpg" alt="Hot chocolate">
+          <div class="candy-name">Hot Chocolate</div>
+          <div class="price-tag">$ donation</div>
+          <div class="stock-left"></div>
+        </button>
+        <button class="candy-btn" type="button" data-id="ramen" data-item="Ramen" data-start="3">
+          <img src="ramen.jpg.WEBP" alt="Ramen">
+          <div class="candy-name">Ramen</div>
+          <div class="price-tag">$ donation</div>
+          <div class="stock-left"></div>
+        </button>
+        <button class="candy-btn" type="button" data-id="twizzler" data-item="Twizzler">
+          <img src="twizzler.jpg.JPG" alt="Twizzler">
+          <div class="candy-name">Twizzler</div>
+          <div class="price-tag">$ donation</div>
+        </button>
+        <button class="candy-btn" type="button" data-id="mms" data-item="M&amp;M's">
+          <img src="mms.jpg.WEBP" alt="M and Ms">
+          <div class="candy-name">M&amp;M's</div>
+          <div class="price-tag">$ donation</div>
+        </button>
+        <button class="candy-btn" type="button" data-id="coffee" data-item="Coffee">
+          <img class="tryimg" alt="Coffee" data-try="coffee.jpg,COFFEE.JPG,COFFEE.jpg,coffee.JPG,coffee.jpeg,coffee.jpg.WEBP,coffee.jpg.JPG">
+          <div class="candy-name">Coffee</div>
+          <div class="price-tag">$ donation</div>
+        </button>
+        <button class="candy-btn" type="button" data-id="coffeehazel" data-item="Coffee Hazelnut">
+          <img class="tryimg" alt="Coffee Hazelnut" data-try="coffeehazel.jpg,coffeehazel,jpg,coffeehazel,jpg.jpg,coffehazel.jpg,COFFEEHAZEL.JPG,coffeehazel.jpeg,coffeehazel.jpg.WEBP">
+          <div class="candy-name">Coffee Hazelnut</div>
+          <div class="price-tag">$ donation</div>
+        </button>
       </div>
       <div class="special-wrap">
         <button class="special-btn" id="specialBtn" type="button">Special order</button>
@@ -49,26 +166,94 @@
         <div class="totals">
           <div class="tot-row"><span>Items</span><span id="subtotal">$ donation</span></div>
           <div class="tot-row"><span>Jonathan Tax</span><span class="tax-box" id="taxBox">$0.50 😂</span></div>
-          <div class="tot-row"><span>Total donation</span>
-            <span class="tax-box" style="padding:0">
-              <span style="padding:0 4px 0 10px">$</span>
-              <input id="donateAmt" type="number" min="0" step="0.01" placeholder="0.00" style="width:88px;border:0;background:transparent;font-weight:800;font-size:14px;padding:6px 8px 6px 0;color:#3730a3;">
-            </span>
-          </div>
-          <div class="tot-row grand"><span>Total</span><span id="grandTotal">$0.50</span></div>
         </div>
         <div class="order-row">
           <button class="order-btn" id="orderBtn" type="button" disabled>Order</button>
         </div>
       </div>
     </div>
-  </section></div>
-<div class="pay" id="payModal">  <div class="pay-box">    <h2>Order</h2>    <div class="pay-scan">Scan either QR code to donate</div>    <div class="pay-qrs">
-      <div>        <img src="venmo-qr.png" alt="Venmo QR">        <p>Venmo</p>      </div>
-      <div>        <img src="zelle-qr.png" alt="Zelle QR">        <p>Zelle</p>      </div>
+  </section>
+</div>
+
+<div class="pay" id="payModal">
+  <div class="pay-box">
+    <h2>Order</h2>
+    <div class="pay-scan">Scan either QR code to donate</div>
+    <div class="pay-qrs">
+      <div>
+        <img src="venmo-qr.png" alt="Venmo QR">
+        <p>Venmo</p>
+      </div>
+      <div>
+        <img src="zelle-qr.png" alt="Zelle QR">
+        <p>Zelle</p>
+      </div>
     </div>
-    <div class="pay-total" id="payTotal"></div>    <input class="pay-name" id="orderName" type="text" placeholder="Write your name" autocomplete="name">    <button class="order-btn" id="sendOrder" type="button">Place order</button>    <button class="pay-close" id="payClose" type="button" style="margin-top:10px">Close</button>  </div></div>
-<script>document.querySelectorAll(".tryimg").forEach(function(img){  var list=(img.getAttribute("data-try")||"").split(",").map(function(s){return s.trim();}).filter(Boolean);  var i=0;  function next(){    if(i>=list.length) return;    img.onerror=function(){ i++; next(); };    img.src=list[i];  }  next();});(function(){  var PIN="777";  var KEY="hf_snack_ok";  function openSite(){ var g=document.getElementById("gate"); if(g) g.classList.add("ok"); }  function unlockGate(){    var v=(document.getElementById("gatePin").value||"").replace(/\D/g,"");    if(v===PIN){ sessionStorage.setItem(KEY,"1"); openSite(); }    else { document.getElementById("gateErr").textContent="Wrong code"; }  }  window.unlockGate=unlockGate;  if(sessionStorage.getItem(KEY)==="1") openSite();  var inp=document.getElementById("gatePin");  if(inp) inp.addEventListener("keydown", function(e){ if(e.key==="Enter") unlockGate(); });})();(function(){  var TAX=0.50;  var cart=[];  var STOCK_KEY="hf_stock_inventory_v4";  var ORDER_EMAIL="info@omniaihub.net";  var list=document.getElementById("cartList");  var empty=document.getElementById("cartEmpty");  var subEl=document.getElementById("subtotal");  var orderBtn=document.getElementById("orderBtn");  function money(n){ return "$"+n.toFixed(2); }  function loadStock(){    var saved={};    try{ saved=JSON.parse(localStorage.getItem(STOCK_KEY)||"{}"); }catch(e){ saved={}; }    document.querySelectorAll(".candy-btn[data-start]").forEach(function(btn){      var id=btn.dataset.id;      var start=parseInt(btn.dataset.start||"0",10);      if(typeof saved[id]!=="number" || saved[id]<=0) saved[id]=start;      btn.dataset.stock=String(saved[id]);    });    localStorage.setItem(STOCK_KEY, JSON.stringify(saved));  }  function saveStock(){    var saved={};    document.querySelectorAll(".candy-btn[data-start]").forEach(function(btn){      saved[btn.dataset.id]=parseInt(btn.dataset.stock||"0",10);    });    localStorage.setItem(STOCK_KEY, JSON.stringify(saved));  }  function paintStock(){    document.querySelectorAll(".candy-btn[data-start]").forEach(function(btn){      var n=parseInt(btn.dataset.stock||"0",10);      var el=btn.querySelector(".stock-left");
+    <div class="pay-total" id="payTotal"></div>
+    <input class="pay-name" id="orderName" type="text" placeholder="Write your name" autocomplete="name">
+    <button class="order-btn" id="sendOrder" type="button">Place order</button>
+    <button class="pay-close" id="payClose" type="button" style="margin-top:10px">Close</button>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll(".tryimg").forEach(function(img){
+  var list=(img.getAttribute("data-try")||"").split(",").map(function(s){return s.trim();}).filter(Boolean);
+  var i=0;
+  function next(){
+    if(i>=list.length) return;
+    img.onerror=function(){ i++; next(); };
+    img.src=list[i];
+  }
+  next();
+});
+(function(){
+  var PIN="777";
+  var KEY="hf_snack_ok";
+  function openSite(){ var g=document.getElementById("gate"); if(g) g.classList.add("ok"); }
+  function unlockGate(){
+    var v=(document.getElementById("gatePin").value||"").replace(/\D/g,"");
+    if(v===PIN){ sessionStorage.setItem(KEY,"1"); openSite(); }
+    else { document.getElementById("gateErr").textContent="Wrong code"; }
+  }
+  window.unlockGate=unlockGate;
+  if(sessionStorage.getItem(KEY)==="1") openSite();
+  var inp=document.getElementById("gatePin");
+  if(inp) inp.addEventListener("keydown", function(e){ if(e.key==="Enter") unlockGate(); });
+})();
+(function(){
+  var TAX=0.50;
+  var cart=[];
+  var STOCK_KEY="hf_stock_hotchoc7";
+  var ORDER_EMAIL="info@omniaihub.net";
+  var list=document.getElementById("cartList");
+  var empty=document.getElementById("cartEmpty");
+  var subEl=document.getElementById("subtotal");
+  var totalEl=document.getElementById("total");
+  var orderBtn=document.getElementById("orderBtn");
+  function money(n){ return "$"+n.toFixed(2); }
+  function loadStock(){
+    var saved={};
+    try{ saved=JSON.parse(localStorage.getItem(STOCK_KEY)||"{}"); }catch(e){ saved={}; }
+    document.querySelectorAll(".candy-btn[data-start]").forEach(function(btn){
+      var id=btn.dataset.id;
+      var start=parseInt(btn.dataset.start||"0",10);
+      if(typeof saved[id]!=="number") saved[id]=start;
+      btn.dataset.stock=String(saved[id]);
+    });
+    localStorage.setItem(STOCK_KEY, JSON.stringify(saved));
+  }
+  function saveStock(){
+    var saved={};
+    document.querySelectorAll(".candy-btn[data-start]").forEach(function(btn){
+      saved[btn.dataset.id]=parseInt(btn.dataset.stock||"0",10);
+    });
+    localStorage.setItem(STOCK_KEY, JSON.stringify(saved));
+  }
+  function paintStock(){
+    document.querySelectorAll(".candy-btn[data-start]").forEach(function(btn){
+      var n=parseInt(btn.dataset.stock||"0",10);
+      var el=btn.querySelector(".stock-left");
       if(!el) return;
       if(n<=0){
         el.textContent="Sold out";
@@ -81,7 +266,13 @@
         btn.classList.remove("sold");
       }
     });
-  }  function render(){    list.innerHTML="";    var sub=0;    cart.forEach(function(item,i){      sub+=item.price;      var li=document.createElement("li");
+  }
+  function render(){
+    list.innerHTML="";
+    var sub=0;
+    cart.forEach(function(item,i){
+      sub+=item.price;
+      var li=document.createElement("li");
       li.className="cart-item";
       li.innerHTML="<span>"+item.name+"</span>";
       var x=document.createElement("button");
@@ -94,12 +285,10 @@
     });
     empty.style.display=cart.length?"none":"block";
     if(subEl) subEl.textContent="$ donation";
-    var d=parseFloat((document.getElementById("donateAmt")||{}).value||"0");
-    if(isNaN(d)||d<0) d=0;
-    var g=document.getElementById("grandTotal");
-    if(g) g.textContent=money(d+TAX);
     orderBtn.disabled=!cart.length;
-  }  document.querySelectorAll(".candy-btn").forEach(function(btn){    btn.addEventListener("click", function(){
+  }
+  document.querySelectorAll(".candy-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
       if(btn.dataset.start){
         var n=parseInt(btn.dataset.stock||"0",10);
         if(n<=0) return;
@@ -107,42 +296,41 @@
       cart.push({id:btn.dataset.id||"", name:btn.dataset.item+" — $ donation", price:0});
       render();
     });
-  });  document.getElementById("specialBtn").addEventListener("click", function(){
+  });
+  document.getElementById("specialBtn").addEventListener("click", function(){
     document.getElementById("specialBox").classList.toggle("show");
-  });  document.getElementById("specialAdd").addEventListener("click", function(){
+  });
+  document.getElementById("specialAdd").addEventListener("click", function(){
     var note=(document.getElementById("specialNote").value||"").trim();
     if(!note) return;
     cart.push({name:"Special order: "+note, price:0});
     document.getElementById("specialNote").value="";
     render();
-  });  var pay=document.getElementById("payModal");
+  });
+  var pay=document.getElementById("payModal");
   var payTotal=document.getElementById("payTotal");
   orderBtn.addEventListener("click", function(){
     if(!cart.length) return;
     payTotal.textContent="Donation — thank you";
     pay.classList.add("show");
-  });  
-  
+  });
   document.getElementById("sendOrder").addEventListener("click", function(){
     var name=(document.getElementById("orderName").value||"").trim();
     if(!name){ alert("Write your name so I know who to deliver to."); return; }
     var lines=cart.map(function(i){ return "- "+i.name; });
-    var d=parseFloat((document.getElementById("donateAmt")||{}).value||"0");
-    if(isNaN(d)||d<0) d=0;
-    var body="Name: "+name+"\n\nOrder:\n"+lines.join("\n")+"\n\nTotal donation $"+d.toFixed(2)+"\nJonathan Tax $0.50\nGrand total $"+(d+TAX).toFixed(2);
+    var body="Name: "+name+"\n\nOrder:\n"+lines.join("\n")+"\n\n$ donation\nJonathan Tax $0.50";
     var sendBtn=document.getElementById("sendOrder");
     sendBtn.disabled=true;
     sendBtn.textContent="Sending...";
-
-    var finished=false;
-    var timer=setTimeout(function(){
-      if(!finished){
-        finished=true;
-        resetOrderState("Order sent successfully!");
-      }
-    }, 4000);
-
-    function resetOrderState(msg){
+    fetch("https://formsubmit.co/ajax/"+ORDER_EMAIL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify({
+        name:name,
+        _subject:"Snack order from "+name,
+        order:body
+      })
+    }).then(function(r){ return r.json(); }).then(function(){
       cart.forEach(function(item){
         if(!item.id) return;
         var b=document.querySelector('.candy-btn[data-id="'+item.id+'"][data-start]');
@@ -158,30 +346,20 @@
       sendBtn.disabled=false;
       sendBtn.textContent="Place order";
       document.getElementById("orderName").value="";
-      alert(msg);
-    }
-
-    fetch("https://formsubmit.co/ajax/"+ORDER_EMAIL,{
-      method:"POST",
-      headers:{"Content-Type":"application/json","Accept":"application/json"},
-      body:JSON.stringify({
-        name:name,
-        _subject:"Snack order from "+name,
-        order:body
-      })
-    }).then(function(r){ return r.json(); }).then(function(){
-      if(!finished){
-        finished=true;
-        clearTimeout(timer);
-        resetOrderState("Order sent.");
-      }
+      alert("Order sent.");
     }).catch(function(){
-      if(!finished){
-        finished=true;
-        clearTimeout(timer);
-        resetOrderState("Order saved and submitted.");
-      }
+      sendBtn.disabled=false;
+      sendBtn.textContent="Place order";
+      alert("Could not send. Try again.");
     });
-  });  
-
-  document.getElementById("payClose").addEventListener("click", function(){    pay.classList.remove("show");  });  var da=document.getElementById("donateAmt");  if(da) da.addEventListener("input", render);  loadStock();  paintStock();  render();})();</script></body></html>
+  });
+  document.getElementById("payClose").addEventListener("click", function(){
+    pay.classList.remove("show");
+  });
+  loadStock();
+  paintStock();
+  render();
+})();
+</script>
+</body>
+</html>
