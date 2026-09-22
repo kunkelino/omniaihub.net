@@ -81,10 +81,16 @@ html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f
 }
 .pay-total{margin:10px 0;font-size:16px;font-weight:800;}
 .pay-name{width:100%;margin:6px 0 10px;padding:10px;border:1px solid #d1d5db;border-radius:12px;font-size:15px;text-align:center;}
-.pay-close{border:0;background:#111827;color:#fff;font-weight:800;padding:10px 18px;border-radius:12px;cursor:pointer;}
+.pay-footer{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;width:100%;}
+.cash-btn,.pay-close,.order-btn#sendOrder{width:100%;height:48px;padding:0 10px;border:0;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;line-height:48px;}
+.pay-close{background:#111827;color:#fff;border-radius:14px;}
+.cash-btn{background:#6d4aff;color:#fff;}
 .pay-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:#9ca3af;font-size:12px;font-weight:700;text-transform:uppercase;}
 .pay-divider::before,.pay-divider::after{content:"";flex:1;height:1px;background:#e5e7eb;}
 #paypal-button-container{margin:4px 0 14px;min-height:44px;}
+#paypal-button-container iframe,
+#paypal-button-container .paypal-buttons,
+#paypal-button-container > div{border-radius:14px !important;overflow:hidden;}
 .pp-note{font-size:11px;color:#9ca3af;margin-top:-6px;margin-bottom:10px;}
 .my-pay-btns{display:flex;flex-direction:column;gap:8px;margin:8px 0 4px;}
 .my-pay-btns button{width:100%;border:0;font-weight:800;padding:12px;border-radius:14px;cursor:pointer;font-size:16px;}
@@ -219,8 +225,10 @@ html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f
       <button type="button" class="venmo-open" id="openVenmo">Pay with Venmo</button>
       <button type="button" class="zelle-open" id="openZelle">Pay with Zelle</button>
     </div>
-    <button class="order-btn" id="sendOrder" type="button" style="margin-top:14px">I paid by Venmo / Zelle</button>
-    <button class="pay-close" id="payClose" type="button" style="margin-top:10px">Close</button>
+    <div class="pay-footer">
+      <button class="order-btn cash-btn" id="sendOrder" type="button">I will donate cash</button>
+      <button class="pay-close" id="payClose" type="button">Close</button>
+    </div>
   </div>
 </div>
 <div class="qr-pop" id="qrPop">
@@ -461,7 +469,7 @@ document.querySelectorAll(".tryimg").forEach(function(img){
       }
       container.innerHTML="";
       paypalButtons=paypal.Buttons({
-        style:{ layout:"vertical", color:"gold", shape:"rect", label:"paypal" },
+        style:{ layout:"vertical", color:"gold", shape:"pill", label:"paypal" },
         createOrder:function(){
           var name=(document.getElementById("orderName").value||"").trim();
           if(!name){
@@ -551,7 +559,7 @@ document.querySelectorAll(".tryimg").forEach(function(img){
       if(!finished){
         finished=true;
         sendBtn.disabled=false;
-        sendBtn.textContent="I paid by QR / Zelle";
+        sendBtn.textContent="I will donate cash";
         finishOrder("Order sent successfully!");
       }
     }, 4000);
@@ -569,7 +577,7 @@ document.querySelectorAll(".tryimg").forEach(function(img){
         finished=true;
         clearTimeout(timer);
         sendBtn.disabled=false;
-        sendBtn.textContent="I paid by QR / Zelle";
+        sendBtn.textContent="I will donate cash";
         finishOrder("Order sent.");
       }
     }).catch(function(){
@@ -577,7 +585,7 @@ document.querySelectorAll(".tryimg").forEach(function(img){
         finished=true;
         clearTimeout(timer);
         sendBtn.disabled=false;
-        sendBtn.textContent="I paid by QR / Zelle";
+        sendBtn.textContent="I will donate cash";
         finishOrder("Order saved and submitted.");
       }
     });
