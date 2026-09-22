@@ -90,7 +90,13 @@ html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f
 #paypal-button-container{margin:4px 0 14px;min-height:44px;}
 #paypal-button-container iframe,
 #paypal-button-container .paypal-buttons,
-#paypal-button-container > div{border-radius:14px !important;overflow:hidden;}
+#paypal-button-container .paypal-buttons-layout-vertical,
+#paypal-button-container .paypal-button-row,
+#paypal-button-container > div,
+#paypal-button-container div{
+  border-radius:14px !important;
+  overflow:hidden !important;
+}
 .pp-note{font-size:11px;color:#9ca3af;margin-top:-6px;margin-bottom:10px;}
 .my-pay-btns{display:flex;flex-direction:column;gap:8px;margin:8px 0 4px;}
 .my-pay-btns button{width:100%;border:0;font-weight:800;padding:12px;border-radius:14px;cursor:pointer;font-size:16px;}
@@ -469,7 +475,7 @@ document.querySelectorAll(".tryimg").forEach(function(img){
       }
       container.innerHTML="";
       paypalButtons=paypal.Buttons({
-        style:{ layout:"vertical", color:"gold", shape:"rect", label:"paypal" },
+        style:{ layout:"vertical", color:"gold", shape:"pill", label:"paypal" },
         createOrder:function(){
           var name=(document.getElementById("orderName").value||"").trim();
           if(!name){
@@ -526,7 +532,20 @@ document.querySelectorAll(".tryimg").forEach(function(img){
           alert("There was a problem with PayPal. Please try again or use a QR code below.");
         }
       });
-      return paypalButtons.render("#paypal-button-container");
+      return paypalButtons.render("#paypal-button-container").then(function(){
+        function clipPayPalCorners(){
+          var box=document.getElementById("paypal-button-container");
+          if(!box) return;
+          var nodes=box.querySelectorAll("iframe,div");
+          for(var i=0;i<nodes.length;i++){
+            nodes[i].style.borderRadius="14px";
+            nodes[i].style.overflow="hidden";
+          }
+        }
+        clipPayPalCorners();
+        setTimeout(clipPayPalCorners, 200);
+        setTimeout(clipPayPalCorners, 800);
+      });
     }).catch(function(err){
       console.error(err);
       showPayPalFallback();
