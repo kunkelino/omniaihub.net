@@ -43,6 +43,15 @@ nav button.active{background:var(--primary);color:#fff;}
 .yt-feed-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;width:100%;}
 .yt-feed-btn{border:0;background:#111827;color:#fff;font-weight:800;font-size:13px;padding:9px 12px;border-radius:14px;cursor:pointer;}
 .yt-feed-btn.active{background:#4f46e5;}
+.yt-feed-btn.fox-live{background:#0b1f4b;display:inline-flex;align-items:center;gap:8px;}
+.yt-feed-btn.fox-live .live-dot{width:8px;height:8px;border-radius:50%;background:#e11d2e;box-shadow:0 0 0 0 rgba(225,29,46,.8);}
+.yt-feed-btn.fox-live.live-on{animation:foxBtnPulse 1s ease-in-out infinite;}
+.yt-feed-btn.fox-live.live-on .live-dot{animation:foxDotBlink 1s ease-in-out infinite;}
+@keyframes foxBtnPulse{0%,100%{box-shadow:0 0 0 0 rgba(225,29,46,.55);}50%{box-shadow:0 0 0 6px rgba(225,29,46,0);}}
+@keyframes foxDotBlink{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.25;transform:scale(.7);}}
+.fox-live-mark{font-weight:900;letter-spacing:.02em;}
+.fox-live-mark span.now{color:#e11d2e;}
+.fox-live-mark span.fox{color:#fff;}
 .tri-box-row{display:flex;gap:16px;margin-bottom:18px;}
 .box-35{width:3.5in;height:3.5in;flex:0 0 3.5in;background:#fff;border:1px solid var(--border);border-radius:18px;padding:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;}
 .box-35 .box-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
@@ -204,7 +213,7 @@ body.lh-pip-float .media-card{display:block;}
         </div>
       </div>
       <div class="yt-feed-row" id="ytFeedRow">
-        <button type="button" class="yt-feed-btn" onclick="playYtFeed('livenowfox')">LiveNOW FOX</button>
+        <button type="button" class="yt-feed-btn fox-live" id="foxLiveBtn" onclick="playYtFeed('livenowfox')"><span class="live-dot"></span><span class="fox-live-mark">LIVE<span class="now">NOW</span> <span class="fox">FOX</span></span></button>
         <button type="button" class="yt-feed-btn" onclick="playYtFeed('boston25news')">Boston 25</button>
         <button type="button" class="yt-feed-btn" onclick="playYtFeed('cbsboston')">CBS Boston</button>
       </div>
@@ -703,14 +712,17 @@ function youtubeEmbed(url){
 function playYtFeed(handle){
   const key=String(handle||"").toLowerCase();
   const chan=YT_CHANNELS[key];
-  const url=(chan && YT_LIVE[key])
-    ? ("https://www.youtube.com/embed/live_stream?channel="+chan+"&autoplay=1&mute=1&playsinline=1")
-    : ("https://www.youtube.com/@"+key);
+  let url;
+  if(key==="livenowfox") url="https://www.livenowfox.com/live";
+  else if(chan && YT_LIVE[key]) url="https://www.youtube.com/embed/live_stream?channel="+chan+"&autoplay=1&mute=1&playsinline=1";
+  else url="https://www.youtube.com/@"+key;
   homeMedia=url;
   const input=document.getElementById("homeMediaSave");
   if(input) input.value=url;
   saveAll();
   loadMediaUrl(url);
+  const foxBtn=document.getElementById("foxLiveBtn");
+  if(foxBtn) foxBtn.classList.toggle("live-on", key==="livenowfox");
   document.querySelectorAll(".yt-feed-btn").forEach(function(btn){
     btn.classList.toggle("active", (btn.getAttribute("onclick")||"").indexOf("'"+key+"'")!==-1);
   });
