@@ -14,7 +14,10 @@ export default async function handler(req, res) {
 
   try {
     const upstream = await fetch(target, {
-      headers: { Accept: "text/calendar, text/plain, */*" },
+      headers: {
+        Accept: "text/calendar, text/plain, */*",
+        "User-Agent": "Mozilla/5.0 LifeHubCalendar/1.0"
+      },
       cache: "no-store"
     });
     const text = await upstream.text();
