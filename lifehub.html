@@ -702,7 +702,10 @@ function youtubeEmbed(url){
 }
 function playYtFeed(handle){
   const key=String(handle||"").toLowerCase();
-  const url="https://www.youtube.com/@"+key;
+  const chan=YT_CHANNELS[key];
+  const url=(chan && YT_LIVE[key])
+    ? ("https://www.youtube.com/embed/live_stream?channel="+chan+"&autoplay=1&mute=1&playsinline=1")
+    : ("https://www.youtube.com/@"+key);
   homeMedia=url;
   const input=document.getElementById("homeMediaSave");
   if(input) input.value=url;
