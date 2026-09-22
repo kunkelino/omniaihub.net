@@ -469,7 +469,7 @@ document.querySelectorAll(".tryimg").forEach(function(img){
       }
       container.innerHTML="";
       paypalButtons=paypal.Buttons({
-        style:{ layout:"vertical", color:"gold", shape:"pill", label:"paypal" },
+        style:{ layout:"vertical", color:"gold", shape:"rect", label:"paypal" },
         createOrder:function(){
           var name=(document.getElementById("orderName").value||"").trim();
           if(!name){
