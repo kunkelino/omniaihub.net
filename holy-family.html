@@ -43,6 +43,9 @@ html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f
 .candy-btn{appearance:none;border:0;background:#fff;border-radius:22px;padding:14px 12px 16px;cursor:pointer;box-shadow:0 8px 22px rgba(40,20,90,.08);text-align:center;color:#2a1f55;}
 .candy-btn:hover{transform:translateY(-3px);}
 .candy-btn.sold{opacity:.45;cursor:not-allowed;}
+.candy-btn.just-added{outline:3px solid #22c55e;}
+.added-tag{display:none;margin-top:6px;font-size:12px;font-weight:800;color:#15803d;}
+.candy-btn.just-added .added-tag{display:block;}
 .candy-btn img{width:100%;height:140px;object-fit:contain;display:block;margin-bottom:10px;}
 .candy-name{font-size:14px;font-weight:700;}
 .price-tag{margin-top:8px;font-size:15px;font-weight:800;color:#2a1f55;}
@@ -83,6 +86,16 @@ html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f
 .pay-divider::before,.pay-divider::after{content:"";flex:1;height:1px;background:#e5e7eb;}
 #paypal-button-container{margin:4px 0 14px;min-height:44px;}
 .pp-note{font-size:11px;color:#9ca3af;margin-top:-6px;margin-bottom:10px;}
+.my-pay-btns{display:flex;flex-direction:column;gap:8px;margin:8px 0 4px;}
+.my-pay-btns button{width:100%;border:0;font-weight:800;padding:12px;border-radius:14px;cursor:pointer;font-size:16px;}
+.venmo-open{background:#008cff;color:#fff;}
+.zelle-open{background:#6d1ed4;color:#fff;}
+.qr-pop{display:none;position:fixed;inset:0;z-index:100000;background:rgba(17,24,39,.8);align-items:center;justify-content:center;padding:16px;}
+.qr-pop.show{display:flex;}
+.qr-pop-box{background:#fff;border-radius:18px;padding:16px;text-align:center;max-width:360px;width:100%;}
+.qr-pop-box img{width:min(280px,80vw);height:auto;background:#fff;border-radius:12px;}
+.qr-pop-box p{margin:10px 0;font-weight:800;}
+.qr-pop-box button{border:0;background:#111827;color:#fff;font-weight:800;padding:10px 16px;border-radius:12px;cursor:pointer;}
 #paypal-fallback{display:none;font-size:12px;color:#b91c1c;margin:4px 0 12px;}
 @media(max-width:800px){.hf-grid{grid-template-columns:1fr;}.hf-title{font-size:36px;}.hf-un{font-size:40px;}}
 </style>
@@ -200,21 +213,21 @@ html,body{min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f3f
     <input class="pay-name" id="orderName" type="text" placeholder="Write your name" autocomplete="name">
     <div id="paypal-button-container"></div>
     <p id="paypal-fallback">PayPal is unavailable right now — please use a QR code below.</p>
-    <p class="pp-note">Pay with PayPal, Venmo, or a debit/credit card.</p>
-    <div class="pay-divider">or scan to pay</div>
-    <div class="pay-scan">Scan either QR code to donate</div>
-    <div class="pay-qrs">
-      <div>
-        <img src="venmo-qr.png" alt="Venmo QR">
-        <p>Venmo</p>
-      </div>
-      <div>
-        <img src="zelle-qr.png" alt="Zelle QR">
-        <p>Zelle</p>
-      </div>
+    <p class="pp-note">Pay with PayPal or a debit/credit card. Or open Venmo or Zelle below.</p>
+    <div class="pay-divider">or pay my Venmo / Zelle</div>
+    <div class="my-pay-btns">
+      <button type="button" class="venmo-open" id="openVenmo">Pay with Venmo</button>
+      <button type="button" class="zelle-open" id="openZelle">Pay with Zelle</button>
     </div>
-    <button class="order-btn" id="sendOrder" type="button" style="margin-top:14px">I paid by QR / Zelle</button>
+    <button class="order-btn" id="sendOrder" type="button" style="margin-top:14px">I paid by Venmo / Zelle</button>
     <button class="pay-close" id="payClose" type="button" style="margin-top:10px">Close</button>
+  </div>
+</div>
+<div class="qr-pop" id="qrPop">
+  <div class="qr-pop-box">
+    <p id="qrPopTitle">Scan to pay</p>
+    <img id="qrPopImg" src="venmo-qr.png" alt="Payment QR">
+    <button type="button" id="qrPopClose">Close code</button>
   </div>
 </div>
 <script>
@@ -334,6 +347,12 @@ document.querySelectorAll(".tryimg").forEach(function(img){
   }
 
   document.querySelectorAll(".candy-btn").forEach(function(btn){
+    if(!btn.querySelector(".added-tag")){
+      var tag=document.createElement("div");
+      tag.className="added-tag";
+      tag.textContent="Added";
+      btn.appendChild(tag);
+    }
     btn.addEventListener("click", function(){
       if(btn.dataset.start){
         var n=parseInt(btn.dataset.stock||"0",10);
@@ -341,6 +360,10 @@ document.querySelectorAll(".tryimg").forEach(function(img){
       }
       cart.push({id:btn.dataset.id||"", name:btn.dataset.item+" — $ donation", price:0});
       render();
+      btn.classList.add("just-added");
+      var tag=btn.querySelector(".added-tag");
+      if(tag) tag.textContent="Added";
+      setTimeout(function(){ btn.classList.remove("just-added"); }, 900);
     });
   });
 
@@ -408,7 +431,7 @@ document.querySelectorAll(".tryimg").forEach(function(img){
         }
         var host = res.data.env === "sandbox" ? "https://www.sandbox.paypal.com" : "https://www.paypal.com";
         var src = host + "/sdk/js?client-id=" + encodeURIComponent(res.data.clientId) +
-          "&currency=USD&intent=capture&components=buttons&enable-funding=venmo,card&disable-funding=paylater,credit";
+          "&currency=USD&intent=capture&components=buttons&enable-funding=card&disable-funding=venmo,paylater,credit";
         return new Promise(function(resolve, reject){
           var s=document.createElement("script");
           s.src=src;
@@ -562,6 +585,30 @@ document.querySelectorAll(".tryimg").forEach(function(img){
 
   document.getElementById("payClose").addEventListener("click", function(){
     pay.classList.remove("show");
+  });
+
+  var qrPop=document.getElementById("qrPop");
+  var qrPopImg=document.getElementById("qrPopImg");
+  var qrPopTitle=document.getElementById("qrPopTitle");
+  function showMyCode(src, title){
+    if(qrPopImg) qrPopImg.src=src;
+    if(qrPopTitle) qrPopTitle.textContent=title;
+    if(qrPop) qrPop.classList.add("show");
+  }
+  var venmoBtn=document.getElementById("openVenmo");
+  if(venmoBtn) venmoBtn.addEventListener("click", function(){
+    showMyCode("venmo-qr.png", "Scan this with the Venmo app");
+  });
+  var zelleBtn=document.getElementById("openZelle");
+  if(zelleBtn) zelleBtn.addEventListener("click", function(){
+    showMyCode("zelle-qr.png", "Scan this with your bank / Zelle app");
+  });
+  var qrClose=document.getElementById("qrPopClose");
+  if(qrClose) qrClose.addEventListener("click", function(){
+    if(qrPop) qrPop.classList.remove("show");
+  });
+  if(qrPop) qrPop.addEventListener("click", function(e){
+    if(e.target===qrPop) qrPop.classList.remove("show");
   });
 
   var da=document.getElementById("donateAmt");
