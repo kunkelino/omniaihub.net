@@ -39,6 +39,9 @@ nav button.active{background:var(--primary);color:#fff;}
 .media-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;color:#fff;font-weight:800;font-size:18px;background:linear-gradient(135deg,#111827,#312e81);}
 .media-screen.loaded .media-placeholder{display:none;}
 .media-screen.loaded iframe{display:block;}
+.yt-feed-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;width:100%;}
+.yt-feed-btn{border:0;background:#111827;color:#fff;font-weight:800;font-size:13px;padding:9px 12px;border-radius:14px;cursor:pointer;}
+.yt-feed-btn.active{background:#4f46e5;}
 .tri-box-row{display:flex;gap:16px;margin-bottom:18px;}
 .box-35{width:3.5in;height:3.5in;flex:0 0 3.5in;background:#fff;border:1px solid var(--border);border-radius:18px;padding:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;}
 .box-35 .box-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
@@ -197,6 +200,11 @@ body.lh-pip-float .media-card{display:none;}
         <iframe id="mediaFrame" title="media" allow="autoplay; encrypted-media; picture-in-picture; fullscreen; accelerometer; gyroscope" allowfullscreen playsinline></iframe>
         <div class="media-placeholder">▶ Click to load YouTube, news, or any webpage</div>
       </div>
+    </div>
+    <div class="yt-feed-row" id="ytFeedRow">
+      <button type="button" class="yt-feed-btn" onclick="playYtFeed('livenowfox')">LiveNOW FOX</button>
+      <button type="button" class="yt-feed-btn" onclick="playYtFeed('boston25news')">Boston 25</button>
+      <button type="button" class="yt-feed-btn" onclick="playYtFeed('cbsboston')">CBS Boston</button>
     </div>
   </div>
   <div class="tri-box-row">
@@ -661,8 +669,15 @@ const YT_CHANNELS={
   "boston25news":"UCFJ2RDc1krJlu38MQUZIsWQ",
   "wcvb":"UC72UssJ1DNQcakZXm-B2-zw",
   "cbsboston":"UCi4fcBVyo4CAnmdgXeO-NvA",
-  "abcnews":"UCBi2mrWuNuyYy4gbM6fU18Q"
+  "abcnews":"UCBi2mrWuNuyYy4gbM6fU18Q",
+  "livenowfox":"UCDiPds0v60wueil5B8w3fPQ",
+  "crimeweeklypodcast":"UC_NhRiyowalHnbKjveNQxxA",
+  "happyyuppie":"UCmzfqZ_-mJcQtORhWIHipjQ",
+  "romayroh":"UCxI3-49z98MUKF3wTVJ9nkg",
+  "rubinbrothers":"UCYlV2PVgJSWST0x6fSJvLtA",
+  "flowers-l8q3w":"UCfHynxRkvFil1pb7f9NrsoQ"
 };
+const YT_LIVE={"boston25news":1,"livenowfox":1,"wcvb":1,"cbsboston":1,"abcnews":1};
 const YT_FALLBACK="https://www.youtube.com/embed/live_stream?channel=UCBi2mrWuNuyYy4gbM6fU18Q&autoplay=1&mute=1";
 function youtubeEmbed(url){
   const p=new URL(url);
@@ -673,10 +688,26 @@ function youtubeEmbed(url){
   const handle=(p.pathname.match(/@([^/]+)/)||[])[1];
   const key=(handle||"").toLowerCase();
   const chan=p.searchParams.get("channel")||YT_CHANNELS[key];
-  const live=p.pathname.indexOf("/live")!==-1||key && !id;
-  if(chan&&(live||!id)) return "https://www.youtube.com/embed/live_stream?channel="+chan+"&autoplay=1&mute=1&playsinline=1";
   if(id) return "https://www.youtube.com/embed/"+id+"?autoplay=1&mute=1&playsinline=1";
+  if(chan){
+    if(YT_LIVE[key] || p.pathname.indexOf("/live")!==-1){
+      return "https://www.youtube.com/embed/live_stream?channel="+chan+"&autoplay=1&mute=1&playsinline=1";
+    }
+    return "https://www.youtube.com/embed?listType=playlist&list=UU"+chan.slice(2)+"&autoplay=1&mute=1&playsinline=1";
+  }
   return url;
+}
+function playYtFeed(handle){
+  const key=String(handle||"").toLowerCase();
+  const url="https://www.youtube.com/@"+key;
+  homeMedia=url;
+  const input=document.getElementById("homeMediaSave");
+  if(input) input.value=url;
+  saveAll();
+  loadMediaUrl(url);
+  document.querySelectorAll(".yt-feed-btn").forEach(function(btn){
+    btn.classList.toggle("active", (btn.getAttribute("onclick")||"").indexOf("'"+key+"'")!==-1);
+  });
 }
 function loadMediaUrl(raw){
   let url=(raw||"").trim(); if(!url)return;
