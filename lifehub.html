@@ -133,32 +133,6 @@ body.lh-pip-float .media-card{display:none;}
 </head>
 <body>
 
-<div id="gate">
-  <div class="lock">
-    <h1>LifeHub</h1>
-    <p>Enter the 6-digit code</p>
-    <input id="gatePin" type="password" inputmode="numeric" maxlength="6" autocomplete="off">
-    <button type="button" onclick="unlockGate()">Enter</button>
-    <div class="err" id="gateErr"></div>
-    <a class="back" href="index.html">Back to portfolio</a>
-  </div>
-</div>
-<script>
-(function(){
-  var PIN="435777";
-  var KEY="jk_gate_ok";
-  function openSite(){ var g=document.getElementById("gate"); if(g) g.classList.add("ok"); }
-  function unlockGate(){
-    var v=(document.getElementById("gatePin").value||"").replace(/\D/g,"");
-    if(v===PIN){ sessionStorage.setItem(KEY,"1"); openSite(); }
-    else { document.getElementById("gateErr").textContent="Wrong code"; }
-  }
-  window.unlockGate=unlockGate;
-  if(sessionStorage.getItem(KEY)==="1") openSite();
-  var inp=document.getElementById("gatePin");
-  if(inp) inp.addEventListener("keydown", function(e){ if(e.key==="Enter") unlockGate(); });
-})();
-</script>
 
 <a id="hubHomeBtn" href="/index.html" title="Home" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M6 10.5V20h12v-9.5"/></svg></a>
 
@@ -321,6 +295,10 @@ body.lh-pip-float .media-card{display:none;}
     <h2>⚙️ Settings</h2>
     <button class="action-google" onclick="syncGoogleCalendar()">🟢 Sync Google Calendar</button>
     <button class="action-apple" onclick="syncICloudCalendar()">☁️ Sync Apple Calendar</button>
+    <p style="margin:12px 0 6px;color:#6b7280;font-size:13px">If sync fails, paste your secret iCal / ICS link and tap sync again.</p>
+    <input id="googleIcsUrl" placeholder="Google Calendar secret iCal URL" style="margin-bottom:8px">
+    <input id="appleIcsUrl" placeholder="Apple Calendar / iCloud ICS URL" style="margin-bottom:8px">
+    <button class="secondary" onclick="saveCalendarFeeds()">Save calendar links</button>
     <button class="primary" onclick="exportData()">Export LifeHub Data</button>
     <input type="file" accept=".json" onchange="importData(event)">
     <button class="danger" onclick="clearAll()">Clear All LifeHub Data</button>
@@ -389,7 +367,7 @@ body.lh-pip-float .media-card{display:none;}
 
 <script>
 const BACKEND_WORKER_URL="https://lifehub-icloud.jonmichaelsjon.workers.dev";
-const KEY={tasks:"lifehub_tasks",buy:"lifehub_buy",events:"lifehub_events",notes:"lifehub_notes",icloud:"lifehub_icloud_events",google:"lifehub_google_events",dismissedIcloud:"lifehub_dismissed_icloud_events",dismissedGoogle:"lifehub_dismissed_google_events",widgets:"lifehub_widgets",homeMedia:"lifehub_home_media"};
+const KEY={tasks:"lifehub_tasks",buy:"lifehub_buy",events:"lifehub_events",notes:"lifehub_notes",icloud:"lifehub_icloud_events",google:"lifehub_google_events",dismissedIcloud:"lifehub_dismissed_icloud_events",dismissedGoogle:"lifehub_dismissed_google_events",widgets:"lifehub_widgets",homeMedia:"lifehub_home_media",googleIcs:"lifehub_google_ics",appleIcs:"lifehub_apple_ics"};
 let tasks=JSON.parse(localStorage.getItem(KEY.tasks)||"null");
 let buy=JSON.parse(localStorage.getItem(KEY.buy)||"null");
 let events=JSON.parse(localStorage.getItem(KEY.events)||"[]");
@@ -540,8 +518,61 @@ function parseICS(icsData){
   }
   return parsed;
 }
-async function syncGoogleCalendar(silent){try{const res=await fetch(BACKEND_WORKER_URL+"/api/google-feed");if(!res.ok)throw new Error("HTTP "+res.status);googleEvents=sortEvents(parseICS(await res.text()).map(i=>({id:String(i.id||crypto.randomUUID()),title:i.title,date:i.date,time:i.time||"",notes:i.notes||""})).filter(i=>dismissedGoogleIds.indexOf(String(i.id))===-1));saveAll();renderAll();if(!silent)toast("Google Calendar synced.");}catch(e){if(!silent)toast("Google sync failed.");}}
-async function syncICloudCalendar(silent){try{const res=await fetch(BACKEND_WORKER_URL+"/api/icloud-feed");if(!res.ok)throw new Error("HTTP "+res.status);icloudEvents=sortEvents(parseICS(await res.text()).map(i=>({id:String(i.id||crypto.randomUUID()),title:i.title,date:i.date,time:i.time||"",notes:i.notes||""})).filter(i=>dismissedIcloudIds.indexOf(String(i.id))===-1));saveAll();renderAll();if(!silent)toast("Apple Calendar synced.");}catch(e){if(!silent)toast("Apple sync failed.");}}
+function saveCalendarFeeds(){
+  const g=(document.getElementById("googleIcsUrl")||{}).value||"";
+  const a=(document.getElementById("appleIcsUrl")||{}).value||"";
+  localStorage.setItem(KEY.googleIcs,g.trim());
+  localStorage.setItem(KEY.appleIcs,a.trim());
+  toast("Calendar links saved.");
+}
+function loadCalendarFeedInputs(){
+  const g=document.getElementById("googleIcsUrl");
+  const a=document.getElementById("appleIcsUrl");
+  if(g) g.value=localStorage.getItem(KEY.googleIcs)||"";
+  if(a) a.value=localStorage.getItem(KEY.appleIcs)||"";
+}
+async function fetchCalendarText(primaryUrl, fallbackIcs){
+  const urls=[];
+  if(primaryUrl) urls.push(primaryUrl);
+  if(fallbackIcs){
+    urls.push(fallbackIcs);
+    urls.push("https://corsproxy.io/?"+encodeURIComponent(fallbackIcs));
+    urls.push("https://api.allorigins.win/raw?url="+encodeURIComponent(fallbackIcs));
+  }
+  let lastErr=null;
+  for(let i=0;i<urls.length;i++){
+    try{
+      const res=await fetch(urls[i],{cache:"no-store"});
+      if(!res.ok) throw new Error("HTTP "+res.status);
+      const text=await res.text();
+      if(text && text.indexOf("BEGIN:VCALENDAR")!==-1) return text;
+      lastErr=new Error("Not an ICS calendar file");
+    }catch(e){ lastErr=e; }
+  }
+  throw lastErr||new Error("Calendar feed unavailable");
+}
+async function syncGoogleCalendar(silent){
+  try{
+    const ics=localStorage.getItem(KEY.googleIcs)||"";
+    const text=await fetchCalendarText(BACKEND_WORKER_URL+"/api/google-feed", ics);
+    googleEvents=sortEvents(parseICS(text).map(i=>({id:String(i.id||crypto.randomUUID()),title:i.title,date:i.date,time:i.time||"",notes:i.notes||""})).filter(i=>dismissedGoogleIds.indexOf(String(i.id))===-1));
+    saveAll();renderAll();
+    if(!silent)toast("Google Calendar synced.");
+  }catch(e){
+    if(!silent)toast("Google sync failed. Save your Google iCal URL in Settings.");
+  }
+}
+async function syncICloudCalendar(silent){
+  try{
+    const ics=localStorage.getItem(KEY.appleIcs)||"";
+    const text=await fetchCalendarText(BACKEND_WORKER_URL+"/api/icloud-feed", ics);
+    icloudEvents=sortEvents(parseICS(text).map(i=>({id:String(i.id||crypto.randomUUID()),title:i.title,date:i.date,time:i.time||"",notes:i.notes||""})).filter(i=>dismissedIcloudIds.indexOf(String(i.id))===-1));
+    saveAll();renderAll();
+    if(!silent)toast("Apple Calendar synced.");
+  }catch(e){
+    if(!silent)toast("Apple sync failed. Save your Apple ICS URL in Settings.");
+  }
+}
 async function syncAllConnectedCalendars(){toast("Syncing...");await Promise.allSettled([syncGoogleCalendar(false),syncICloudCalendar(false)]);}
 function saveEvent(e){e.preventDefault();events.push({id:crypto.randomUUID(),title:document.getElementById("eventTitle").value.trim(),date:document.getElementById("eventDate").value,time:document.getElementById("eventTime").value,endTime:document.getElementById("eventEndTime").value,notes:document.getElementById("eventNotes").value.trim()});events=sortEvents(events);e.target.reset();document.getElementById("eventDate").value=getTodayString();saveAll();renderAll();toast("Event added.");}
 function deleteEvent(id){events=events.filter(e=>e.id!==id);saveAll();renderAll();}
@@ -786,6 +817,7 @@ function loadSavedHomeMedia(){
 function renderHome(){renderHomeTasks();renderHomeBuy();renderMiniCalendar();renderBigCalendar();renderHomeNotes();renderHomeWidgets();renderDaySummary();}
 function renderAll(){renderHome();renderTasks();renderBuy();renderEvents();renderNotes();}
 initializeTodayData();
+loadCalendarFeedInputs();
 renderAll();
 loadSavedHomeMedia();
 syncGoogleCalendar(true);
