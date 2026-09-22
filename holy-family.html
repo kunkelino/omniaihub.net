@@ -408,7 +408,7 @@ document.querySelectorAll(".tryimg").forEach(function(img){
         }
         var host = res.data.env === "sandbox" ? "https://www.sandbox.paypal.com" : "https://www.paypal.com";
         var src = host + "/sdk/js?client-id=" + encodeURIComponent(res.data.clientId) +
-          "&currency=USD&intent=capture&components=buttons&enable-funding=venmo";
+          "&currency=USD&intent=capture&components=buttons&enable-funding=venmo,card&disable-funding=paylater,credit";
         return new Promise(function(resolve, reject){
           var s=document.createElement("script");
           s.src=src;
@@ -438,7 +438,7 @@ document.querySelectorAll(".tryimg").forEach(function(img){
       }
       container.innerHTML="";
       paypalButtons=paypal.Buttons({
-        style:{ layout:"vertical", color:"blue", shape:"rect", label:"donate" },
+        style:{ layout:"vertical", color:"gold", shape:"rect", label:"paypal" },
         createOrder:function(){
           var name=(document.getElementById("orderName").value||"").trim();
           if(!name){
@@ -490,7 +490,8 @@ document.querySelectorAll(".tryimg").forEach(function(img){
         },
         onError:function(err){
           console.error(err);
-          showPayPalFallback();
+          var msg = (err && err.message) ? String(err.message) : "";
+          if(msg.indexOf("missing name") !== -1) return;
           alert("There was a problem with PayPal. Please try again or use a QR code below.");
         }
       });
