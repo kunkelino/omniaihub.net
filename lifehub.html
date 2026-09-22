@@ -34,6 +34,7 @@ nav button.active{background:var(--primary);color:#fff;}
 .row-speak{display:flex;gap:8px;align-items:center;}
 .row-speak input,.row-speak textarea{flex:1;}
 .mic{border:0;background:#eef2ff;color:#312e81;border-radius:12px;padding:12px 14px;font-weight:800;white-space:nowrap;}
+.media-wrap{min-width:0;display:flex;flex-direction:column;}
 .media-card,.media-screen{width:100%;height:360px;border-radius:24px;overflow:hidden;position:relative;background:#111827;cursor:pointer;}
 .media-screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;}
 .media-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;color:#fff;font-weight:800;font-size:18px;background:linear-gradient(135deg,#111827,#312e81);}
@@ -128,7 +129,7 @@ nav button{flex:1 1 calc(50% - 8px);min-height:48px;}
   #newsPipClose{top:8px;right:8px;width:36px;height:36px;font-size:22px;}
   body.lh-landscape-video{overflow:hidden;}
 }
-body.lh-pip-float .media-card{display:none;}
+body.lh-pip-float .media-card{display:block;}
 #hubHomeBtn{position:fixed;top:8px;left:8px;z-index:9999;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.28);color:#111;text-decoration:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(0,0,0,.18);}
 #hubHomeBtn svg{width:18px;height:18px;display:block;}
 #hubHomeBtn:hover{background:rgba(255,255,255,.5);}
@@ -195,16 +196,18 @@ body.lh-pip-float .media-card{display:none;}
       </div>
       <div class="hero-summary" id="daySummary">Today's appointments load here.</div>
     </div>
-    <div class="media-card">
-      <div class="media-screen" id="mediaScreen" onclick="if(!this.classList.contains('loaded')) openMediaModal();">
-        <iframe id="mediaFrame" title="media" allow="autoplay; encrypted-media; picture-in-picture; fullscreen; accelerometer; gyroscope" allowfullscreen playsinline></iframe>
-        <div class="media-placeholder">▶ Click to load YouTube, news, or any webpage</div>
+    <div class="media-wrap">
+      <div class="media-card">
+        <div class="media-screen" id="mediaScreen" onclick="if(!this.classList.contains('loaded')) openMediaModal();">
+          <iframe id="mediaFrame" title="media" allow="autoplay; encrypted-media; picture-in-picture; fullscreen; accelerometer; gyroscope" allowfullscreen playsinline></iframe>
+          <div class="media-placeholder">▶ Click to load YouTube, news, or any webpage</div>
+        </div>
       </div>
-    </div>
-    <div class="yt-feed-row" id="ytFeedRow">
-      <button type="button" class="yt-feed-btn" onclick="playYtFeed('livenowfox')">LiveNOW FOX</button>
-      <button type="button" class="yt-feed-btn" onclick="playYtFeed('boston25news')">Boston 25</button>
-      <button type="button" class="yt-feed-btn" onclick="playYtFeed('cbsboston')">CBS Boston</button>
+      <div class="yt-feed-row" id="ytFeedRow">
+        <button type="button" class="yt-feed-btn" onclick="playYtFeed('livenowfox')">LiveNOW FOX</button>
+        <button type="button" class="yt-feed-btn" onclick="playYtFeed('boston25news')">Boston 25</button>
+        <button type="button" class="yt-feed-btn" onclick="playYtFeed('cbsboston')">CBS Boston</button>
+      </div>
     </div>
   </div>
   <div class="tri-box-row">
@@ -734,7 +737,7 @@ function setNewsDock(onHome){
   if(!pip||pip.dataset.active!=="1") return;
   const mobile = window.innerWidth <= 900;
   const landscape = mobile && window.matchMedia("(orientation: landscape)").matches;
-  const corner = mobile || !onHome;
+  const corner = !onHome;
   pip.classList.add("show");
   pip.classList.toggle("float", corner && !landscape);
   pip.classList.toggle("docked", !corner && !landscape);
