@@ -1,4 +1,8 @@
 function paypalBase() {
+  var env = (process.env.PAYPAL_ENV || "live").toLowerCase();
+  return env === "sandbox"
+    ? "https://api-m.sandbox.paypal.com"
+    : "https://api-m.paypal.com";
 }
 
 async function getAccessToken() {
