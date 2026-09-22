@@ -233,10 +233,10 @@ body.lh-pip-float .media-card{display:block;}
       <div class="box-header"><h3>🤖 Talk to AI</h3></div>
       <div class="box-scroll-area">
         <div class="ai-mini-grid">
-          <button class="ai-mini-btn" onclick="openAppOrWeb('chatgpt://','https://chatgpt.com/')">ChatGPT</button>
-          <button class="ai-mini-btn" onclick="openAppOrWeb('googlegemini://','https://gemini.google.com/')">Gemini</button>
-          <button class="ai-mini-btn" onclick="openAppOrWeb('claude://','https://claude.ai/')">Claude</button>
-          <button class="ai-mini-btn" onclick="openAppOrWeb('grok://','https://x.com/i/grok')">Grok</button>
+          <button class="ai-mini-btn" onclick="openAI('https://chatgpt.com/')">ChatGPT</button>
+          <button class="ai-mini-btn" onclick="openAI('https://gemini.google.com/app')">Gemini</button>
+          <button class="ai-mini-btn" onclick="openAI('https://claude.ai/new')">Claude</button>
+          <button class="ai-mini-btn" onclick="openAI('https://grok.com/')">Grok</button>
         </div>
       </div>
     </div>
@@ -869,14 +869,11 @@ function saveHomeMedia(){
   homeMedia=url; saveAll(); loadMediaUrl(url); toast("Saved. Home screen will open this.");
 }
 function clearHomeMedia(){homeMedia="";saveAll();document.getElementById("homeMediaSave").value="";toast("Cleared.");}
+function openAI(url){
+  window.open(url,'_blank','noopener,noreferrer');
+}
 function openAppOrWeb(appUrl, webUrl){
-  const start=Date.now();
-  let hidden=false;
-  function goWeb(){ if(!hidden && Date.now()-start<1800){ hidden=true; window.open(webUrl,'_blank','noopener'); } }
-  window.addEventListener('pagehide', function(){ hidden=true; }, {once:true});
-  window.addEventListener('blur', function(){ hidden=true; }, {once:true});
-  try{ window.location.href=appUrl; }catch(e){}
-  setTimeout(goWeb, 900);
+  openAI(webUrl||appUrl);
 }
 function loadSavedHomeMedia(){
   const input=document.getElementById("homeMediaSave"); if(input) input.value=homeMedia||"";
