@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const target = process.env.APPLE_ICS_URL || "";
+  const target = process.env.APPLE_ICS_URL || "https://p134-caldav.icloud.com/published/2/MTY5MTQwODc1ODExNjkxNLduprY9-JfeypH8YKqd0OWZaN2JMFH3oDveHtfm95o1";
   if (!target) {
     res.status(500).json({ error: "APPLE_ICS_URL is not set on the server" });
     return;
@@ -14,7 +14,10 @@ export default async function handler(req, res) {
 
   try {
     const upstream = await fetch(target, {
-      headers: { Accept: "text/calendar, text/plain, */*" },
+      headers: {
+        Accept: "text/calendar, text/plain, */*",
+        "User-Agent": "Mozilla/5.0 LifeHubCalendar/1.0"
+      },
       cache: "no-store"
     });
     const text = await upstream.text();
