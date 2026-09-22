@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const target = process.env.GOOGLE_ICS_URL || "";
+  const target = process.env.GOOGLE_ICS_URL || "https://calendar.google.com/calendar/ical/jonmichaelsjon%40gmail.com/private-1a0a74ed190f35045f43e6647c3a1cd6/basic.ics";
   if (!target) {
     res.status(500).json({ error: "GOOGLE_ICS_URL is not set on the server" });
     return;
