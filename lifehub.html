@@ -259,7 +259,7 @@ body.lh-video-full{overflow:hidden;}
           <span class="feed-cap">FOX</span>
         </button>
         <button type="button" class="feed-tile" id="feedTile1" onclick="playHomeFeed(1)">
-          <iframe id="feedMini1" title="Feed 2" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <iframe id="feedMini1" title="CBS News 24/7" src="https://www.youtube.com/embed/sOocoiODEHw?autoplay=0&mute=1&playsinline=1&rel=0" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
           <span class="feed-cap">CBS</span>
         </button>
         <button type="button" class="feed-tile" id="feedTile2" onclick="playHomeFeed(2)">
@@ -322,7 +322,7 @@ body.lh-video-full{overflow:hidden;}
     <button class="primary" onclick="syncAllConnectedCalendars()">🔄 Sync All</button>
     <button class="action-google" onclick="syncGoogleCalendar()">🟢 Sync Google</button>
     <button class="action-apple" onclick="syncICloudCalendar()">☁️ Sync Apple</button>
-    <p style="margin:12px 0 6px;color:#6b7280;font-size:13px">If sync fails, paste your secret iCal / ICS link and tap sync again.</p>
+    <p style="margin:12px 0 6px;color:#6b7280;font-size:13px">Paste the secret iCal / ICS link from Google Calendar settings and from iCloud.com calendar sharing, tap Save calendar links, then Sync. webcal links are fine.</p>
     <input id="googleIcsUrl" placeholder="Google Calendar secret iCal URL" style="margin-bottom:8px">
     <input id="appleIcsUrl" placeholder="Apple Calendar / iCloud ICS URL" style="margin-bottom:8px">
     <button class="secondary" onclick="saveCalendarFeeds()">Save calendar links</button>
@@ -598,23 +598,121 @@ function renderHomeDayEvents(){
   if(!all.length){box.textContent="No events on "+formatDate(dateStr)+".";return;}
   box.innerHTML=all.map(e=>{const src=e._source||"LifeHub";return "<div style='padding:6px 0;border-bottom:1px solid #e5e7eb'><div>"+(e.time?e.time+" · ":"")+escapeHtml(e.title)+'</div><div class="item-actions"><button class="secondary" onclick="openItemNote(\'event\',\''+escapeAttribute(e.id)+'\',\''+src+'\',\''+escapeHtml(e.title)+'\')">Note</button><button class="danger" onclick="removeCalendarItem(\''+escapeAttribute(e.id)+'\',\''+src+'\')">🗑️</button></div></div>';}).join("");
 }
+function pad2(n){return String(n).padStart(2,"0");}
+function ymdLocal(d){return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
+function hmLocal(d){return pad2(d.getHours())+":"+pad2(d.getMinutes());}
+function addDays(d,n){const x=new Date(d.getTime());x.setDate(x.getDate()+n);return x;}
+function parseIcsDateTime(val){
+  const raw=String(val||"").replace(/[^0-9TZ]/g,"");
+  if(raw.length<8) return null;
+  const y=+raw.slice(0,4), mo=+raw.slice(4,6)-1, day=+raw.slice(6,8);
+  if(raw.indexOf("T")===-1){
+    const d=new Date(y,mo,day);
+    return {date:ymdLocal(d),time:"",stamp:d};
+  }
+  const h=+raw.slice(9,11)||0, mi=+raw.slice(11,13)||0, s=+raw.slice(13,15)||0;
+  const d=raw.indexOf("Z")!==-1 ? new Date(Date.UTC(y,mo,day,h,mi,s)) : new Date(y,mo,day,h,mi,s);
+  return {date:ymdLocal(d),time:hmLocal(d),stamp:d};
+}
+function unescapeIcs(s){
+  return String(s||"").replace(/\\n/gi," ").replace(/\\,/g,",").replace(/\\;/g,";").replace(/\\\\/g,"\\").trim();
+}
+function parseRRule(val){
+  const out={};
+  String(val||"").split(";").forEach(function(part){
+    const i=part.indexOf("="); if(i===-1) return;
+    out[part.slice(0,i).toUpperCase()]=part.slice(i+1);
+  });
+  return out;
+}
+function expandEvent(cur, horizon){
+  const start=parseIcsDateTime(cur.dtstart||"");
+  if(!start) return [];
+  const title=unescapeIcs(cur.title||"");
+  if(!title) return [];
+  const notes=unescapeIcs(cur.notes||"");
+  const baseId=cur.id||title;
+  const results=[];
+  const untilHorizon=horizon;
+  if(!cur.rrule){
+    if(start.date<=ymdLocal(untilHorizon) || start.date>=getTodayString()){
+      results.push({id:baseId,title:title,date:start.date,time:start.time,notes:notes});
+    }
+    return results;
+  }
+  const rule=parseRRule(cur.rrule);
+  const freq=(rule.FREQ||"").toUpperCase();
+  const interval=Math.max(1, parseInt(rule.INTERVAL||"1",10)||1);
+  let until=untilHorizon;
+  if(rule.UNTIL){
+    const u=parseIcsDateTime(rule.UNTIL);
+    if(u && u.stamp<until) until=u.stamp;
+  }
+  const count=rule.COUNT?parseInt(rule.COUNT,10):0;
+  const ex=new Set((cur.exdates||[]).map(function(v){const p=parseIcsDateTime(v);return p?p.date:"";}));
+  let cursor=new Date(start.stamp.getTime());
+  let n=0;
+  const today=getTodayString();
+  while(cursor<=until && n<400 && (!count || n<count)){
+    const date=ymdLocal(cursor);
+    const time=start.time;
+    if(!ex.has(date) && date>=today && date<=ymdLocal(untilHorizon)){
+      results.push({id:baseId+"_"+date,title:title,date:date,time:time,notes:notes});
+    }
+    n++;
+    if(freq==="DAILY") cursor=addDays(cursor, interval);
+    else if(freq==="WEEKLY") cursor=addDays(cursor, 7*interval);
+    else if(freq==="MONTHLY"){ cursor=new Date(cursor.getTime()); cursor.setMonth(cursor.getMonth()+interval); }
+    else if(freq==="YEARLY"){ cursor=new Date(cursor.getTime()); cursor.setFullYear(cursor.getFullYear()+interval); }
+    else break;
+  }
+  if(!results.length && start.date===today && !ex.has(today)){
+    results.push({id:baseId,title:title,date:start.date,time:start.time,notes:notes});
+  }
+  return results;
+}
 function parseICS(icsData){
-  const lines=icsData.replace(/\r\n/g,"\n").replace(/\n /g,"").split("\n"); const parsed=[]; const todayStr=getTodayString(); let cur=null;
-  for(let raw of lines){const line=raw.trim();
-    if(line==="BEGIN:VEVENT")cur={};
-    else if(line==="END:VEVENT"){if(cur&&cur.title&&cur.date&&cur.date>=todayStr)parsed.push(cur);cur=null;}
-    else if(cur){const idx=line.indexOf(":");if(idx===-1)continue;const h=line.substring(0,idx).toUpperCase(),val=line.substring(idx+1);
-      if(h.indexOf("UID")===0)cur.id=val; if(h.indexOf("SUMMARY")===0)cur.title=val; if(h.indexOf("DESCRIPTION")===0)cur.notes=val;
-      if(h.indexOf("DTSTART")===0){const dt=val.replace(/[^0-9TZ]/g,"");if(dt.length>=8)cur.date=dt.substring(0,4)+"-"+dt.substring(4,6)+"-"+dt.substring(6,8);if(dt.indexOf("T")!==-1){const t=dt.indexOf("T")+1;if(dt.length>=t+4)cur.time=dt.substring(t,t+2)+":"+dt.substring(t+2,t+4);}}
+  const lines=String(icsData||"").replace(/\r\n/g,"\n").replace(/\n[ \t]/g,"").split("\n");
+  const parsed=[];
+  const todayStr=getTodayString();
+  const horizon=addDays(new Date(), 90);
+  let cur=null;
+  for(let raw of lines){
+    const line=raw.trim();
+    if(line==="BEGIN:VEVENT"){ cur={exdates:[]}; continue; }
+    if(line==="END:VEVENT"){
+      if(cur) parsed.push.apply(parsed, expandEvent(cur, horizon));
+      cur=null; continue;
+    }
+    if(!cur) continue;
+    const idx=line.indexOf(":"); if(idx===-1) continue;
+    const h=line.substring(0,idx).toUpperCase();
+    const val=line.substring(idx+1);
+    if(h==="UID"||h.indexOf("UID;")===0) cur.id=val;
+    if(h==="SUMMARY"||h.indexOf("SUMMARY;")===0) cur.title=val;
+    if(h==="DESCRIPTION"||h.indexOf("DESCRIPTION;")===0) cur.notes=val;
+    if(h==="RRULE"||h.indexOf("RRULE;")===0) cur.rrule=val;
+    if(h.indexOf("EXDATE")===0) cur.exdates.push(val);
+    if(h.indexOf("DTSTART")===0){
+      cur.dtstart=val;
+      const p=parseIcsDateTime(val);
+      if(p){ cur.date=p.date; cur.time=p.time; }
     }
   }
-  return parsed;
+  return parsed.filter(function(e){ return e.title && e.date && e.date>=todayStr; });
 }
+function normalizeIcsUrl(u){
+  u=String(u||"").trim();
+  if(!u) return "";
+  if(u.indexOf("webcal://")===0) u="https://"+u.slice(9);
+  return u;
+}
+
 function saveCalendarFeeds(){
   const g=(document.getElementById("googleIcsUrl")||{}).value||"";
   const a=(document.getElementById("appleIcsUrl")||{}).value||"";
-  localStorage.setItem(KEY.googleIcs,g.trim());
-  localStorage.setItem(KEY.appleIcs,a.trim());
+  localStorage.setItem(KEY.googleIcs,normalizeIcsUrl(g));
+  localStorage.setItem(KEY.appleIcs,normalizeIcsUrl(a));
   toast("Calendar links saved.");
 }
 function loadCalendarFeedInputs(){
@@ -625,6 +723,7 @@ function loadCalendarFeedInputs(){
 }
 async function fetchCalendarText(primaryUrl, fallbackIcs){
   const urls=[];
+  fallbackIcs=normalizeIcsUrl(fallbackIcs);
   if(fallbackIcs){
     urls.push("/api/calendar-feed?url="+encodeURIComponent(fallbackIcs));
     urls.push(fallbackIcs);
@@ -650,7 +749,7 @@ async function syncGoogleCalendar(silent){
     const text=await fetchCalendarText(BACKEND_WORKER_URL+"/api/google-feed", ics);
     googleEvents=sortEvents(parseICS(text).map(i=>({id:String(i.id||crypto.randomUUID()),title:i.title,date:i.date,time:i.time||"",notes:i.notes||""})).filter(i=>dismissedGoogleIds.indexOf(String(i.id))===-1));
     saveAll();renderAll();
-    if(!silent)toast("Google Calendar synced.");
+    if(!silent)toast("Google Calendar synced: "+googleEvents.length+" upcoming.");
   }catch(e){
     if(!silent)toast("Google sync failed. Save your Google iCal URL in Settings.");
   }
@@ -661,7 +760,7 @@ async function syncICloudCalendar(silent){
     const text=await fetchCalendarText(BACKEND_WORKER_URL+"/api/icloud-feed", ics);
     icloudEvents=sortEvents(parseICS(text).map(i=>({id:String(i.id||crypto.randomUUID()),title:i.title,date:i.date,time:i.time||"",notes:i.notes||""})).filter(i=>dismissedIcloudIds.indexOf(String(i.id))===-1));
     saveAll();renderAll();
-    if(!silent)toast("Apple Calendar synced.");
+    if(!silent)toast("Apple Calendar synced: "+icloudEvents.length+" upcoming.");
   }catch(e){
     if(!silent)toast("Apple sync failed. Save your Apple ICS URL in Settings.");
   }
@@ -747,6 +846,7 @@ function youtubeEmbed(url){
   if(chan){
     const vid=YT_LIVE_VIDEO[key];
     if(vid) return "https://www.youtube.com/embed/"+vid+"?autoplay=1&mute=1&playsinline=1&rel=0";
+    if(key==="cbsboston"||key==="cbs") return "https://www.youtube.com/embed/sOocoiODEHw?autoplay=1&mute=1&playsinline=1&rel=0";
     return "https://www.youtube.com/embed/live_stream?channel="+chan+"&autoplay=1&mute=1&playsinline=1";
   }
   return url;
@@ -1007,11 +1107,31 @@ function loadSavedHomeMedia(){
 }
 function saveHomeFeeds(){}
 function playHomeFeed(i){
-  const url=(homeFeeds&&homeFeeds[i])||HOME_FEED_DEFAULTS[i]||"";
+  const LOCKED=[
+    {id:"C96oohpWBGw",title:"LIVE NEWS: LiveNOW FOX 24/7 LIVE STREAM"},
+    {id:"sOocoiODEHw",title:"LIVE: Breaking News and Top Stories on CBS News 24/7"},
+    {id:"iipR5yUp36o",title:"LIVE: ABC News Live - 24/7 news, context and analysis"},
+    {id:"wt6SIE7BXS8",title:"FOX Weather Live"}
+  ];
+  const item=LOCKED[i];
+  const url=item?("https://www.youtube.com/embed/"+item.id+"?autoplay=1&mute=1&playsinline=1&rel=0"):((homeFeeds&&homeFeeds[i])||HOME_FEED_DEFAULTS[i]||"");
   if(!url){ toast("That channel is not set."); return; }
   homeFeedPick=i;
   homeMedia=url;
-  loadMediaUrl(url);
+  var frame=document.getElementById("mediaFrame");
+  if(frame && item){
+    frame.title=item.title;
+    frame.setAttribute("allow","accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen");
+    frame.setAttribute("referrerpolicy","strict-origin-when-cross-origin");
+    frame.setAttribute("allowfullscreen","");
+    frame.src=url;
+    var screen=document.getElementById("mediaScreen");
+    if(screen) screen.classList.add("loaded");
+    var pipFrame=document.getElementById("newsPipFrame");
+    if(pipFrame) pipFrame.src=url;
+  } else {
+    loadMediaUrl(url);
+  }
   for(var n=0;n<4;n++){
     var tile=document.getElementById("feedTile"+n);
     if(tile) tile.classList.toggle("active", n===i);
