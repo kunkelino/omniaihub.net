@@ -43,6 +43,16 @@ nav button.active{background:var(--primary);color:#fff;}
 .yt-feed-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;width:100%;}
 .yt-feed-btn{border:0;background:#111827;color:#fff;font-weight:800;font-size:13px;padding:9px 12px;border-radius:14px;cursor:pointer;}
 .yt-feed-btn.active{background:#4f46e5;}
+.yt-feed-btn.cbs-live{background:#000;color:#fff;display:inline-flex;align-items:center;gap:8px;}
+.yt-feed-btn.cbs-live .cbs-eye{width:18px;height:18px;border:2px solid #fff;border-radius:50%;position:relative;box-shadow:inset 0 0 0 3px #000, inset 0 0 0 5px #fff;}
+.yt-feed-btn.cbs-live.active{background:#111;outline:2px solid #fff;}
+.yt-feed-btn.abc-live{background:#061a3a;color:#4db4e7;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;}
+.yt-feed-btn.abc-live .abc-mark{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#000;color:#fff;font-size:10px;font-weight:900;letter-spacing:-.04em;box-shadow:0 0 0 2px rgba(255,255,255,.15);}
+.yt-feed-btn.abc-live .abc-word{display:inline-flex;align-items:baseline;gap:2px;font-weight:900;letter-spacing:.04em;}
+.yt-feed-btn.abc-live .abc-word .live{color:#5ec8f2;}
+.yt-feed-btn.abc-live.active{background:#0a2a58;outline:2px solid #5ec8f2;}
+
+
 .yt-feed-btn.fox-live{background:#0b1f4b;display:inline-flex;align-items:center;gap:8px;}
 .yt-feed-btn.fox-live .live-dot{width:8px;height:8px;border-radius:50%;background:#e11d2e;box-shadow:0 0 0 0 rgba(225,29,46,.8);}
 .yt-feed-btn.fox-live.live-on{animation:foxBtnPulse 1s ease-in-out infinite;}
@@ -212,7 +222,11 @@ body.lh-pip-float .media-card{display:block;}
           <div class="media-placeholder">▶ Click to load YouTube, news, or any webpage</div>
         </div>
       </div>
-
+      <div class="yt-feed-row" id="ytFeedRow">
+        <button type="button" class="yt-feed-btn fox-live" onclick="playHomeFeed(0)">1 · LIVENOW FOX</button>
+        <button type="button" class="yt-feed-btn cbs-live" onclick="playHomeFeed(1)"><span class="cbs-eye"></span> 2 · CBS News</button>
+        <button type="button" class="yt-feed-btn abc-live" onclick="playHomeFeed(2)"><span class="abc-mark">abc</span><span class="abc-word"><span>NEWS</span><span class="live">LIVE</span></span></button>
+      </div>
     </div>
   </div>
   <div class="tri-box-row">
@@ -353,11 +367,17 @@ body.lh-pip-float .media-card{display:block;}
     <button class="danger" onclick="clearAll()">Clear All LifeHub Data</button>
   </div>
   <div class="card">
-    <h2>▶ Home screen webpage</h2>
-    <p>Type a news site, YouTube, or any page. Save it and LifeHub will load it automatically on Home.</p>
-    <input id="homeMediaSave" placeholder="https://news.yahoo.com or a YouTube link">
+    <h2>▶ Home screen webpages</h2>
+    <p>Save up to three embed links. Home has one big player and three buttons. Tap a button to play that link in the big player.</p>
+    <label>Button 1</label>
+    <input id="homeFeed1" placeholder="https://www.youtube.com/embed/C96oohpWBGw">
+    <label style="margin-top:10px;display:block">Button 2</label>
+    <input id="homeFeed2" placeholder="https://www.youtube.com/embed/sOocoiODEHw">
+    <label style="margin-top:10px;display:block">Button 3</label>
+    <input id="homeFeed3" placeholder="https://www.youtube.com/embed/iipR5yUp36o">
+    <input id="homeMediaSave" type="hidden">
     <div class="item-actions" style="margin-top:10px">
-      <button class="primary" onclick="saveHomeMedia()">Save and load</button>
+      <button class="primary" onclick="saveHomeFeeds()">Save the three links</button>
       <button class="secondary" onclick="clearHomeMedia()">Clear</button>
     </div>
   </div>
@@ -416,7 +436,7 @@ body.lh-pip-float .media-card{display:block;}
 
 <script>
 const BACKEND_WORKER_URL="";
-const KEY={tasks:"lifehub_tasks",buy:"lifehub_buy",events:"lifehub_events",notes:"lifehub_notes",icloud:"lifehub_icloud_events",google:"lifehub_google_events",dismissedIcloud:"lifehub_dismissed_icloud_events",dismissedGoogle:"lifehub_dismissed_google_events",widgets:"lifehub_widgets",homeMedia:"lifehub_home_media",googleIcs:"lifehub_google_ics",appleIcs:"lifehub_apple_ics"};
+const KEY={tasks:"lifehub_tasks",buy:"lifehub_buy",events:"lifehub_events",notes:"lifehub_notes",icloud:"lifehub_icloud_events",google:"lifehub_google_events",dismissedIcloud:"lifehub_dismissed_icloud_events",dismissedGoogle:"lifehub_dismissed_google_events",widgets:"lifehub_widgets",homeMedia:"lifehub_home_media",homeFeeds:"lifehub_home_feeds",googleIcs:"lifehub_google_ics",appleIcs:"lifehub_apple_ics"};
 let tasks=JSON.parse(localStorage.getItem(KEY.tasks)||"null");
 let buy=JSON.parse(localStorage.getItem(KEY.buy)||"null");
 let events=JSON.parse(localStorage.getItem(KEY.events)||"[]");
@@ -426,7 +446,10 @@ let googleEvents=JSON.parse(localStorage.getItem(KEY.google)||"[]");
 let dismissedIcloudIds=JSON.parse(localStorage.getItem(KEY.dismissedIcloud)||"[]");
 let dismissedGoogleIds=JSON.parse(localStorage.getItem(KEY.dismissedGoogle)||"[]");
 let widgets=JSON.parse(localStorage.getItem(KEY.widgets)||"[]");
-let homeMedia=localStorage.getItem(KEY.homeMedia)||"";
+let homeMedia=localStorage.getItem(KEY.homeMedia)||"https://www.youtube.com/embed/C96oohpWBGw";
+const HOME_FEED_DEFAULTS=["https://www.youtube.com/embed/C96oohpWBGw","https://www.youtube.com/embed/sOocoiODEHw","https://www.youtube.com/embed/iipR5yUp36o"];
+let homeFeeds=JSON.parse(localStorage.getItem(KEY.homeFeeds)||"null")||HOME_FEED_DEFAULTS.slice();
+let homeFeedPick=parseInt(localStorage.getItem("lifehub_home_feed_pick")||"0",10)||0;
 let selectedCalDate="";
 let noteEdit={type:"",id:"",source:""};
 function getTodayString(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");}
@@ -708,6 +731,32 @@ function youtubeEmbed(url){
   }
   return url;
 }
+
+function playNewsEmbed(which){
+  var feeds={
+    fox:{id:"C96oohpWBGw",title:"LIVE NEWS: LiveNOW FOX 24/7 LIVE STREAM"},
+    cbs:{id:"sOocoiODEHw",title:"LIVE: Breaking News and Top Stories on CBS News 24/7"},
+    abc:{id:"iipR5yUp36o",title:"LIVE: ABC News Live - 24/7 news, context and analysis"},
+    weather:{id:"wt6SIE7BXS8",title:"FOX Weather Live"}
+  };
+  var f=feeds[which]; if(!f)return;
+  var url="https://www.youtube.com/embed/"+f.id+"?autoplay=1&mute=1&playsinline=1&rel=0";
+  homeMedia=url; saveAll();
+  var input=document.getElementById("homeMediaSave"); if(input) input.value=url;
+  var frame=document.getElementById("mediaFrame");
+  var screen=document.getElementById("mediaScreen");
+  if(frame){
+    frame.title=f.title;
+    frame.setAttribute("referrerpolicy","strict-origin-when-cross-origin");
+    frame.setAttribute("allow","accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share");
+    frame.src=url;
+  }
+  if(screen) screen.classList.add("loaded");
+  document.querySelectorAll(".yt-feed-btn").forEach(function(btn){
+    btn.classList.toggle("active", (btn.getAttribute("onclick")||"").indexOf("'"+which+"'")!==-1);
+  });
+}
+
 function playYtFeed(handle){
   const key=String(handle||"").toLowerCase();
   const chan=YT_CHANNELS[key];
@@ -880,12 +929,7 @@ function tickClock(){
   if(el) el.textContent=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
 }
 setInterval(tickClock,1000);
-function saveHomeMedia(){
-  let url=(document.getElementById("homeMediaSave").value||"").trim();
-  if(!url){toast("Type a website first.");return;}
-  if(!/^https?:\/\//i.test(url)) url="https://"+url;
-  homeMedia=url; saveAll(); loadMediaUrl(url); toast("Saved. Home screen will open this.");
-}
+function saveHomeMedia(){ saveHomeFeeds(); }
 function clearHomeMedia(){homeMedia="";saveAll();document.getElementById("homeMediaSave").value="";toast("Cleared.");}
 function openAI(url){
   window.open(url,'_blank','noopener,noreferrer');
@@ -894,8 +938,40 @@ function openAppOrWeb(appUrl, webUrl){
   openAI(webUrl||appUrl);
 }
 function loadSavedHomeMedia(){
-  const input=document.getElementById("homeMediaSave"); if(input) input.value=homeMedia||"";
-  if(homeMedia) setTimeout(function(){ loadMediaUrl(homeMedia); }, 200);
+  if(!Array.isArray(homeFeeds) || homeFeeds.length<3) homeFeeds=HOME_FEED_DEFAULTS.slice();
+  ["homeFeed1","homeFeed2","homeFeed3"].forEach(function(id,i){
+    const el=document.getElementById(id); if(el) el.value=homeFeeds[i]||"";
+  });
+  const input=document.getElementById("homeMediaSave"); if(input) input.value=homeMedia||homeFeeds[homeFeedPick]||"";
+  const start=homeFeeds[homeFeedPick]||homeMedia||"";
+  if(start) setTimeout(function(){ loadMediaUrl(start); }, 200);
+}
+function saveHomeFeeds(){
+  homeFeeds=[
+    (document.getElementById("homeFeed1").value||"").trim(),
+    (document.getElementById("homeFeed2").value||"").trim(),
+    (document.getElementById("homeFeed3").value||"").trim()
+  ].map(function(url){
+    if(!url) return "";
+    if(!/^https?:\/\//i.test(url)) url="https://"+url;
+    return url;
+  });
+  const first=homeFeeds.find(Boolean)||"";
+  homeMedia=first;
+  saveAll();
+  if(first) loadMediaUrl(first);
+  toast("Saved the three Home links.");
+}
+function playHomeFeed(i){
+  const url=(homeFeeds&&homeFeeds[i])||"";
+  if(!url){ toast("Put a link in Settings for button "+(i+1)+"."); showPage("settings"); return; }
+  homeFeedPick=i;
+  localStorage.setItem("lifehub_home_feed_pick",String(i));
+  homeMedia=url; saveAll();
+  loadMediaUrl(url);
+  document.querySelectorAll(".yt-feed-btn").forEach(function(btn,idx){
+    btn.classList.toggle("active", idx===i);
+  });
 }
 function renderHome(){renderHomeTasks();renderHomeBuy();renderMiniCalendar();renderBigCalendar();renderHomeNotes();renderHomeWidgets();renderDaySummary();}
 function renderAll(){renderHome();renderTasks();renderBuy();renderEvents();renderNotes();}
