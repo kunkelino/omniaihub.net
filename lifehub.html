@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -102,10 +103,6 @@ textarea{min-height:100px;}
 .item{border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;background:#fff;}
 .item.done{opacity:.62;}
 
-/* HIDE CHECKED SHOPPING ITEMS ON MOBILE */
-@media(max-width:900px) {
-  #buyList .item.done { display: none !important; }
-}
 
 .item-title{font-weight:800;font-size:17px;}
 .item-meta{color:#6b7280;font-size:14px;margin-top:5px;}
@@ -155,6 +152,9 @@ nav button{flex:1 1 calc(50% - 8px);min-height:48px;}
   body.lh-landscape-video{overflow:hidden;}
 }
 body.lh-pip-float .media-card{display:block;}
+ .media-expand{position:absolute;top:8px;right:8px;z-index:5;border:0;background:rgba(0,0,0,.55);color:#fff;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:800;cursor:pointer;}
+.media-card:fullscreen,.media-card:-webkit-full-screen{width:100vw;height:100vh;max-width:none;border-radius:0;aspect-ratio:auto;height:100vh!important;padding:0!important;}
+.media-card:fullscreen .media-screen,.media-card:-webkit-full-screen .media-screen{position:absolute;inset:0;width:100%;height:100%;padding:0;}
 #hubHomeBtn{position:fixed;top:8px;left:8px;z-index:9999;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.28);color:#111;text-decoration:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(0,0,0,.18);}
 #hubHomeBtn svg{width:18px;height:18px;display:block;}
 #hubHomeBtn:hover{background:rgba(255,255,255,.5);}
@@ -223,26 +223,27 @@ body.lh-pip-float .media-card{display:block;}
     <div class="media-wrap">
       <div class="media-card">
         <div class="media-screen loaded" id="mediaScreen">
-          <iframe id="mediaFrame" width="857" height="482" src="https://www.youtube.com/embed/C96oohpWBGw" title="LIVE NEWS: LiveNOW FOX 24/7 LIVE STREAM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          <iframe id="mediaFrame" width="857" height="482" src="https://www.youtube.com/embed/C96oohpWBGw" title="LIVE NEWS: LiveNOW FOX 24/7 LIVE STREAM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           <div class="media-placeholder">▶ Click to load YouTube, news, or any webpage</div>
         </div>
+        <button type="button" class="media-expand" id="mediaExpandBtn" onclick="expandHomeVideo(event)">Expand</button>
       </div>
       <div class="feed-previews" id="feedPreviews">
         <button type="button" class="feed-tile" id="feedTile0" onclick="playHomeFeed(0)">
           <iframe id="feedMini0" title="Feed 1" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-          <span class="feed-cap">1 · FOX</span>
+          <span class="feed-cap">FOX</span>
         </button>
         <button type="button" class="feed-tile" id="feedTile1" onclick="playHomeFeed(1)">
           <iframe id="feedMini1" title="Feed 2" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-          <span class="feed-cap">2 · CBS</span>
+          <span class="feed-cap">CBS</span>
         </button>
         <button type="button" class="feed-tile" id="feedTile2" onclick="playHomeFeed(2)">
           <iframe id="feedMini2" title="Feed 3" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-          <span class="feed-cap">3 · ABC</span>
+          <span class="feed-cap">ABC</span>
         </button>
         <button type="button" class="feed-tile" id="feedTile3" onclick="playHomeFeed(3)">
           <iframe id="feedMini3" title="Feed 4" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-          <span class="feed-cap">4 · WX</span>
+          <span class="feed-cap">Weather</span>
         </button>
       </div>
     </div>
@@ -666,7 +667,7 @@ function renderTasks(){
 function renderHomeTasks(){
   const container=document.getElementById("homeTasks"); if(!container)return;
   const today=getTodayString();
-  const todays=(tasks||[]).filter(t=>!t.due||t.due===today);
+  const todays=(tasks||[]);
   container.innerHTML='<ul class="today-list">'+todays.map(t=>'<li><div class="row-main"><input class="check" type="checkbox" '+(t.done?"checked":"")+' onchange="toggleTask(\''+t.id+'\')"><span>'+escapeHtml(t.title)+'</span><div class="row-actions"><button class="secondary" onclick="openItemNote(\'task\',\''+t.id+'\',\'\',\''+escapeHtml(t.title)+'\')">Note</button><button class="danger" onclick="deleteTask(\''+t.id+'\')">🗑️</button></div></div></li>').join("")+'</ul>';
 }
 function saveBuy(e){e.preventDefault();buy.push({id:crypto.randomUUID(),item:document.getElementById("buyItem").value.trim(),price:document.getElementById("buyPrice").value.trim(),notes:(document.getElementById("buyNotes")&&document.getElementById("buyNotes").value||"").trim(),bought:false});e.target.reset();saveAll();renderAll();toast("Shopping item added.");}
@@ -680,8 +681,8 @@ function renderBuy(){
 }
 function renderHomeBuy(){
   const container=document.getElementById("homeBuy"); if(!container)return;
-  const rem=(buy||[]).filter(b=>!b.bought);
-  container.innerHTML='<ul class="today-list">'+rem.map(b=>'<li><div class="row-main"><input class="check" type="checkbox" onchange="toggleBuy(\''+b.id+'\')"><span>'+escapeHtml(b.item)+'</span><div class="row-actions"><button class="danger" onclick="deleteBuy(\''+b.id+'\')">🗑️</button></div></div></li>').join("")+'</ul>';
+  const rem=(buy||[]);
+  container.innerHTML='<ul class="today-list">'+rem.map(b=>'<li><div class="row-main"><input class="check" type="checkbox" '+(b.bought?"checked":"")+' onchange="toggleBuy(\''+b.id+'\')"><span>'+escapeHtml(b.item)+'</span><div class="row-actions"><button class="danger" onclick="deleteBuy(\''+b.id+'\')">🗑️</button></div></div></li>').join("")+'</ul>';
 }
 function saveNote(e){e.preventDefault();notes.push({id:crypto.randomUUID(),title:document.getElementById("noteTitle").value.trim(),text:document.getElementById("noteText").value.trim()});e.target.reset();saveAll();renderAll();toast("Note saved.");}
 function deleteNote(id){notes=notes.filter(n=>n.id!==id);saveAll();renderAll();}
@@ -926,6 +927,20 @@ function tickClock(){
 setInterval(tickClock,1000);
 function saveHomeMedia(){}
 function clearHomeMedia(){}
+function expandHomeVideo(e){
+  if(e) e.stopPropagation();
+  var card=document.querySelector(".media-card");
+  var frame=document.getElementById("mediaFrame");
+  if(!card) return;
+  var req=card.requestFullscreen||card.webkitRequestFullscreen||card.msRequestFullscreen;
+  if(req){
+    req.call(card).catch(function(){
+      if(frame && frame.requestFullscreen) frame.requestFullscreen().catch(function(){});
+    });
+    return;
+  }
+  if(frame && frame.requestFullscreen) frame.requestFullscreen().catch(function(){});
+}
 function openAI(url){
   window.open(url,'_blank','noopener,noreferrer');
 }
