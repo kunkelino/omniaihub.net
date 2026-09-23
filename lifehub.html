@@ -324,7 +324,8 @@ body.lh-video-full{overflow:hidden;}
     <button class="action-apple" onclick="syncICloudCalendar()">☁️ Sync Apple</button>
     <p style="margin:12px 0 6px;color:#6b7280;font-size:13px">Paste the secret iCal / ICS link from Google Calendar settings and from iCloud.com calendar sharing, tap Save calendar links, then Sync. webcal links are fine.</p>
     <input id="googleIcsUrl" placeholder="Google Calendar secret iCal URL" style="margin-bottom:8px">
-    <input id="appleIcsUrl" placeholder="Apple Calendar / iCloud ICS URL" style="margin-bottom:8px">
+    <input id="appleIcsUrl" placeholder="iCloud Calendar ICS URL (blue Calendar)" style="margin-bottom:8px">
+    <input id="appleIcsHomeUrl" placeholder="iCloud Home calendar ICS URL (pink Home — 11:15 is here)" style="margin-bottom:8px">
     <button class="secondary" onclick="saveCalendarFeeds()">Save calendar links</button>
     <button class="primary" onclick="exportData()">Export LifeHub Data</button>
     <input type="file" accept=".json" onchange="importData(event)">
@@ -457,7 +458,7 @@ body.lh-video-full{overflow:hidden;}
 
 <script>
 const BACKEND_WORKER_URL="";
-const KEY={tasks:"lifehub_tasks",buy:"lifehub_buy",events:"lifehub_events",notes:"lifehub_notes",icloud:"lifehub_icloud_events",google:"lifehub_google_events",dismissedIcloud:"lifehub_dismissed_icloud_events",dismissedGoogle:"lifehub_dismissed_google_events",widgets:"lifehub_widgets",homeMedia:"lifehub_home_media",homeFeeds:"lifehub_home_feeds",googleIcs:"lifehub_google_ics",appleIcs:"lifehub_apple_ics"};
+const KEY={tasks:"lifehub_tasks",buy:"lifehub_buy",events:"lifehub_events",notes:"lifehub_notes",icloud:"lifehub_icloud_events",google:"lifehub_google_events",dismissedIcloud:"lifehub_dismissed_icloud_events",dismissedGoogle:"lifehub_dismissed_google_events",widgets:"lifehub_widgets",homeMedia:"lifehub_home_media",homeFeeds:"lifehub_home_feeds",googleIcs:"lifehub_google_ics",appleIcs:"lifehub_apple_ics",appleIcsHome:"lifehub_apple_ics_home"};
 let tasks=JSON.parse(localStorage.getItem(KEY.tasks)||"null");
 let buy=JSON.parse(localStorage.getItem(KEY.buy)||"null");
 let events=JSON.parse(localStorage.getItem(KEY.events)||"[]");
@@ -711,15 +712,51 @@ function normalizeIcsUrl(u){
 function saveCalendarFeeds(){
   const g=(document.getElementById("googleIcsUrl")||{}).value||"";
   const a=(document.getElementById("appleIcsUrl")||{}).value||"";
+  const h=(document.getElementById("appleIcsHomeUrl")||{}).value||"";
   localStorage.setItem(KEY.googleIcs,normalizeIcsUrl(g));
   localStorage.setItem(KEY.appleIcs,normalizeIcsUrl(a));
+  localStorage.setItem(KEY.appleIcsHome,normalizeIcsUrl(h));
   toast("Calendar links saved.");
 }
 function loadCalendarFeedInputs(){
   const g=document.getElementById("googleIcsUrl");
   const a=document.getElementById("appleIcsUrl");
+  const h=document.getElementById("appleIcsHomeUrl");
   if(g) g.value=localStorage.getItem(KEY.googleIcs)||"";
   if(a) a.value=localStorage.getItem(KEY.appleIcs)||"";
+  if(h) h.value=localStorage.getItem(KEY.appleIcsHome)||"";
+}
+function setCalStatus(id,msg){
+  const el=document.getElementById(id);
+  if(el) el.textContent=msg||"";
+}
+function splitIcsUrls(){
+  const urls=[];
+  for(let i=0;i<arguments.length;i++){
+    String(arguments[i]||"").split(/[\n,]+/).forEach(function(u){
+      u=normalizeIcsUrl(u);
+      if(u && urls.indexOf(u)===-1) urls.push(u);
+    });
+  }
+  return urls;
+}
+async function fetchManyCalendars(urls, primaryUrl){
+  const texts=[];
+  let lastErr=null;
+  if(primaryUrl){
+    try{
+      const text=await fetchCalendarText(primaryUrl, "");
+      if(text) texts.push(text);
+    }catch(e){ lastErr=e; }
+  }
+  for(let i=0;i<urls.length;i++){
+    try{
+      const text=await fetchCalendarText("", urls[i]);
+      if(text) texts.push(text);
+    }catch(e){ lastErr=e; }
+  }
+  if(!texts.length) throw lastErr||new Error("No calendar feeds loaded");
+  return texts.join("\n");
 }
 async function fetchCalendarText(primaryUrl, fallbackIcs){
   const urls=[];
@@ -749,20 +786,33 @@ async function syncGoogleCalendar(silent){
     const text=await fetchCalendarText(BACKEND_WORKER_URL+"/api/google-feed", ics);
     googleEvents=sortEvents(parseICS(text).map(i=>({id:String(i.id||crypto.randomUUID()),title:i.title,date:i.date,time:i.time||"",notes:i.notes||""})).filter(i=>dismissedGoogleIds.indexOf(String(i.id))===-1));
     saveAll();renderAll();
-    if(!silent)toast("Google Calendar synced: "+googleEvents.length+" upcoming.");
+    const today=getTodayString();
+    const todayN=googleEvents.filter(function(e){return e.date===today;}).length;
+    setCalStatus("googleCalendarStatus","Google: "+googleEvents.length+" upcoming, "+todayN+" today.");
+    if(!silent)toast("Google Calendar synced: "+todayN+" today / "+googleEvents.length+" upcoming.");
   }catch(e){
-    if(!silent)toast("Google sync failed. Save your Google iCal URL in Settings.");
+    setCalStatus("googleCalendarStatus","Google sync failed. Paste the secret iCal address from Google Calendar settings.");
+    if(!silent)toast("Google sync failed. Save your Google iCal URL.");
   }
 }
 async function syncICloudCalendar(silent){
   try{
-    const ics=localStorage.getItem(KEY.appleIcs)||"";
-    const text=await fetchCalendarText(BACKEND_WORKER_URL+"/api/icloud-feed", ics);
+    const urls=splitIcsUrls(localStorage.getItem(KEY.appleIcs)||"", localStorage.getItem(KEY.appleIcsHome)||"");
+    if(!urls.length){
+      setCalStatus("icloudCalendarStatus","Add the iCloud Home calendar ICS link (pink Home) then Save and Sync.");
+      if(!silent) toast("Apple sync needs the Home calendar ICS link.");
+      return;
+    }
+    const text=await fetchManyCalendars(urls, BACKEND_WORKER_URL?BACKEND_WORKER_URL+"/api/icloud-feed":"");
     icloudEvents=sortEvents(parseICS(text).map(i=>({id:String(i.id||crypto.randomUUID()),title:i.title,date:i.date,time:i.time||"",notes:i.notes||""})).filter(i=>dismissedIcloudIds.indexOf(String(i.id))===-1));
     saveAll();renderAll();
-    if(!silent)toast("Apple Calendar synced: "+icloudEvents.length+" upcoming.");
+    const today=getTodayString();
+    const todayN=icloudEvents.filter(function(e){return e.date===today;}).length;
+    setCalStatus("icloudCalendarStatus","Apple: "+icloudEvents.length+" upcoming, "+todayN+" today.");
+    if(!silent)toast("Apple Calendar synced: "+todayN+" today / "+icloudEvents.length+" upcoming.");
   }catch(e){
-    if(!silent)toast("Apple sync failed. Save your Apple ICS URL in Settings.");
+    setCalStatus("icloudCalendarStatus","Apple sync failed. On iCloud.com open the pink Home calendar → Share Calendar → copy the ICS link.");
+    if(!silent)toast("Apple sync failed. Need the Home calendar ICS link.");
   }
 }
 async function syncAllConnectedCalendars(){toast("Syncing...");await Promise.allSettled([syncGoogleCalendar(false),syncICloudCalendar(false)]);}
