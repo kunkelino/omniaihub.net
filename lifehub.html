@@ -208,7 +208,6 @@ body.lh-pip-float .media-card{display:block;}
   <button onclick="showPage('todo',this)">✅ To-Do</button>
   <button onclick="showPage('buy',this)">🛒 Shopping</button>
   <button onclick="showPage('notes',this)">📝 Notes</button>
-  <button onclick="showPage('settings',this)">⚙️ Settings</button>
 </nav>
 <div class="container">
 <section id="home" class="page active">
@@ -271,9 +270,9 @@ body.lh-pip-float .media-card{display:block;}
       <div class="box-header"><h3>🤖 Talk to AI</h3></div>
       <div class="box-scroll-area">
         <div class="ai-mini-grid">
-          <button class="ai-mini-btn" onclick="openAI('https://chatgpt.com/')">ChatGPT</button>
-          <button class="ai-mini-btn" onclick="openAI('https://gemini.google.com/app')">Gemini</button>
-          <button class="ai-mini-btn" onclick="openAI('https://claude.ai/new')">Claude</button>
+          <button class="ai-mini-btn" onclick="openAppOrWeb('chatgpt://','https://chatgpt.com/')">ChatGPT</button>
+          <button class="ai-mini-btn" onclick="openAppOrWeb(['gemini://','googlegemini://'],'https://gemini.google.com/app')">Gemini</button>
+          <button class="ai-mini-btn" onclick="openAppOrWeb('claude://','https://claude.ai/new')">Claude</button>
           <button class="ai-mini-btn" onclick="openAI('https://grok.com/')">Grok</button>
         </div>
       </div>
@@ -297,6 +296,12 @@ body.lh-pip-float .media-card{display:block;}
     <button class="primary" onclick="syncAllConnectedCalendars()">🔄 Sync All</button>
     <button class="action-google" onclick="syncGoogleCalendar()">🟢 Sync Google</button>
     <button class="action-apple" onclick="syncICloudCalendar()">☁️ Sync Apple</button>
+    <p style="margin:12px 0 6px;color:#6b7280;font-size:13px">If sync fails, paste your secret iCal / ICS link and tap sync again.</p>
+    <input id="googleIcsUrl" placeholder="Google Calendar secret iCal URL" style="margin-bottom:8px">
+    <input id="appleIcsUrl" placeholder="Apple Calendar / iCloud ICS URL" style="margin-bottom:8px">
+    <button class="secondary" onclick="saveCalendarFeeds()">Save calendar links</button>
+    <button class="primary" onclick="exportData()">Export LifeHub Data</button>
+    <input type="file" accept=".json" onchange="importData(event)">
     <div id="googleCalendarStatus"></div>
     <div id="icloudCalendarStatus"></div>
   </div>
@@ -372,37 +377,6 @@ body.lh-pip-float .media-card{display:block;}
     <div id="notesList"></div>
   </div>
 </section>
-<section id="settings" class="page">
-  <div class="card">
-    <h2>⚙️ Settings</h2>
-    <button class="action-google" onclick="syncGoogleCalendar()">🟢 Sync Google Calendar</button>
-    <button class="action-apple" onclick="syncICloudCalendar()">☁️ Sync Apple Calendar</button>
-    <p style="margin:12px 0 6px;color:#6b7280;font-size:13px">If sync fails, paste your secret iCal / ICS link and tap sync again.</p>
-    <input id="googleIcsUrl" placeholder="Google Calendar secret iCal URL" style="margin-bottom:8px">
-    <input id="appleIcsUrl" placeholder="Apple Calendar / iCloud ICS URL" style="margin-bottom:8px">
-    <button class="secondary" onclick="saveCalendarFeeds()">Save calendar links</button>
-    <button class="primary" onclick="exportData()">Export LifeHub Data</button>
-    <input type="file" accept=".json" onchange="importData(event)">
-    <button class="danger" onclick="clearAll()">Clear All LifeHub Data</button>
-  </div>
-  <div class="card">
-    <h2>▶ Home screen webpages</h2>
-    <p>Save up to four embed links. Home has one big player and four buttons. Tap a button to play that link in the big player.</p>
-    <label>Button 1</label>
-    <input id="homeFeed1" placeholder="https://www.youtube.com/embed/C96oohpWBGw">
-    <label style="margin-top:10px;display:block">Button 2</label>
-    <input id="homeFeed2" placeholder="https://www.youtube.com/embed/sOocoiODEHw">
-    <label style="margin-top:10px;display:block">Button 3</label>
-    <input id="homeFeed3" placeholder="https://www.youtube.com/embed/iipR5yUp36o">
-    <label style="margin-top:10px;display:block">Button 4 — FOX Weather</label>
-    <input id="homeFeed4" placeholder="https://www.youtube.com/embed/wt6SIE7BXS8">
-    <input id="homeMediaSave" type="hidden">
-    <div class="item-actions" style="margin-top:10px">
-      <button class="primary" onclick="saveHomeFeeds()">Save the four links</button>
-      <button class="secondary" onclick="clearHomeMedia()">Clear</button>
-    </div>
-  </div>
-</section>
 </div>
 <footer>🧠 LifeHub — Your life. One place.</footer>
 
@@ -467,9 +441,9 @@ let googleEvents=JSON.parse(localStorage.getItem(KEY.google)||"[]");
 let dismissedIcloudIds=JSON.parse(localStorage.getItem(KEY.dismissedIcloud)||"[]");
 let dismissedGoogleIds=JSON.parse(localStorage.getItem(KEY.dismissedGoogle)||"[]");
 let widgets=JSON.parse(localStorage.getItem(KEY.widgets)||"[]");
-let homeMedia=localStorage.getItem(KEY.homeMedia)||"https://www.youtube.com/embed/C96oohpWBGw";
 const HOME_FEED_DEFAULTS=["https://www.youtube.com/embed/C96oohpWBGw","https://www.youtube.com/embed/sOocoiODEHw","https://www.youtube.com/embed/iipR5yUp36o","https://www.youtube.com/embed/wt6SIE7BXS8"];
-let homeFeeds=JSON.parse(localStorage.getItem(KEY.homeFeeds)||"null")||HOME_FEED_DEFAULTS.slice();
+let homeFeeds=HOME_FEED_DEFAULTS.slice();
+let homeMedia=homeFeeds[0];
 let homeFeedPick=parseInt(localStorage.getItem("lifehub_home_feed_pick")||"0",10)||0;
 let selectedCalDate="";
 let noteEdit={type:"",id:"",source:""};
@@ -512,8 +486,6 @@ function saveAll(){
   localStorage.setItem(KEY.dismissedIcloud,JSON.stringify(dismissedIcloudIds||[]));
   localStorage.setItem(KEY.dismissedGoogle,JSON.stringify(dismissedGoogleIds||[]));
   localStorage.setItem(KEY.widgets,JSON.stringify(widgets||[]));
-  if(homeMedia) localStorage.setItem(KEY.homeMedia,homeMedia); else localStorage.removeItem(KEY.homeMedia);
-  localStorage.setItem(KEY.homeFeeds,JSON.stringify(homeFeeds||[]));
 }
 function showPage(id,button){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
@@ -952,13 +924,37 @@ function tickClock(){
   if(el) el.textContent=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
 }
 setInterval(tickClock,1000);
-function saveHomeMedia(){ saveHomeFeeds(); }
-function clearHomeMedia(){homeMedia="";saveAll();document.getElementById("homeMediaSave").value="";toast("Cleared.");}
+function saveHomeMedia(){}
+function clearHomeMedia(){}
 function openAI(url){
   window.open(url,'_blank','noopener,noreferrer');
 }
 function openAppOrWeb(appUrl, webUrl){
-  openAI(webUrl||appUrl);
+  var web = webUrl || appUrl;
+  var schemes = Array.isArray(appUrl) ? appUrl : [appUrl];
+  schemes = schemes.filter(function(s){ return s && s.indexOf("http")!==0; });
+  if(!schemes.length){ openAI(web); return; }
+  var start = Date.now();
+  var left = false;
+  function markLeft(){ left = true; }
+  document.addEventListener("visibilitychange", markLeft, {once:true});
+  window.addEventListener("pagehide", markLeft, {once:true});
+  window.addEventListener("blur", markLeft, {once:true});
+  schemes.forEach(function(s){
+    try{
+      var frame=document.createElement("iframe");
+      frame.style.display="none";
+      frame.src=s;
+      document.body.appendChild(frame);
+      setTimeout(function(){ try{ document.body.removeChild(frame); }catch(e){} }, 800);
+    }catch(e){}
+  });
+  try{ window.location.href = schemes[0]; }catch(e){}
+  setTimeout(function(){
+    if(left || document.hidden || document.visibilityState==="hidden") return;
+    if(Date.now()-start > 2500) return;
+    openAI(web);
+  }, 1400);
 }
 function previewEmbedUrl(raw){
   let url=(raw||"").trim();
@@ -982,43 +978,17 @@ function loadFeedPreviews(){
   }
 }
 function loadSavedHomeMedia(){
-  if(!Array.isArray(homeFeeds) || homeFeeds.length<4){
-    var next=HOME_FEED_DEFAULTS.slice();
-    for(var i=0;i<(homeFeeds||[]).length;i++){ if(homeFeeds[i]) next[i]=homeFeeds[i]; }
-    homeFeeds=next;
-  }
-  ["homeFeed1","homeFeed2","homeFeed3","homeFeed4"].forEach(function(id,i){
-    const el=document.getElementById(id); if(el) el.value=homeFeeds[i]||"";
-  });
-  const input=document.getElementById("homeMediaSave"); if(input) input.value=homeMedia||homeFeeds[homeFeedPick]||"";
-  const start=homeFeeds[homeFeedPick]||homeMedia||"";
+  homeFeeds=HOME_FEED_DEFAULTS.slice();
+  const start=homeFeeds[homeFeedPick]||homeFeeds[0]||"";
   if(start) setTimeout(function(){ loadMediaUrl(start); }, 200);
   setTimeout(loadFeedPreviews, 250);
 }
-function saveHomeFeeds(){
-  homeFeeds=[
-    (document.getElementById("homeFeed1").value||"").trim(),
-    (document.getElementById("homeFeed2").value||"").trim(),
-    (document.getElementById("homeFeed3").value||"").trim(),
-    (document.getElementById("homeFeed4").value||"").trim()
-  ].map(function(url){
-    if(!url) return "";
-    if(!/^https?:\/\//i.test(url)) url="https://"+url;
-    return url;
-  });
-  const first=homeFeeds.find(Boolean)||"";
-  homeMedia=first;
-  saveAll();
-  if(first) loadMediaUrl(first);
-  loadFeedPreviews();
-  toast("Saved the four Home links.");
-}
+function saveHomeFeeds(){}
 function playHomeFeed(i){
-  const url=(homeFeeds&&homeFeeds[i])||"";
-  if(!url){ toast("Put a link in Settings for box "+(i+1)+"."); showPage("settings"); return; }
+  const url=(homeFeeds&&homeFeeds[i])||HOME_FEED_DEFAULTS[i]||"";
+  if(!url){ toast("That channel is not set."); return; }
   homeFeedPick=i;
-  localStorage.setItem("lifehub_home_feed_pick",String(i));
-  homeMedia=url; saveAll();
+  homeMedia=url;
   loadMediaUrl(url);
   for(var n=0;n<4;n++){
     var tile=document.getElementById("feedTile"+n);
