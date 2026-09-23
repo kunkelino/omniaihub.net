@@ -152,34 +152,6 @@ nav button{flex:1 1 calc(50% - 8px);min-height:48px;}
   body.lh-landscape-video{overflow:hidden;}
 }
 body.lh-pip-float .media-card{display:block;}
- .media-expand{position:absolute;top:8px;right:8px;z-index:5;border:0;background:rgba(0,0,0,.55);color:#fff;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:800;cursor:pointer;}
-.media-card.lh-full{
-  position:fixed!important;
-  inset:0!important;
-  top:0!important;left:0!important;right:0!important;bottom:0!important;
-  width:100vw!important;
-  height:100dvh!important;height:100vh!important;
-  max-width:none!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:0!important;
-  border-radius:0!important;
-  aspect-ratio:auto!important;
-  z-index:200000!important;
-  background:#000!important;
-}
-.media-card.lh-full .media-screen{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  padding:0!important;
-  min-height:0!important;
-  aspect-ratio:auto!important;
-}
-.media-card.lh-full iframe{width:100%!important;height:100%!important;}
-.media-card.lh-full .media-expand{top:max(8px, env(safe-area-inset-top));right:max(8px, env(safe-area-inset-right));}
-body.lh-video-full{overflow:hidden;}
 #hubHomeBtn{position:fixed;top:8px;left:8px;z-index:9999;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.28);color:#111;text-decoration:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(0,0,0,.18);}
 #hubHomeBtn svg{width:18px;height:18px;display:block;}
 #hubHomeBtn:hover{background:rgba(255,255,255,.5);}
@@ -251,7 +223,6 @@ body.lh-video-full{overflow:hidden;}
           <iframe id="mediaFrame" width="857" height="482" src="https://www.youtube.com/embed/C96oohpWBGw" title="LIVE NEWS: LiveNOW FOX 24/7 LIVE STREAM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           <div class="media-placeholder">▶ Click to load YouTube, news, or any webpage</div>
         </div>
-        <button type="button" class="media-expand" id="mediaExpandBtn" onclick="expandHomeVideo(event)">Expand</button>
       </div>
       <div class="feed-previews" id="feedPreviews">
         <button type="button" class="feed-tile" id="feedTile0" onclick="playHomeFeed(0)">
@@ -259,7 +230,7 @@ body.lh-video-full{overflow:hidden;}
           <span class="feed-cap">FOX</span>
         </button>
         <button type="button" class="feed-tile" id="feedTile1" onclick="playHomeFeed(1)">
-          <iframe id="feedMini1" title="CBS News 24/7" src="https://www.youtube.com/embed/sOocoiODEHw?autoplay=0&mute=1&playsinline=1&rel=0" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <iframe id="feedMini1" title="CBS News 24/7" src="https://www.youtube.com/embed/sOocoiODEHw?autoplay=0&mute=1&playsinline=1&rel=0&fs=1" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
           <span class="feed-cap">CBS</span>
         </button>
         <button type="button" class="feed-tile" id="feedTile2" onclick="playHomeFeed(2)">
@@ -322,10 +293,9 @@ body.lh-video-full{overflow:hidden;}
     <button class="primary" onclick="syncAllConnectedCalendars()">🔄 Sync All</button>
     <button class="action-google" onclick="syncGoogleCalendar()">🟢 Sync Google</button>
     <button class="action-apple" onclick="syncICloudCalendar()">☁️ Sync Apple</button>
-    <p style="margin:12px 0 6px;color:#6b7280;font-size:13px">Paste the secret iCal / ICS link from Google Calendar settings and from iCloud.com calendar sharing, tap Save calendar links, then Sync. webcal links are fine.</p>
+    <p style="margin:12px 0 6px;color:#6b7280;font-size:13px">Paste each secret iCal / ICS link, tap Save calendar links, then Sync Google and Sync Apple. webcal:// links are fine.</p>
     <input id="googleIcsUrl" placeholder="Google Calendar secret iCal URL" style="margin-bottom:8px">
-    <input id="appleIcsUrl" placeholder="iCloud Calendar ICS URL (blue Calendar)" style="margin-bottom:8px">
-    <input id="appleIcsHomeUrl" placeholder="iCloud Home calendar ICS URL (pink Home — 11:15 is here)" style="margin-bottom:8px">
+    <input id="appleIcsUrl" placeholder="Apple Calendar / iCloud ICS URL" style="margin-bottom:8px">
     <button class="secondary" onclick="saveCalendarFeeds()">Save calendar links</button>
     <button class="primary" onclick="exportData()">Export LifeHub Data</button>
     <input type="file" accept=".json" onchange="importData(event)">
@@ -458,7 +428,7 @@ body.lh-video-full{overflow:hidden;}
 
 <script>
 const BACKEND_WORKER_URL="";
-const KEY={tasks:"lifehub_tasks",buy:"lifehub_buy",events:"lifehub_events",notes:"lifehub_notes",icloud:"lifehub_icloud_events",google:"lifehub_google_events",dismissedIcloud:"lifehub_dismissed_icloud_events",dismissedGoogle:"lifehub_dismissed_google_events",widgets:"lifehub_widgets",homeMedia:"lifehub_home_media",homeFeeds:"lifehub_home_feeds",googleIcs:"lifehub_google_ics",appleIcs:"lifehub_apple_ics",appleIcsHome:"lifehub_apple_ics_home"};
+const KEY={tasks:"lifehub_tasks",buy:"lifehub_buy",events:"lifehub_events",notes:"lifehub_notes",icloud:"lifehub_icloud_events",google:"lifehub_google_events",dismissedIcloud:"lifehub_dismissed_icloud_events",dismissedGoogle:"lifehub_dismissed_google_events",widgets:"lifehub_widgets",homeMedia:"lifehub_home_media",homeFeeds:"lifehub_home_feeds",googleIcs:"lifehub_google_ics",appleIcs:"lifehub_apple_ics"};
 let tasks=JSON.parse(localStorage.getItem(KEY.tasks)||"null");
 let buy=JSON.parse(localStorage.getItem(KEY.buy)||"null");
 let events=JSON.parse(localStorage.getItem(KEY.events)||"[]");
@@ -629,15 +599,21 @@ function parseRRule(val){
 function expandEvent(cur, horizon){
   const start=parseIcsDateTime(cur.dtstart||"");
   if(!start) return [];
-  const title=unescapeIcs(cur.title||"");
-  if(!title) return [];
+  const title=unescapeIcs(cur.title||"")||"Appointment";
   const notes=unescapeIcs(cur.notes||"");
   const baseId=cur.id||title;
   const results=[];
   const untilHorizon=horizon;
   if(!cur.rrule){
-    if(start.date<=ymdLocal(untilHorizon) || start.date>=getTodayString()){
+    const today=getTodayString();
+    if(start.date>=today && start.date<=ymdLocal(untilHorizon)){
       results.push({id:baseId,title:title,date:start.date,time:start.time,notes:notes});
+    } else if(start.stamp){
+      const localDate=ymdLocal(start.stamp);
+      const utcDate=start.stamp.getUTCFullYear()+"-"+pad2(start.stamp.getUTCMonth()+1)+"-"+pad2(start.stamp.getUTCDate());
+      if(localDate===today || utcDate===today){
+        results.push({id:baseId,title:title,date:today,time:start.time||hmLocal(start.stamp),notes:notes});
+      }
     }
     return results;
   }
@@ -712,19 +688,15 @@ function normalizeIcsUrl(u){
 function saveCalendarFeeds(){
   const g=(document.getElementById("googleIcsUrl")||{}).value||"";
   const a=(document.getElementById("appleIcsUrl")||{}).value||"";
-  const h=(document.getElementById("appleIcsHomeUrl")||{}).value||"";
   localStorage.setItem(KEY.googleIcs,normalizeIcsUrl(g));
   localStorage.setItem(KEY.appleIcs,normalizeIcsUrl(a));
-  localStorage.setItem(KEY.appleIcsHome,normalizeIcsUrl(h));
   toast("Calendar links saved.");
 }
 function loadCalendarFeedInputs(){
   const g=document.getElementById("googleIcsUrl");
   const a=document.getElementById("appleIcsUrl");
-  const h=document.getElementById("appleIcsHomeUrl");
   if(g) g.value=localStorage.getItem(KEY.googleIcs)||"";
   if(a) a.value=localStorage.getItem(KEY.appleIcs)||"";
-  if(h) h.value=localStorage.getItem(KEY.appleIcsHome)||"";
 }
 function setCalStatus(id,msg){
   const el=document.getElementById(id);
@@ -797,10 +769,10 @@ async function syncGoogleCalendar(silent){
 }
 async function syncICloudCalendar(silent){
   try{
-    const urls=splitIcsUrls(localStorage.getItem(KEY.appleIcs)||"", localStorage.getItem(KEY.appleIcsHome)||"");
+    const urls=splitIcsUrls(localStorage.getItem(KEY.appleIcs)||"");
     if(!urls.length){
-      setCalStatus("icloudCalendarStatus","Add the iCloud Home calendar ICS link (pink Home) then Save and Sync.");
-      if(!silent) toast("Apple sync needs the Home calendar ICS link.");
+      setCalStatus("icloudCalendarStatus","Paste your Apple / iCloud ICS link, tap Save calendar links, then Sync Apple.");
+      if(!silent) toast("Apple sync needs your iCloud ICS link.");
       return;
     }
     const text=await fetchManyCalendars(urls, BACKEND_WORKER_URL?BACKEND_WORKER_URL+"/api/icloud-feed":"");
@@ -811,8 +783,8 @@ async function syncICloudCalendar(silent){
     setCalStatus("icloudCalendarStatus","Apple: "+icloudEvents.length+" upcoming, "+todayN+" today.");
     if(!silent)toast("Apple Calendar synced: "+todayN+" today / "+icloudEvents.length+" upcoming.");
   }catch(e){
-    setCalStatus("icloudCalendarStatus","Apple sync failed. On iCloud.com open the pink Home calendar → Share Calendar → copy the ICS link.");
-    if(!silent)toast("Apple sync failed. Need the Home calendar ICS link.");
+    setCalStatus("icloudCalendarStatus","Apple sync failed. Paste the iCloud ICS link, save, then sync again.");
+    if(!silent)toast("Apple sync failed. Paste your iCloud ICS link and save it first.");
   }
 }
 async function syncAllConnectedCalendars(){toast("Syncing...");await Promise.allSettled([syncGoogleCalendar(false),syncICloudCalendar(false)]);}
@@ -892,11 +864,11 @@ function youtubeEmbed(url){
   const handle=(p.pathname.match(/@([^/]+)/)||[])[1];
   const key=(handle||"").toLowerCase();
   const chan=p.searchParams.get("channel")||YT_CHANNELS[key];
-  if(id) return "https://www.youtube.com/embed/"+id+"?autoplay=1&mute=1&playsinline=1&rel=0";
+  if(id) return "https://www.youtube.com/embed/"+id+"?autoplay=1&mute=1&playsinline=1&rel=0&fs=1";
   if(chan){
     const vid=YT_LIVE_VIDEO[key];
-    if(vid) return "https://www.youtube.com/embed/"+vid+"?autoplay=1&mute=1&playsinline=1&rel=0";
-    if(key==="cbsboston"||key==="cbs") return "https://www.youtube.com/embed/sOocoiODEHw?autoplay=1&mute=1&playsinline=1&rel=0";
+    if(vid) return "https://www.youtube.com/embed/"+vid+"?autoplay=1&mute=1&playsinline=1&rel=0&fs=1";
+    if(key==="cbsboston"||key==="cbs") return "https://www.youtube.com/embed/sOocoiODEHw?autoplay=1&mute=1&playsinline=1&rel=0&fs=1";
     return "https://www.youtube.com/embed/live_stream?channel="+chan+"&autoplay=1&mute=1&playsinline=1";
   }
   return url;
@@ -910,7 +882,7 @@ function playNewsEmbed(which){
     weather:{id:"wt6SIE7BXS8",title:"FOX Weather Live"}
   };
   var f=feeds[which]; if(!f)return;
-  var url="https://www.youtube.com/embed/"+f.id+"?autoplay=1&mute=1&playsinline=1&rel=0";
+  var url="https://www.youtube.com/embed/"+f.id+"?autoplay=1&mute=1&playsinline=1&rel=0&fs=1";
   homeMedia=url; saveAll();
   var input=document.getElementById("homeMediaSave"); if(input) input.value=url;
   var frame=document.getElementById("mediaFrame");
@@ -932,7 +904,7 @@ function playYtFeed(handle){
   const chan=YT_CHANNELS[key];
   const vid=YT_LIVE_VIDEO[key];
   let url;
-  if(vid) url="https://www.youtube.com/embed/"+vid+"?autoplay=1&mute=1&playsinline=1&rel=0";
+  if(vid) url="https://www.youtube.com/embed/"+vid+"?autoplay=1&mute=1&playsinline=1&rel=0&fs=1";
   else if(chan) url="https://www.youtube.com/embed/live_stream?channel="+chan+"&autoplay=1&mute=1&playsinline=1";
   else url="https://www.youtube.com/@"+key;
   homeMedia=url;
@@ -1102,29 +1074,6 @@ function tickClock(){
 setInterval(tickClock,1000);
 function saveHomeMedia(){}
 function clearHomeMedia(){}
-function expandHomeVideo(e){
-  if(e){ e.preventDefault(); e.stopPropagation(); }
-  var card=document.querySelector(".media-card");
-  var btn=document.getElementById("mediaExpandBtn");
-  var pip=document.getElementById("newsPip");
-  if(!card) return;
-  var on=card.classList.toggle("lh-full");
-  document.body.classList.toggle("lh-video-full", on);
-  if(btn) btn.textContent=on?"Close":"Expand";
-  if(pip) pip.style.display=on?"none":"";
-}
-document.addEventListener("keydown", function(e){
-  if(e.key!=="Escape") return;
-  var card=document.querySelector(".media-card");
-  if(!card || !card.classList.contains("lh-full")) return;
-  card.classList.remove("lh-full");
-  document.body.classList.remove("lh-video-full");
-  var btn=document.getElementById("mediaExpandBtn");
-  if(btn) btn.textContent="Expand";
-  var pip=document.getElementById("newsPip");
-  if(pip) pip.style.display="";
-});
-
 function openAI(url){
   window.open(url,'_blank','noopener,noreferrer');
 }
@@ -1164,7 +1113,7 @@ function playHomeFeed(i){
     {id:"wt6SIE7BXS8",title:"FOX Weather Live"}
   ];
   const item=LOCKED[i];
-  const url=item?("https://www.youtube.com/embed/"+item.id+"?autoplay=1&mute=1&playsinline=1&rel=0"):((homeFeeds&&homeFeeds[i])||HOME_FEED_DEFAULTS[i]||"");
+  const url=item?("https://www.youtube.com/embed/"+item.id+"?autoplay=1&mute=1&playsinline=1&rel=0&fs=1"):((homeFeeds&&homeFeeds[i])||HOME_FEED_DEFAULTS[i]||"");
   if(!url){ toast("That channel is not set."); return; }
   homeFeedPick=i;
   homeMedia=url;
