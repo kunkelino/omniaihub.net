@@ -13,7 +13,7 @@ a{color:#312e81;}
 .hero{background:linear-gradient(135deg,#111827,#312e81);color:#fff;border-radius:24px;padding:32px 28px;box-shadow:var(--shadow);margin-bottom:22px;}
 .name,.nav a,h3,.title{font-family:Arial,Helvetica,sans-serif;text-shadow:0 1px 0 rgba(255,255,255,.35),0 2px 0 rgba(0,0,0,.18);}
 .name{font-size:34px;font-weight:700;margin:0 0 8px;}
-.email,.phone{font-size:17px;font-weight:700;}
+ .email,.phone{font-size:17px;font-weight:700;}.email{margin-bottom:14px;}
 .email a,.phone a{color:#fff;}
 .location{font-size:20px;font-weight:700;margin-top:8px;opacity:.95;}
 .nav{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;}
@@ -64,7 +64,7 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
 <div class="page">
   <div class="hero">
     <div class="name">Jonathan Kunkel</div>
-    <div class="email"><a href="mailto:Jonathan@omniaihub.net" onclick="window.location.href='mailto:Jonathan@omniaihub.net';return true;">Jonathan@omniaihub.net</a></div>
+    <div class="email"><a href="https://mail.google.com/mail/?view=cm&fs=1&to=Jonathan@omniaihub.net" target="_blank" rel="noopener noreferrer">Jonathan@omniaihub.net</a></div>
     <div class="phone"><a href="tel:6464384703">646-438-4703</a></div>
     <div class="location">Boston, Massachusetts</div>
     <nav class="nav">
@@ -117,8 +117,8 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
         <div>
           <h3>Contact</h3>
           <p>Jonathan Kunkel<br>
-          <a href="tel:6464384703">(646) 438-4703</a><br>
-          <a href="mailto:Jonathan@omniaihub.net" onclick="window.location.href='mailto:Jonathan@omniaihub.net';return true;">Jonathan@omniaihub.net</a><br>
+          <a href="tel:6464384703">(646) 438-4703</a><br><br>
+          <a href="https://mail.google.com/mail/?view=cm&fs=1&to=Jonathan@omniaihub.net" target="_blank" rel="noopener noreferrer">Jonathan@omniaihub.net</a><br>
           Boston, Massachusetts</p>
         </div>
       </div>
@@ -126,7 +126,7 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
   </div>
   <section class="resume" id="resume">
     <div class="resume-name">Jonathan Kunkel</div>
-    <div class="resume-contact">(646) 438-4703 | <a href="mailto:Jonathan@omniaihub.net" onclick="window.location.href='mailto:Jonathan@omniaihub.net';return true;">Jonathan@omniaihub.net</a> | Boston, Massachusetts</div>
+    <div class="resume-contact">(646) 438-4703 &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://mail.google.com/mail/?view=cm&fs=1&to=Jonathan@omniaihub.net" target="_blank" rel="noopener noreferrer">Jonathan@omniaihub.net</a> | Boston, Massachusetts</div>
     <h2>Professional Summary</h2>
     <p>Adaptable operations and management professional with a strong background in high-volume queue management, administrative support, and cross-departmental coordination. Proven track record of executing detailed financial audits, maintaining database accuracy, and ensuring strict quality standards across fast-paced customer service and hospitality environments. Adept at building strong business relationships through reliable client support, proactive customer outreach, and effective workflow optimization. Combines hands-on experience in retail production management with a commitment to maintaining optimal operational flow and enhancing overall guest and customer satisfaction.</p>
     <h2>Skills</h2>
@@ -186,25 +186,10 @@ document.querySelectorAll(".yt").forEach(function(box){
     box.querySelector(".expand").addEventListener("click", function(ev){
       ev.preventDefault();
       ev.stopPropagation();
-      var frame=box.querySelector("iframe");
       var open=box.classList.contains("yt-full");
-      if(open){
-        box.classList.remove("yt-full");
-        document.body.classList.remove("yt-video-full");
-        ev.currentTarget.textContent="Expand";
-        var ex=document.exitFullscreen||document.webkitExitFullscreen;
-        if(ex && (document.fullscreenElement||document.webkitFullscreenElement)) ex.call(document);
-        return;
-      }
-      box.classList.add("yt-full");
-      document.body.classList.add("yt-video-full");
-      ev.currentTarget.textContent="Close";
-      var target=frame||box;
-      var req=target.requestFullscreen||target.webkitRequestFullscreen||box.requestFullscreen;
-      if(req){
-        var p=req.call(target);
-        if(p && p.catch) p.catch(function(){});
-      }
+      box.classList.toggle("yt-full", !open);
+      document.body.classList.toggle("yt-video-full", !open);
+      ev.currentTarget.textContent=open?"Expand":"Close";
     });
   }
   box.addEventListener("click", function(e){

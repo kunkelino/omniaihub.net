@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,6 +42,12 @@ nav button.active{background:var(--primary);color:#fff;}
 .media-screen.loaded .media-placeholder{display:none;}
 .media-screen.loaded iframe{display:block;}
 .yt-feed-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;width:100%;}
+.feed-previews{display:flex;align-items:stretch;gap:8px;margin-top:10px;width:100%;}
+.feed-tile{width:1.4in;height:1in;flex:1 1 0;min-width:0;border:0;padding:0;border-radius:10px;overflow:hidden;background:#111;cursor:pointer;position:relative;box-shadow:0 0 0 2px rgba(15,23,42,.12);}
+.feed-tile iframe{width:100%;height:100%;border:0;pointer-events:none;display:block;background:#000;}
+.feed-tile.active{box-shadow:0 0 0 3px #4f46e5;}
+.feed-tile .feed-cap{position:absolute;left:4px;bottom:3px;z-index:2;background:rgba(0,0,0,.62);color:#fff;font-size:9px;font-weight:800;padding:2px 5px;border-radius:6px;pointer-events:none;}
+@media(max-width:700px){.feed-tile{width:22%;flex:1 1 22%;height:.9in;}}
 .yt-feed-btn{border:0;background:#111827;color:#fff;font-weight:800;font-size:13px;padding:9px 12px;border-radius:14px;cursor:pointer;}
 .yt-feed-btn.active{background:#4f46e5;}
 .yt-feed-btn.cbs-live{background:#000;color:#fff;display:inline-flex;align-items:center;gap:8px;}
@@ -96,10 +103,6 @@ textarea{min-height:100px;}
 .item{border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;background:#fff;}
 .item.done{opacity:.62;}
 
-/* HIDE CHECKED SHOPPING ITEMS ON MOBILE */
-@media(max-width:900px) {
-  #buyList .item.done { display: none !important; }
-}
 
 .item-title{font-weight:800;font-size:17px;}
 .item-meta{color:#6b7280;font-size:14px;margin-top:5px;}
@@ -119,10 +122,10 @@ textarea{min-height:100px;}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(120px);background:#111827;color:#fff;padding:13px 18px;border-radius:12px;z-index:300;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 footer{text-align:center;color:#6b7280;padding:30px 15px;}
-#newsPip{position:fixed;z-index:4000;border-radius:12px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.35);background:#111;display:none;}
+#newsPip{position:fixed;z-index:4000;top:8px;right:8px;width:390px;height:220px;border-radius:12px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.35);background:#111;display:none;transform:translateZ(0);-webkit-transform:translateZ(0);will-change:auto;pointer-events:auto;}
 #newsPip.show{display:block;}
 #newsPip.float{top:8px;right:8px;width:390px;height:220px;}
-#newsPip.docked{box-shadow:none;border-radius:24px;}
+#newsPip.docked{display:none !important;}
 #newsPip iframe{width:100%;height:100%;border:0;}
 #newsPipClose{position:absolute;top:6px;right:6px;z-index:2;border:0;background:rgba(0,0,0,.6);color:#fff;border-radius:8px;width:28px;height:28px;font-weight:800;cursor:pointer;}
 @media(max-width:900px){
@@ -142,13 +145,41 @@ nav button{flex:1 1 calc(50% - 8px);min-height:48px;}
 @media (max-width:900px) and (orientation:landscape){
   #newsPip.show,#newsPip.float,#newsPip.docked{
     top:0!important;left:0!important;right:0!important;bottom:0!important;
-    width:100vw!important;height:100dvh!important;border-radius:0!important;
+    width:100vw!important;height:100dvh!important;height:100vh!important;border-radius:0!important;
     z-index:99999;
   }
   #newsPipClose{top:8px;right:8px;width:36px;height:36px;font-size:22px;}
   body.lh-landscape-video{overflow:hidden;}
 }
 body.lh-pip-float .media-card{display:block;}
+ .media-expand{position:absolute;top:8px;right:8px;z-index:5;border:0;background:rgba(0,0,0,.55);color:#fff;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:800;cursor:pointer;}
+.media-card.lh-full{
+  position:fixed!important;
+  inset:0!important;
+  top:0!important;left:0!important;right:0!important;bottom:0!important;
+  width:100vw!important;
+  height:100dvh!important;height:100vh!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  border-radius:0!important;
+  aspect-ratio:auto!important;
+  z-index:200000!important;
+  background:#000!important;
+}
+.media-card.lh-full .media-screen{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  padding:0!important;
+  min-height:0!important;
+  aspect-ratio:auto!important;
+}
+.media-card.lh-full iframe{width:100%!important;height:100%!important;}
+.media-card.lh-full .media-expand{top:max(8px, env(safe-area-inset-top));right:max(8px, env(safe-area-inset-right));}
+body.lh-video-full{overflow:hidden;}
 #hubHomeBtn{position:fixed;top:8px;left:8px;z-index:9999;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.28);color:#111;text-decoration:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(0,0,0,.18);}
 #hubHomeBtn svg{width:18px;height:18px;display:block;}
 #hubHomeBtn:hover{background:rgba(255,255,255,.5);}
@@ -202,7 +233,6 @@ body.lh-pip-float .media-card{display:block;}
   <button onclick="showPage('todo',this)">✅ To-Do</button>
   <button onclick="showPage('buy',this)">🛒 Shopping</button>
   <button onclick="showPage('notes',this)">📝 Notes</button>
-  <button onclick="showPage('settings',this)">⚙️ Settings</button>
 </nav>
 <div class="container">
 <section id="home" class="page active">
@@ -218,14 +248,28 @@ body.lh-pip-float .media-card{display:block;}
     <div class="media-wrap">
       <div class="media-card">
         <div class="media-screen loaded" id="mediaScreen">
-          <iframe id="mediaFrame" width="857" height="482" src="https://www.youtube.com/embed/C96oohpWBGw" title="LIVE NEWS: LiveNOW FOX 24/7 LIVE STREAM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          <iframe id="mediaFrame" width="857" height="482" src="https://www.youtube.com/embed/C96oohpWBGw" title="LIVE NEWS: LiveNOW FOX 24/7 LIVE STREAM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           <div class="media-placeholder">▶ Click to load YouTube, news, or any webpage</div>
         </div>
+        <button type="button" class="media-expand" id="mediaExpandBtn" onclick="expandHomeVideo(event)">Expand</button>
       </div>
-      <div class="yt-feed-row" id="ytFeedRow">
-        <button type="button" class="yt-feed-btn fox-live" onclick="playHomeFeed(0)">1 · LIVENOW FOX</button>
-        <button type="button" class="yt-feed-btn cbs-live" onclick="playHomeFeed(1)"><span class="cbs-eye"></span> 2 · CBS News</button>
-        <button type="button" class="yt-feed-btn abc-live" onclick="playHomeFeed(2)"><span class="abc-mark">abc</span><span class="abc-word"><span>NEWS</span><span class="live">LIVE</span></span></button>
+      <div class="feed-previews" id="feedPreviews">
+        <button type="button" class="feed-tile" id="feedTile0" onclick="playHomeFeed(0)">
+          <iframe id="feedMini0" title="Feed 1" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <span class="feed-cap">FOX</span>
+        </button>
+        <button type="button" class="feed-tile" id="feedTile1" onclick="playHomeFeed(1)">
+          <iframe id="feedMini1" title="Feed 2" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <span class="feed-cap">CBS</span>
+        </button>
+        <button type="button" class="feed-tile" id="feedTile2" onclick="playHomeFeed(2)">
+          <iframe id="feedMini2" title="Feed 3" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <span class="feed-cap">ABC</span>
+        </button>
+        <button type="button" class="feed-tile" id="feedTile3" onclick="playHomeFeed(3)">
+          <iframe id="feedMini3" title="Feed 4" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <span class="feed-cap">Weather</span>
+        </button>
       </div>
     </div>
   </div>
@@ -278,6 +322,12 @@ body.lh-pip-float .media-card{display:block;}
     <button class="primary" onclick="syncAllConnectedCalendars()">🔄 Sync All</button>
     <button class="action-google" onclick="syncGoogleCalendar()">🟢 Sync Google</button>
     <button class="action-apple" onclick="syncICloudCalendar()">☁️ Sync Apple</button>
+    <p style="margin:12px 0 6px;color:#6b7280;font-size:13px">If sync fails, paste your secret iCal / ICS link and tap sync again.</p>
+    <input id="googleIcsUrl" placeholder="Google Calendar secret iCal URL" style="margin-bottom:8px">
+    <input id="appleIcsUrl" placeholder="Apple Calendar / iCloud ICS URL" style="margin-bottom:8px">
+    <button class="secondary" onclick="saveCalendarFeeds()">Save calendar links</button>
+    <button class="primary" onclick="exportData()">Export LifeHub Data</button>
+    <input type="file" accept=".json" onchange="importData(event)">
     <div id="googleCalendarStatus"></div>
     <div id="icloudCalendarStatus"></div>
   </div>
@@ -353,35 +403,6 @@ body.lh-pip-float .media-card{display:block;}
     <div id="notesList"></div>
   </div>
 </section>
-<section id="settings" class="page">
-  <div class="card">
-    <h2>⚙️ Settings</h2>
-    <button class="action-google" onclick="syncGoogleCalendar()">🟢 Sync Google Calendar</button>
-    <button class="action-apple" onclick="syncICloudCalendar()">☁️ Sync Apple Calendar</button>
-    <p style="margin:12px 0 6px;color:#6b7280;font-size:13px">If sync fails, paste your secret iCal / ICS link and tap sync again.</p>
-    <input id="googleIcsUrl" placeholder="Google Calendar secret iCal URL" style="margin-bottom:8px">
-    <input id="appleIcsUrl" placeholder="Apple Calendar / iCloud ICS URL" style="margin-bottom:8px">
-    <button class="secondary" onclick="saveCalendarFeeds()">Save calendar links</button>
-    <button class="primary" onclick="exportData()">Export LifeHub Data</button>
-    <input type="file" accept=".json" onchange="importData(event)">
-    <button class="danger" onclick="clearAll()">Clear All LifeHub Data</button>
-  </div>
-  <div class="card">
-    <h2>▶ Home screen webpages</h2>
-    <p>Save up to three embed links. Home has one big player and three buttons. Tap a button to play that link in the big player.</p>
-    <label>Button 1</label>
-    <input id="homeFeed1" placeholder="https://www.youtube.com/embed/C96oohpWBGw">
-    <label style="margin-top:10px;display:block">Button 2</label>
-    <input id="homeFeed2" placeholder="https://www.youtube.com/embed/sOocoiODEHw">
-    <label style="margin-top:10px;display:block">Button 3</label>
-    <input id="homeFeed3" placeholder="https://www.youtube.com/embed/iipR5yUp36o">
-    <input id="homeMediaSave" type="hidden">
-    <div class="item-actions" style="margin-top:10px">
-      <button class="primary" onclick="saveHomeFeeds()">Save the three links</button>
-      <button class="secondary" onclick="clearHomeMedia()">Clear</button>
-    </div>
-  </div>
-</section>
 </div>
 <footer>🧠 LifeHub — Your life. One place.</footer>
 
@@ -446,9 +467,9 @@ let googleEvents=JSON.parse(localStorage.getItem(KEY.google)||"[]");
 let dismissedIcloudIds=JSON.parse(localStorage.getItem(KEY.dismissedIcloud)||"[]");
 let dismissedGoogleIds=JSON.parse(localStorage.getItem(KEY.dismissedGoogle)||"[]");
 let widgets=JSON.parse(localStorage.getItem(KEY.widgets)||"[]");
-let homeMedia=localStorage.getItem(KEY.homeMedia)||"https://www.youtube.com/embed/C96oohpWBGw";
-const HOME_FEED_DEFAULTS=["https://www.youtube.com/embed/C96oohpWBGw","https://www.youtube.com/embed/sOocoiODEHw","https://www.youtube.com/embed/iipR5yUp36o"];
-let homeFeeds=JSON.parse(localStorage.getItem(KEY.homeFeeds)||"null")||HOME_FEED_DEFAULTS.slice();
+const HOME_FEED_DEFAULTS=["https://www.youtube.com/embed/C96oohpWBGw","https://www.youtube.com/embed/sOocoiODEHw","https://www.youtube.com/embed/iipR5yUp36o","https://www.youtube.com/embed/wt6SIE7BXS8"];
+let homeFeeds=HOME_FEED_DEFAULTS.slice();
+let homeMedia=homeFeeds[0];
 let homeFeedPick=parseInt(localStorage.getItem("lifehub_home_feed_pick")||"0",10)||0;
 let selectedCalDate="";
 let noteEdit={type:"",id:"",source:""};
@@ -491,7 +512,6 @@ function saveAll(){
   localStorage.setItem(KEY.dismissedIcloud,JSON.stringify(dismissedIcloudIds||[]));
   localStorage.setItem(KEY.dismissedGoogle,JSON.stringify(dismissedGoogleIds||[]));
   localStorage.setItem(KEY.widgets,JSON.stringify(widgets||[]));
-  if(homeMedia) localStorage.setItem(KEY.homeMedia,homeMedia); else localStorage.removeItem(KEY.homeMedia);
 }
 function showPage(id,button){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
@@ -672,7 +692,7 @@ function renderTasks(){
 function renderHomeTasks(){
   const container=document.getElementById("homeTasks"); if(!container)return;
   const today=getTodayString();
-  const todays=(tasks||[]).filter(t=>!t.due||t.due===today);
+  const todays=(tasks||[]);
   container.innerHTML='<ul class="today-list">'+todays.map(t=>'<li><div class="row-main"><input class="check" type="checkbox" '+(t.done?"checked":"")+' onchange="toggleTask(\''+t.id+'\')"><span>'+escapeHtml(t.title)+'</span><div class="row-actions"><button class="secondary" onclick="openItemNote(\'task\',\''+t.id+'\',\'\',\''+escapeHtml(t.title)+'\')">Note</button><button class="danger" onclick="deleteTask(\''+t.id+'\')">🗑️</button></div></div></li>').join("")+'</ul>';
 }
 function saveBuy(e){e.preventDefault();buy.push({id:crypto.randomUUID(),item:document.getElementById("buyItem").value.trim(),price:document.getElementById("buyPrice").value.trim(),notes:(document.getElementById("buyNotes")&&document.getElementById("buyNotes").value||"").trim(),bought:false});e.target.reset();saveAll();renderAll();toast("Shopping item added.");}
@@ -686,8 +706,8 @@ function renderBuy(){
 }
 function renderHomeBuy(){
   const container=document.getElementById("homeBuy"); if(!container)return;
-  const rem=(buy||[]).filter(b=>!b.bought);
-  container.innerHTML='<ul class="today-list">'+rem.map(b=>'<li><div class="row-main"><input class="check" type="checkbox" onchange="toggleBuy(\''+b.id+'\')"><span>'+escapeHtml(b.item)+'</span><div class="row-actions"><button class="danger" onclick="deleteBuy(\''+b.id+'\')">🗑️</button></div></div></li>').join("")+'</ul>';
+  const rem=(buy||[]);
+  container.innerHTML='<ul class="today-list">'+rem.map(b=>'<li><div class="row-main"><input class="check" type="checkbox" '+(b.bought?"checked":"")+' onchange="toggleBuy(\''+b.id+'\')"><span>'+escapeHtml(b.item)+'</span><div class="row-actions"><button class="danger" onclick="deleteBuy(\''+b.id+'\')">🗑️</button></div></div></li>').join("")+'</ul>';
 }
 function saveNote(e){e.preventDefault();notes.push({id:crypto.randomUUID(),title:document.getElementById("noteTitle").value.trim(),text:document.getElementById("noteText").value.trim()});e.target.reset();saveAll();renderAll();toast("Note saved.");}
 function deleteNote(id){notes=notes.filter(n=>n.id!==id);saveAll();renderAll();}
@@ -710,7 +730,7 @@ const YT_CHANNELS={
   "flowers-l8q3w":"UCfHynxRkvFil1pb7f9NrsoQ"
 };
 const YT_LIVE={"boston25news":1,"livenowfox":1,"wcvb":1,"cbsboston":1,"abcnews":1,"channel7boston":1};
-const YT_LIVE_VIDEO={"livenowfox":"C96oohpWBGw"};
+const YT_LIVE_VIDEO={"livenowfox":"C96oohpWBGw","cbsboston":"sOocoiODEHw","cbs":"sOocoiODEHw"};
 const YT_FALLBACK="https://www.youtube.com/embed/live_stream?channel=UCBi2mrWuNuyYy4gbM6fU18Q&autoplay=1&mute=1";
 function youtubeEmbed(url){
   const p=new URL(url, location.href);
@@ -804,48 +824,49 @@ function setNewsDock(onHome){
   if(!pip||pip.dataset.active!=="1") return;
   const mobile = window.innerWidth <= 900;
   const landscape = mobile && window.matchMedia("(orientation: landscape)").matches;
-  const corner = !onHome;
-  pip.classList.add("show");
-  pip.classList.toggle("float", corner && !landscape);
-  pip.classList.toggle("docked", !corner && !landscape);
   if(landscape){
+    pip.classList.add("show","float");
+    pip.classList.remove("docked");
     pip.style.top="0px"; pip.style.left="0px"; pip.style.right="0px"; pip.style.bottom="0px";
     pip.style.width="100vw"; pip.style.height="100dvh";
     document.body.classList.add("lh-pip-float");
     return;
   }
-  if(corner){
-    pip.style.top="8px";
-    pip.style.left="auto";
-    pip.style.right="8px";
-    pip.style.bottom="auto";
-    pip.style.width = mobile ? "168px" : "390px";
-    pip.style.height = mobile ? "96px" : "220px";
-    document.body.classList.add("lh-pip-float");
-  }else{
-    const card=document.querySelector(".media-card");
-    if(!card) return;
-    const r=card.getBoundingClientRect();
-    pip.style.top=r.top+"px";
-    pip.style.left=r.left+"px";
-    pip.style.width=r.width+"px";
-    pip.style.height=r.height+"px";
-    pip.style.right="auto";
+  // Keep the in-page player still. Only show a fixed corner mini-player
+  // after the home card has left the screen — never move the overlay
+  // to follow the card (that was the jumpy scroll).
+  if(onHome){
+    pip.classList.remove("show","float");
+    pip.classList.add("docked");
     document.body.classList.remove("lh-pip-float");
+    return;
   }
+  pip.classList.add("show","float");
+  pip.classList.remove("docked");
+  pip.style.top="8px";
+  pip.style.left="auto";
+  pip.style.right="8px";
+  pip.style.bottom="auto";
+  pip.style.width = mobile ? "168px" : "390px";
+  pip.style.height = mobile ? "96px" : "220px";
+  document.body.classList.add("lh-pip-float");
 }
 window.addEventListener("resize", function(){
   const home=document.getElementById("home");
   if(home&&home.classList.contains("active")) updateNewsDockFromScroll();
 });
+var _pipAway=false;
 function updateNewsDockFromScroll(){
   const home=document.getElementById("home");
   if(!home || !home.classList.contains("active")) return;
   const card=document.querySelector(".media-card");
   if(!card){ setNewsDock(true); return; }
   const r=card.getBoundingClientRect();
-  const scrolledAway = r.bottom < (window.innerWidth<=900 ? 160 : 90);
-  setNewsDock(!scrolledAway);
+  const leaveAt = window.innerWidth<=900 ? 80 : 40;
+  const returnAt = window.innerWidth<=900 ? 180 : 140;
+  if(!_pipAway && r.bottom < leaveAt) _pipAway=true;
+  else if(_pipAway && r.bottom > returnAt) _pipAway=false;
+  setNewsDock(!_pipAway);
 }
 window.addEventListener("scroll", updateNewsDockFromScroll, {passive:true});
 document.addEventListener("scroll", updateNewsDockFromScroll, {passive:true, capture:true});
@@ -929,49 +950,72 @@ function tickClock(){
   if(el) el.textContent=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
 }
 setInterval(tickClock,1000);
-function saveHomeMedia(){ saveHomeFeeds(); }
-function clearHomeMedia(){homeMedia="";saveAll();document.getElementById("homeMediaSave").value="";toast("Cleared.");}
+function saveHomeMedia(){}
+function clearHomeMedia(){}
+function expandHomeVideo(e){
+  if(e){ e.preventDefault(); e.stopPropagation(); }
+  var card=document.querySelector(".media-card");
+  var btn=document.getElementById("mediaExpandBtn");
+  var pip=document.getElementById("newsPip");
+  if(!card) return;
+  var on=card.classList.toggle("lh-full");
+  document.body.classList.toggle("lh-video-full", on);
+  if(btn) btn.textContent=on?"Close":"Expand";
+  if(pip) pip.style.display=on?"none":"";
+}
+document.addEventListener("keydown", function(e){
+  if(e.key!=="Escape") return;
+  var card=document.querySelector(".media-card");
+  if(!card || !card.classList.contains("lh-full")) return;
+  card.classList.remove("lh-full");
+  document.body.classList.remove("lh-video-full");
+  var btn=document.getElementById("mediaExpandBtn");
+  if(btn) btn.textContent="Expand";
+  var pip=document.getElementById("newsPip");
+  if(pip) pip.style.display="";
+});
+
 function openAI(url){
   window.open(url,'_blank','noopener,noreferrer');
 }
-function openAppOrWeb(appUrl, webUrl){
-  openAI(webUrl||appUrl);
+function previewEmbedUrl(raw){
+  let url=(raw||"").trim();
+  if(!url) return "";
+  if(!/^https?:\/\//i.test(url)) url="https://"+url;
+  try{ if(/youtube\.com|youtu\.be|youtube-nocookie\.com/i.test(url)) url=youtubeEmbed(url); }catch(e){}
+  if(url.indexOf("autoplay=")===-1) url+=(url.indexOf("?")>=0?"&":"?")+"autoplay=1&mute=1&playsinline=1";
+  return url;
+}
+function loadFeedPreviews(){
+  if(!Array.isArray(homeFeeds)) homeFeeds=HOME_FEED_DEFAULTS.slice();
+  for(var i=0;i<4;i++){
+    var frame=document.getElementById("feedMini"+i);
+    var tile=document.getElementById("feedTile"+i);
+    var url=previewEmbedUrl(homeFeeds[i]||"");
+    if(frame){
+      if(url) frame.src=url;
+      else frame.removeAttribute("src");
+    }
+    if(tile) tile.classList.toggle("active", i===homeFeedPick);
+  }
 }
 function loadSavedHomeMedia(){
-  if(!Array.isArray(homeFeeds) || homeFeeds.length<3) homeFeeds=HOME_FEED_DEFAULTS.slice();
-  ["homeFeed1","homeFeed2","homeFeed3"].forEach(function(id,i){
-    const el=document.getElementById(id); if(el) el.value=homeFeeds[i]||"";
-  });
-  const input=document.getElementById("homeMediaSave"); if(input) input.value=homeMedia||homeFeeds[homeFeedPick]||"";
-  const start=homeFeeds[homeFeedPick]||homeMedia||"";
+  homeFeeds=HOME_FEED_DEFAULTS.slice();
+  const start=homeFeeds[homeFeedPick]||homeFeeds[0]||"";
   if(start) setTimeout(function(){ loadMediaUrl(start); }, 200);
+  setTimeout(loadFeedPreviews, 250);
 }
-function saveHomeFeeds(){
-  homeFeeds=[
-    (document.getElementById("homeFeed1").value||"").trim(),
-    (document.getElementById("homeFeed2").value||"").trim(),
-    (document.getElementById("homeFeed3").value||"").trim()
-  ].map(function(url){
-    if(!url) return "";
-    if(!/^https?:\/\//i.test(url)) url="https://"+url;
-    return url;
-  });
-  const first=homeFeeds.find(Boolean)||"";
-  homeMedia=first;
-  saveAll();
-  if(first) loadMediaUrl(first);
-  toast("Saved the three Home links.");
-}
+function saveHomeFeeds(){}
 function playHomeFeed(i){
-  const url=(homeFeeds&&homeFeeds[i])||"";
-  if(!url){ toast("Put a link in Settings for button "+(i+1)+"."); showPage("settings"); return; }
+  const url=(homeFeeds&&homeFeeds[i])||HOME_FEED_DEFAULTS[i]||"";
+  if(!url){ toast("That channel is not set."); return; }
   homeFeedPick=i;
-  localStorage.setItem("lifehub_home_feed_pick",String(i));
-  homeMedia=url; saveAll();
+  homeMedia=url;
   loadMediaUrl(url);
-  document.querySelectorAll(".yt-feed-btn").forEach(function(btn,idx){
-    btn.classList.toggle("active", idx===i);
-  });
+  for(var n=0;n<4;n++){
+    var tile=document.getElementById("feedTile"+n);
+    if(tile) tile.classList.toggle("active", n===i);
+  }
 }
 function renderHome(){renderHomeTasks();renderHomeBuy();renderMiniCalendar();renderBigCalendar();renderHomeNotes();renderHomeWidgets();renderDaySummary();}
 function renderAll(){renderHome();renderTasks();renderBuy();renderEvents();renderNotes();}
