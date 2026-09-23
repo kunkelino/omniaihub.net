@@ -41,6 +41,12 @@ nav button.active{background:var(--primary);color:#fff;}
 .media-screen.loaded .media-placeholder{display:none;}
 .media-screen.loaded iframe{display:block;}
 .yt-feed-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;width:100%;}
+.feed-previews{display:flex;align-items:stretch;gap:10px;margin-top:10px;width:100%;}
+.feed-tile{width:1.78in;height:1in;flex:0 0 1.78in;border:0;padding:0;border-radius:10px;overflow:hidden;background:#111;cursor:pointer;position:relative;box-shadow:0 0 0 2px rgba(15,23,42,.12);}
+.feed-tile iframe{width:100%;height:100%;border:0;pointer-events:none;display:block;background:#000;}
+.feed-tile.active{box-shadow:0 0 0 3px #4f46e5;}
+.feed-tile .feed-cap{position:absolute;left:4px;bottom:3px;z-index:2;background:rgba(0,0,0,.62);color:#fff;font-size:9px;font-weight:800;padding:2px 5px;border-radius:6px;pointer-events:none;}
+@media(max-width:700px){.feed-tile{width:30%;flex:1 1 30%;height:1in;}}
 .yt-feed-btn{border:0;background:#111827;color:#fff;font-weight:800;font-size:13px;padding:9px 12px;border-radius:14px;cursor:pointer;}
 .yt-feed-btn.active{background:#4f46e5;}
 .yt-feed-btn.cbs-live{background:#000;color:#fff;display:inline-flex;align-items:center;gap:8px;}
@@ -222,10 +228,19 @@ body.lh-pip-float .media-card{display:block;}
           <div class="media-placeholder">▶ Click to load YouTube, news, or any webpage</div>
         </div>
       </div>
-      <div class="yt-feed-row" id="ytFeedRow">
-        <button type="button" class="yt-feed-btn fox-live" onclick="playHomeFeed(0)">1 · LIVENOW FOX</button>
-        <button type="button" class="yt-feed-btn cbs-live" onclick="playHomeFeed(1)"><span class="cbs-eye"></span> 2 · CBS News</button>
-        <button type="button" class="yt-feed-btn abc-live" onclick="playHomeFeed(2)"><span class="abc-mark">abc</span><span class="abc-word"><span>NEWS</span><span class="live">LIVE</span></span></button>
+      <div class="feed-previews" id="feedPreviews">
+        <button type="button" class="feed-tile" id="feedTile0" onclick="playHomeFeed(0)">
+          <iframe id="feedMini0" title="Feed 1" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <span class="feed-cap">FOX</span>
+        </button>
+        <button type="button" class="feed-tile" id="feedTile1" onclick="playHomeFeed(1)">
+          <iframe id="feedMini1" title="Feed 2" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <span class="feed-cap">CBS</span>
+        </button>
+        <button type="button" class="feed-tile" id="feedTile2" onclick="playHomeFeed(2)">
+          <iframe id="feedMini2" title="Feed 3" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <span class="feed-cap">ABC</span>
+        </button>
       </div>
     </div>
   </div>
@@ -937,6 +952,27 @@ function openAI(url){
 function openAppOrWeb(appUrl, webUrl){
   openAI(webUrl||appUrl);
 }
+function previewEmbedUrl(raw){
+  let url=(raw||"").trim();
+  if(!url) return "";
+  if(!/^https?:\/\//i.test(url)) url="https://"+url;
+  try{ if(/youtube\.com|youtu\.be|youtube-nocookie\.com/i.test(url)) url=youtubeEmbed(url); }catch(e){}
+  if(url.indexOf("autoplay=")===-1) url+=(url.indexOf("?")>=0?"&":"?")+"autoplay=1&mute=1&playsinline=1";
+  return url;
+}
+function loadFeedPreviews(){
+  if(!Array.isArray(homeFeeds)) homeFeeds=HOME_FEED_DEFAULTS.slice();
+  for(var i=0;i<3;i++){
+    var frame=document.getElementById("feedMini"+i);
+    var tile=document.getElementById("feedTile"+i);
+    var url=previewEmbedUrl(homeFeeds[i]||"");
+    if(frame){
+      if(url) frame.src=url;
+      else frame.removeAttribute("src");
+    }
+    if(tile) tile.classList.toggle("active", i===homeFeedPick);
+  }
+}
 function loadSavedHomeMedia(){
   if(!Array.isArray(homeFeeds) || homeFeeds.length<3) homeFeeds=HOME_FEED_DEFAULTS.slice();
   ["homeFeed1","homeFeed2","homeFeed3"].forEach(function(id,i){
@@ -945,6 +981,7 @@ function loadSavedHomeMedia(){
   const input=document.getElementById("homeMediaSave"); if(input) input.value=homeMedia||homeFeeds[homeFeedPick]||"";
   const start=homeFeeds[homeFeedPick]||homeMedia||"";
   if(start) setTimeout(function(){ loadMediaUrl(start); }, 200);
+  setTimeout(loadFeedPreviews, 250);
 }
 function saveHomeFeeds(){
   homeFeeds=[
@@ -960,18 +997,20 @@ function saveHomeFeeds(){
   homeMedia=first;
   saveAll();
   if(first) loadMediaUrl(first);
+  loadFeedPreviews();
   toast("Saved the three Home links.");
 }
 function playHomeFeed(i){
   const url=(homeFeeds&&homeFeeds[i])||"";
-  if(!url){ toast("Put a link in Settings for button "+(i+1)+"."); showPage("settings"); return; }
+  if(!url){ toast("Put a link in Settings for box "+(i+1)+"."); showPage("settings"); return; }
   homeFeedPick=i;
   localStorage.setItem("lifehub_home_feed_pick",String(i));
   homeMedia=url; saveAll();
   loadMediaUrl(url);
-  document.querySelectorAll(".yt-feed-btn").forEach(function(btn,idx){
-    btn.classList.toggle("active", idx===i);
-  });
+  for(var n=0;n<3;n++){
+    var tile=document.getElementById("feedTile"+n);
+    if(tile) tile.classList.toggle("active", n===i);
+  }
 }
 function renderHome(){renderHomeTasks();renderHomeBuy();renderMiniCalendar();renderBigCalendar();renderHomeNotes();renderHomeWidgets();renderDaySummary();}
 function renderAll(){renderHome();renderTasks();renderBuy();renderEvents();renderNotes();}
