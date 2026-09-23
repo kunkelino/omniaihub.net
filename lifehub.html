@@ -1105,6 +1105,44 @@ function loadSavedHomeMedia(){
   setTimeout(loadFeedPreviews, 250);
 }
 function saveHomeFeeds(){}
+var ytLivePlayer=null;
+function youtubeLiveUrl(id){
+  var origin="";
+  try{ origin=encodeURIComponent(location.origin||""); }catch(e){}
+  return "https://www.youtube.com/embed/"+id+"?autoplay=1&mute=1&playsinline=1&rel=0&fs=1&enablejsapi=1"+(origin?("&origin="+origin):"");
+}
+function jumpYoutubeToLive(player){
+  function go(){
+    try{
+      var d=player.getDuration && player.getDuration();
+      if(d && d>20){ player.seekTo(Math.max(0,d-1), true); return true; }
+    }catch(e){}
+    return false;
+  }
+  go();
+  setTimeout(go, 600);
+  setTimeout(go, 1600);
+  setTimeout(go, 3200);
+}
+function attachYoutubeLivePlayer(){
+  if(!window.YT || !YT.Player) return;
+  var frame=document.getElementById("mediaFrame");
+  if(!frame) return;
+  try{
+    ytLivePlayer=new YT.Player("mediaFrame",{
+      events:{
+        onReady:function(e){ jumpYoutubeToLive(e.target); },
+        onStateChange:function(e){
+          if(e.data===YT.PlayerState.PLAYING || e.data===YT.PlayerState.BUFFERING){
+            var d=e.target.getDuration && e.target.getDuration();
+            var t=e.target.getCurrentTime && e.target.getCurrentTime();
+            if(d>60 && t<15) jumpYoutubeToLive(e.target);
+          }
+        }
+      }
+    });
+  }catch(e){}
+}
 function playHomeFeed(i){
   const LOCKED=[
     {id:"C96oohpWBGw",title:"LIVE NEWS: LiveNOW FOX 24/7 LIVE STREAM"},
@@ -1113,7 +1151,7 @@ function playHomeFeed(i){
     {id:"wt6SIE7BXS8",title:"FOX Weather Live"}
   ];
   const item=LOCKED[i];
-  const url=item?("https://www.youtube.com/embed/"+item.id+"?autoplay=1&mute=1&playsinline=1&rel=0&fs=1"):((homeFeeds&&homeFeeds[i])||HOME_FEED_DEFAULTS[i]||"");
+  const url=item?youtubeLiveUrl(item.id):((homeFeeds&&homeFeeds[i])||HOME_FEED_DEFAULTS[i]||"");
   if(!url){ toast("That channel is not set."); return; }
   homeFeedPick=i;
   homeMedia=url;
@@ -1128,6 +1166,7 @@ function playHomeFeed(i){
     if(screen) screen.classList.add("loaded");
     var pipFrame=document.getElementById("newsPipFrame");
     if(pipFrame) pipFrame.src=url;
+    setTimeout(attachYoutubeLivePlayer, 400);
   } else {
     loadMediaUrl(url);
   }
@@ -1145,5 +1184,6 @@ loadSavedHomeMedia();
 syncGoogleCalendar(true);
 syncICloudCalendar(true);
 </script>
+<script src="https://www.youtube.com/iframe_api"></script>
 </body>
 </html>
