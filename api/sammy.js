@@ -5,11 +5,11 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
 
-  const key = process.env.OPENAI_API_KEY;
+  const key = process.env.OPENAI_API_KEY || process.env.OPEN_AI_KEY || process.env.OPENAI_KEY;
   if (!key) {
     return res.status(500).json({
       error: "Missing OPENAI_API_KEY",
-      reply: "Sammy is not connected yet. Add your OpenAI key in Vercel as OPENAI_API_KEY."
+      reply: "Sammy is not connected yet. In Vercel add OPENAI_API_KEY or OPEN_AI_KEY, then Redeploy."
     });
   }
 
