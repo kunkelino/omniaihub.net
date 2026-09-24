@@ -13,7 +13,7 @@ a{color:#312e81;}
 .hero{background:linear-gradient(135deg,#111827,#312e81);color:#fff;border-radius:24px;padding:32px 28px;box-shadow:var(--shadow);margin-bottom:22px;}
 .name,.nav a,h3,.title{font-family:Arial,Helvetica,sans-serif;text-shadow:0 1px 0 rgba(255,255,255,.35),0 2px 0 rgba(0,0,0,.18);}
 .name{font-size:34px;font-weight:700;margin:0 0 8px;}
-.email,.phone{font-size:17px;font-weight:700;}
+ .email,.phone{font-size:17px;font-weight:700;}.email{margin-bottom:14px;}
 .email a,.phone a{color:#fff;}
 .location{font-size:20px;font-weight:700;margin-top:8px;opacity:.95;}
 .nav{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;}
@@ -27,7 +27,20 @@ a{color:#312e81;}
 .box.playing .cap{display:none;}
 .play-badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:22px;}
 .expand{position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,.55);color:#fff;border:0;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;display:none;}
-.box.playing .expand{display:block;}
+  .box.playing .expand{display:block;}
+
+.box.investor{background:linear-gradient(135deg,#111827,#1e3a5f);display:flex;align-items:center;justify-content:center;text-align:center;border:0;}
+.investor-inner{padding:18px;}
+.investor-kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.7;margin-bottom:8px;}
+.investor-title{font-size:26px;font-weight:800;}
+.investor-sub{margin-top:8px;font-size:13px;opacity:.8;}
+
+
+.box.yt-full{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;border-radius:0!important;z-index:200000!important;aspect-ratio:auto!important;}
+.box.yt-full iframe{width:100%!important;height:100%!important;object-fit:contain;}
+.box.yt-full .expand{display:block;}
+body.yt-video-full{overflow:hidden;}
+
 .wide{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--shadow);}
 .wide-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
 h3{margin:0 0 10px;font-size:16px;}
@@ -58,7 +71,7 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
 <div class="page">
   <div class="hero">
     <div class="name">Jonathan Kunkel</div>
-    <div class="email"><a href="mailto:jonmichaelsjon@gmail.com">jonmichaelsjon@gmail.com</a></div>
+    <div class="email"><a href="https://mail.google.com/mail/?view=cm&fs=1&to=Jonathan@omniaihub.net" target="_blank" rel="noopener noreferrer">Jonathan@omniaihub.net</a></div>
     <div class="phone"><a href="tel:6464384703">646-438-4703</a></div>
     <div class="location">Boston, Massachusetts</div>
     <nav class="nav">
@@ -70,13 +83,13 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
   <div id="portfolio">
     <a class="box" href="ofn.html"><img src="ofn-preview.jpg" alt="One From Now"><span class="cap">One From Now</span></a>
     <a class="box" href="lifehub.html"><img src="lifehub-preview.jpg" alt="LifeHub"><span class="cap">LifeHub</span></a>
-    <div class="box yt" data-id="XhXTWCofzMo">
-      <img src="https://img.youtube.com/vi/XhXTWCofzMo/sddefault.jpg" alt="YouTube">
-      <span class="play-badge">▶</span>
-      <span class="cap">YouTube</span>
-      <button class="expand" type="button">Expand</button>
-    </div>
-    <a class="box" href="spk4gln.html"><img src="speak4-preview.jpg" alt="Speak4"><span class="cap">Speak4</span></a>
+    <button class="box investor" type="button" id="investorTile" onclick="unlockPrivateApp()">
+      <div class="investor-inner">
+        <div class="investor-kicker">Private</div>
+        <div class="investor-title">Investors</div>
+        <div class="investor-sub">Access by invitation</div>
+      </div>
+    </button>
     <div class="box yt" data-id="iSAq5QqCaFI">
       <img src="https://img.youtube.com/vi/iSAq5QqCaFI/sddefault.jpg" alt="YouTube">
       <span class="play-badge">▶</span>
@@ -112,13 +125,13 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
         </div>
         <div>
           <h3>About</h3>
-          <p>Builder of LifeHub, One From Now, and Speak4 applications. Boston-based.</p>
+          <p>Builder of LifeHub, One From Now, and additional private applications. Boston-based.</p>
         </div>
         <div>
           <h3>Contact</h3>
           <p>Jonathan Kunkel<br>
-          <a href="tel:6464384703">(646) 438-4703</a><br>
-          <a href="mailto:jonmichaelsjon@gmail.com">jonmichaelsjon@gmail.com</a><br>
+          <a href="tel:6464384703">(646) 438-4703</a><br><br>
+          <a href="https://mail.google.com/mail/?view=cm&fs=1&to=Jonathan@omniaihub.net" target="_blank" rel="noopener noreferrer">Jonathan@omniaihub.net</a><br>
           Boston, Massachusetts</p>
         </div>
       </div>
@@ -126,7 +139,7 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
   </div>
   <section class="resume" id="resume">
     <div class="resume-name">Jonathan Kunkel</div>
-    <div class="resume-contact">(646) 438-4703 | <a href="mailto:jonmichaelsjon@gmail.com">jonmichaelsjon@gmail.com</a> | Boston, Massachusetts</div>
+    <div class="resume-contact">(646) 438-4703 &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://mail.google.com/mail/?view=cm&fs=1&to=Jonathan@omniaihub.net" target="_blank" rel="noopener noreferrer">Jonathan@omniaihub.net</a> | Boston, Massachusetts</div>
     <h2>Professional Summary</h2>
     <p>Adaptable operations and management professional with a strong background in high-volume queue management, administrative support, and cross-departmental coordination. Proven track record of executing detailed financial audits, maintaining database accuracy, and ensuring strict quality standards across fast-paced customer service and hospitality environments. Adept at building strong business relationships through reliable client support, proactive customer outreach, and effective workflow optimization. Combines hands-on experience in retail production management with a commitment to maintaining optimal operational flow and enhancing overall guest and customer satisfaction.</p>
     <h2>Skills</h2>
@@ -182,20 +195,38 @@ document.querySelectorAll(".yt").forEach(function(box){
     if(box.classList.contains("playing")) return;
     box.classList.add("playing");
     var id=box.dataset.id;
-    box.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><button class="expand" type="button">Expand</button>';
+    box.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0&playsinline=1&fs=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><button class="expand" type="button">Expand</button>';
     box.querySelector(".expand").addEventListener("click", function(ev){
+      ev.preventDefault();
       ev.stopPropagation();
-      window.open("https://www.youtube.com/watch?v="+id,"_blank","noopener");
+      var open=box.classList.contains("yt-full");
+      box.classList.toggle("yt-full", !open);
+      document.body.classList.toggle("yt-video-full", !open);
+      ev.currentTarget.textContent=open?"Expand":"Close";
     });
   }
   box.addEventListener("click", function(e){
-    if(e.target.closest(".expand")){
-      window.open("https://www.youtube.com/watch?v="+box.dataset.id,"_blank","noopener");
-      return;
-    }
+    if(e.target.closest(".expand")) return;
     play();
   });
 });
+document.addEventListener("keydown", function(e){
+  if(e.key!=="Escape") return;
+  document.querySelectorAll(".yt.yt-full").forEach(function(box){
+    box.classList.remove("yt-full");
+    var b=box.querySelector(".expand");
+    if(b) b.textContent="Expand";
+  });
+  document.body.classList.remove("yt-video-full");
+});
+
+function unlockPrivateApp(){
+  var v=prompt("Enter access code");
+  if(v==null) return;
+  v=String(v).replace(/\s/g,"");
+  if(v==="8291"){ window.location.href="spk4gln.html"; }
+  else { alert("That code is not valid."); }
+}
 </script>
 
 </body>
