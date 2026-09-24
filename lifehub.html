@@ -409,7 +409,6 @@ body.lh-video-full{overflow:hidden;}
 
 <div class="modal" id="talkModal"><div class="modal-box">
   <h2>🎤 Talk to Sammy</h2>
-  <p style="margin:0 0 10px;color:#6b7280;font-size:13px">Speak or type. Sammy can add shopping, to-dos, notes, and appointments. No ChatGPT bill.</p>
   <button class="primary" id="sammySpeakBtn" style="width:100%;padding:18px" onclick="startListening()">🎤 Speak</button>
   <textarea id="modalSpeechText" placeholder="Add shampoo to my shopping list..."></textarea>
   <div id="sammyReply" style="display:none;margin:10px 0;padding:12px;border-radius:12px;background:#eef2ff;color:#312e81;font-weight:700;white-space:pre-wrap;"></div>
@@ -1190,10 +1189,12 @@ function parseSammyLocal(text){
   }
   if(/\b(appointment|meet|meeting|schedule|calendar|at \d)/.test(s) || /\b(today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/.test(s) && /\b(at|@|:)\b/.test(s)){
     var title=raw.replace(/^(please|sammy|hey sammy|can you|add|schedule|set|book|make)\b[\s,]*/i,"");
-    title=title.replace(/\b(an |a )?(appointment|meeting) (for |to |with )?/,"");
+    title=title.replace(/\b(an |a )?(appointment|meeting)\b/ig,"");
     title=title.replace(/\b(today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/ig,"");
-    title=title.replace(/\b(at|@)\s*\d{1,2}(:\d{2})?\s*(a\.?m\.?|p\.?m\.?)?/ig,"");
-    title=title.replace(/\bon\b/ig,"").replace(/\s+/g," ").trim()||"Appointment";
+    title=title.replace(/\b(morning|afternoon|evening|tonight|which is)\b/ig,"");
+    title=title.replace(/\b(for|at|@)\s*\d{1,2}(:\d{2})?\s*(a\.?m\.?|p\.?m\.?)/ig,"");
+    title=title.replace(/\b\d{1,2}(:\d{2})?\s*(a\.?m\.?|p\.?m\.?)/ig,"");
+    title=title.replace(/\b(for|on|to|at)\b/ig,"").replace(/\s+/g," ").trim()||"Appointment";
     var date=parseSammyDate(s);
     var time=parseSammyTime(s);
     actions.push({type:"add_event",title:title,date:date,time:time});
