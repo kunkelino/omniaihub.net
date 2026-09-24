@@ -319,18 +319,16 @@ body.lh-video-full{overflow:hidden;}
 <section id="calendar" class="page">
   <div class="card">
     <h2>📅 Connected Calendars</h2>
+    <div class="item-actions">
     <button class="primary" onclick="syncAllConnectedCalendars()">🔄 Sync All</button>
     <button class="action-google" onclick="syncGoogleCalendar()">🟢 Sync Google</button>
     <button class="action-apple" onclick="syncICloudCalendar()">☁️ Sync Apple</button>
-    <p style="margin:12px 0 6px;color:#6b7280;font-size:13px">Paste the secret iCal / ICS link from Google Calendar settings and from iCloud.com calendar sharing, tap Save calendar links, then Sync. webcal links are fine.</p>
-    <input id="googleIcsUrl" placeholder="Google Calendar secret iCal URL" style="margin-bottom:8px">
-    <input id="appleIcsUrl" placeholder="iCloud Calendar ICS URL (blue Calendar)" style="margin-bottom:8px">
-    <input id="appleIcsHomeUrl" placeholder="iCloud Home calendar ICS URL (pink Home — 11:15 is here)" style="margin-bottom:8px">
-    <button class="secondary" onclick="saveCalendarFeeds()">Save calendar links</button>
-    <button class="primary" onclick="exportData()">Export LifeHub Data</button>
-    <input type="file" accept=".json" onchange="importData(event)">
-    <div id="googleCalendarStatus"></div>
-    <div id="icloudCalendarStatus"></div>
+    </div>
+    <input id="googleIcsUrl" type="hidden">
+    <input id="appleIcsUrl" type="hidden">
+    <input id="appleIcsHomeUrl" type="hidden">
+    <div id="googleCalendarStatus" style="display:none"></div>
+    <div id="icloudCalendarStatus" style="display:none"></div>
   </div>
   <div class="card">
     <div class="cal-split">
