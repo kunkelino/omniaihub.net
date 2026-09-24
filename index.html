@@ -22,7 +22,7 @@ a{color:#312e81;}
 .title{font-size:20px;font-weight:700;margin:0 0 14px;}
 #portfolio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;}
 .box{width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#111;display:block;position:relative;text-decoration:none;color:#fff;box-shadow:var(--shadow);cursor:pointer;}
-.box img,.box iframe{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;border:0;}
+.box img,.box iframe,.box video{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;border:0;}
 .box .cap{position:absolute;left:0;right:0;bottom:0;padding:10px 12px;background:linear-gradient(transparent,rgba(0,0,0,.75));font-size:13px;font-weight:700;pointer-events:none;}
 .box.playing .cap{display:none;}
 .play-badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:22px;}
@@ -86,8 +86,8 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
     <button class="box investor" type="button" id="investorTile" onclick="unlockPrivateApp()">
       <div class="investor-inner">
         <div class="investor-kicker">Private</div>
-        <div class="investor-title">Investors</div>
-        <div class="investor-sub">Access by invitation</div>
+        <div class="investor-title">Access</div>
+        <div class="investor-sub">By invitation</div>
       </div>
     </button>
     <div class="box yt" data-id="iSAq5QqCaFI">
@@ -100,6 +100,12 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
       <img src="https://img.youtube.com/vi/6lhyfMfMqyE/maxresdefault.jpg" alt="YouTube">
       <span class="play-badge">▶</span>
       <span class="cap">YouTube</span>
+      <button class="expand" type="button">Expand</button>
+    </div>
+    <div class="box local-vid" data-src="video-3.mp4">
+      <img src="video-3-poster.jpg" alt="Video 3">
+      <span class="play-badge">▶</span>
+      <span class="cap">Video</span>
       <button class="expand" type="button">Expand</button>
     </div>
     <a class="box" href="holy-family.html"><img src="order-here.jpg" alt="Holy Family Snack Center"><span class="cap">Holy Family Snack Center</span></a>
@@ -196,6 +202,26 @@ document.querySelectorAll(".yt").forEach(function(box){
     box.classList.add("playing");
     var id=box.dataset.id;
     box.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0&playsinline=1&fs=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><button class="expand" type="button">Expand</button>';
+    box.querySelector(".expand").addEventListener("click", function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      var open=box.classList.contains("yt-full");
+      box.classList.toggle("yt-full", !open);
+      document.body.classList.toggle("yt-video-full", !open);
+      ev.currentTarget.textContent=open?"Expand":"Close";
+    });
+  }
+  box.addEventListener("click", function(e){
+    if(e.target.closest(".expand")) return;
+    play();
+  });
+});
+document.querySelectorAll(".local-vid").forEach(function(box){
+  function play(){
+    if(box.classList.contains("playing")) return;
+    box.classList.add("playing");
+    var src=box.dataset.src;
+    box.innerHTML='<video src="'+src+'" autoplay controls playsinline></video><button class="expand" type="button">Expand</button>';
     box.querySelector(".expand").addEventListener("click", function(ev){
       ev.preventDefault();
       ev.stopPropagation();

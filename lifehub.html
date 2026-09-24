@@ -270,12 +270,6 @@ body.lh-video-full{overflow:hidden;}
           <span class="feed-cap">Weather</span>
         </button>
       </div>
-      <div class="feed-previews" id="privateVideos">
-        <button type="button" class="feed-tile" onclick="playNumberedVideo(1)"><span class="feed-cap">1</span></button>
-        <button type="button" class="feed-tile" onclick="playNumberedVideo(2)"><span class="feed-cap">2</span></button>
-        <button type="button" class="feed-tile" onclick="playNumberedVideo(3)"><span class="feed-cap">3</span></button>
-        <button type="button" class="feed-tile" onclick="playNumberedVideo(4)"><span class="feed-cap">4 · Private</span></button>
-      </div>
     </div>
   </div>
   <div class="tri-box-row">
@@ -1374,44 +1368,6 @@ renderAll();
 loadSavedHomeMedia();
 syncGoogleCalendar(true);
 syncICloudCalendar(true);
-
-var NUMBERED_VIDEOS={
-  1:{type:"yt",id:"iSAq5QqCaFI"},
-  2:{type:"yt",id:"6lhyfMfMqyE"},
-  3:{type:"yt",id:"sOocoiODEHw"},
-  4:{type:"file",src:"private-4.mp4"}
-};
-function playNumberedVideo(n){
-  var item=NUMBERED_VIDEOS[n];
-  if(!item) return;
-  var screen=document.getElementById("mediaScreen");
-  var frame=document.getElementById("mediaFrame");
-  var file=document.getElementById("mediaFile");
-  if(!file){
-    file=document.createElement("video");
-    file.id="mediaFile";
-    file.setAttribute("controls","");
-    file.setAttribute("playsinline","");
-    file.style.cssText="position:absolute;inset:0;width:100%;height:100%;background:#000;object-fit:contain;display:none;";
-    if(screen) screen.appendChild(file);
-  }
-  if(item.type==="file"){
-    if(frame){ frame.style.display="none"; frame.removeAttribute("src"); }
-    file.src=item.src;
-    file.style.display="block";
-    file.play().catch(function(){});
-  }else{
-    file.pause(); file.removeAttribute("src"); file.style.display="none";
-    if(typeof playHomeFeed==="function" && frame){
-      frame.style.display="block";
-    }
-    if(frame){
-      frame.src="https://www.youtube.com/embed/"+item.id+"?autoplay=1&rel=0&playsinline=1&fs=1";
-      frame.style.display="block";
-    }
-  }
-  if(screen) screen.classList.add("loaded");
-}
 
 </script>
 </body>
