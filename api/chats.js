@@ -94,7 +94,11 @@ module.exports = async function handler(req, res) {
       const out = {
         info: mergeRows(SEED.info, current.info),
         story: current.story,
-        rooms: current.rooms
+        rooms: current.rooms,
+        resources: current.resources,
+        videos: current.videos,
+        modQueue: current.modQueue,
+        suggestions: current.suggestions
       };
       return send(res, 200, out);
     }
@@ -110,7 +114,15 @@ module.exports = async function handler(req, res) {
           : current.rooms
       };
       await writeStore(next);
-      return send(res, 200, { info: next.info, story: next.story, rooms: next.rooms });
+      return send(res, 200, {
+        info: next.info,
+        story: next.story,
+        rooms: next.rooms,
+        resources: next.resources,
+        videos: next.videos,
+        modQueue: next.modQueue,
+        suggestions: next.suggestions
+      });
     }
 
     return send(res, 405, { error: "Use GET or POST" });
