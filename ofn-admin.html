@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One From Now — Admin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fa;color:#17202a}
+.wrap{max-width:900px;margin:0 auto;padding:32px 18px}.card{background:#fff;border:1px solid #dfe5ec;border-radius:14px;padding:24px;margin-bottom:18px;box-shadow:0 2px 8px #0000000a}
+h1{margin:0 0 6px}.muted{color:#667085}.login{max-width:430px;margin:10vh auto}.row{display:flex;gap:10px;flex-wrap:wrap}
+input,button{font:inherit;padding:12px;border-radius:9px;border:1px solid #cbd5e1}input{width:100%}button{cursor:pointer;background:#17202a;color:#fff;border-color:#17202a}
+#error{color:#b42318;min-height:22px}.hidden{display:none}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2f6;font-size:13px}
+</style>
+</head>
+<body>
+<div id="login" class="wrap login">
+  <div class="card">
+    <h1>One From Now</h1>
+    <p class="muted">Private moderator/admin area</p>
+    <input id="code" inputmode="numeric" autocomplete="off" placeholder="Admin code">
+    <div style="height:10px"></div>
+    <button id="loginBtn">Log in</button>
+    <p id="error"></p>
+  </div>
+</div>
+
+<div id="app" class="wrap hidden">
+  <div class="card">
+    <span class="badge">ADMIN</span>
+    <h1>One From Now Admin</h1>
+    <p class="muted">This page is isolated from the public OFN page. No existing OFN files are modified by this page.</p>
+    <button id="logout">Log out</button>
+  </div>
+  <div class="card">
+    <h2>Moderator Dashboard</h2>
+    <p class="muted">Admin area is installed and ready for the next moderation features.</p>
+  </div>
+</div>
+
+<script>
+const ADMIN_CODE="728416";
+const SESSION_KEY="ofn_admin_private";
+
+function showApp(){
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+}
+function login(){
+  const value=(document.getElementById("code").value||"").replace(/\D/g,"");
+  if(value!==ADMIN_CODE){
+    document.getElementById("error").textContent="Incorrect admin code.";
+    return;
+  }
+  sessionStorage.setItem(SESSION_KEY,"1");
+  document.getElementById("error").textContent="";
+  showApp();
+}
+document.getElementById("loginBtn").addEventListener("click",login);
+document.getElementById("code").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+document.getElementById("logout").addEventListener("click",()=>{
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+});
+if(sessionStorage.getItem(SESSION_KEY)==="1")showApp();
+</script>
+</body>
+</html>
