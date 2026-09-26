@@ -98,7 +98,7 @@ let CODE="", STORE={};
 const $=id=>document.getElementById(id);
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
 async function api(body){
- const r=await fetch("/api/ofn-admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...body,code:CODE})});
+ const r=await fetch("/api/ofn-admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...body,code:body.code||CODE})});
  const d=await r.json().catch(()=>({}));
  if(!r.ok) throw new Error(d.error||"Request failed");
  return d;
@@ -106,7 +106,7 @@ async function api(body){
 async function login(){
  const c=$("code").value.trim(); if(!c)return;
  $("loginStatus").textContent="Checking…";
- try{const d=await api({action:"login"}); if(!d.ok)throw new Error("Not authorized"); CODE=c; $("login").style.display="none"; $("app").style.display="block"; await refresh();}
+ try{const d=await api({action:"login",code:c}); if(!d.ok)throw new Error("Not authorized"); CODE=c; $("login").style.display="none"; $("app").style.display="block"; await refresh();}
  catch(e){$("loginStatus").textContent=e.message==="Not authorized"?"Wrong moderator code.":"Could not connect to the moderator service."; $("loginStatus").className="status err";}
 }
 async function refresh(){
