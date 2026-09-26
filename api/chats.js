@@ -1,8 +1,6 @@
-// Vercel Serverless Function
-// Saves One From Now chats so every phone / laptop sees the same rooms.
-// Needs two environment variables in Vercel:
-//   JSONBIN_BIN_ID
-//   JSONBIN_KEY
+// One From Now shared community store.
+// Existing JSONBin environment variables are reused.
+// Public OFN behavior is preserved; this only adds persistence for rooms.
 
 const BIN = process.env.JSONBIN_BIN_ID;
 const KEY = process.env.JSONBIN_KEY;
@@ -13,7 +11,8 @@ const SEED = {
     { id: "seed-dtc", who: "Anonymous", text: "down town crossing area", at: "2026-09-19T00:00:00.000Z", reports: 0 },
     { id: "seed-sf", who: "Anonymous", text: "St Francis help full", at: "2026-09-19T00:00:00.000Z", reports: 0 }
   ],
-  story: []
+  story: [],
+  rooms: {}
 };
 
 function headers() {
@@ -29,9 +28,19 @@ function merge(a, b) {
   (a || []).concat(b || []).forEach((row) => {
     if (!row || row.id == null) return;
     const id = String(row.id);
-    if (!map.has(id)) map.set(id, row);
+    map.set(id, row);
   });
-  return Array.from(map.values()).sort((x, y) => String(y.at || "").localeCompare(String(x.at || "")));
+  return Array.from(map.values()).sort((x, y) =>
+    String(y.at || "").localeCompare(String(x.at || ""))
+  );
+}
+
+function mergeRooms(a, b) {
+  const out = { ...(a || {}) };
+  Object.keys(b || {}).forEach((room) => {
+    out[room] = merge(out[room], b[room]);
+  });
+  return out;
 }
 
 async function readStore() {
@@ -42,7 +51,8 @@ async function readStore() {
   const body = data.record || data;
   return {
     info: Array.isArray(body.info) ? body.info : SEED.info.slice(),
-    story: Array.isArray(body.story) ? body.story : []
+    story: Array.isArray(body.story) ? body.story : [],
+    rooms: body.rooms && typeof body.rooms === "object" ? body.rooms : {}
   };
 }
 
@@ -76,12 +86,17 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === "POST") {
-      const incoming = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+      const incoming = typeof req.body === "string"
+        ? JSON.parse(req.body || "{}")
+        : (req.body || {});
       const current = await readStore();
+
       const next = {
         info: merge(SEED.info, merge(current.info, incoming.info)),
-        story: merge(current.story, incoming.story)
+        story: merge(current.story, incoming.story),
+        rooms: mergeRooms(current.rooms, incoming.rooms)
       };
+
       await writeStore(next);
       return send(res, 200, next);
     }
