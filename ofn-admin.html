@@ -1,1 +1,145 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>One From Now Moderator</title></head><body><h1>One From Now — Moderator</h1><p>Private moderator dashboard.</p></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One From Now — Moderator</title>
+<style>
+:root{--teal:#0D7377;--ink:#172b33;--bg:#f4f8f9;--card:#fff;--line:#d8e6e8;--muted:#667b83;--danger:#b42318;--soft:#e8f4f4}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{width:min(1100px,100% - 24px);margin:auto;padding:20px 0 40px}
+header{background:var(--teal);color:white;border-radius:18px;padding:22px;margin-bottom:14px}
+h1{margin:0 0 5px;font-size:25px}h2{margin:0 0 12px;font-size:18px}.muted{color:var(--muted);font-size:13px}.header-muted{color:#e6ffff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}@media(max-width:700px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin:10px 0 5px;letter-spacing:.04em}
+input,textarea,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font:inherit;background:white}
+textarea{min-height:80px;resize:vertical}.btn{border:0;border-radius:10px;padding:10px 13px;font-weight:800;cursor:pointer;background:var(--teal);color:white;margin-top:10px}
+.btn.secondary{background:var(--soft);color:var(--teal);border:1px solid var(--line)}.btn.danger{background:#b42318}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row .btn{flex:0 0 auto}
+.item{border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0;background:#fff}
+.item b{display:block}.item small{color:var(--muted);display:block;margin:4px 0 8px;line-height:1.35}
+#app{display:none}.tabs{display:flex;gap:7px;overflow:auto;margin:12px 0}.tabs button{white-space:nowrap;border:1px solid var(--line);background:#fff;color:var(--teal);border-radius:999px;padding:9px 12px;font-weight:800;cursor:pointer}.tabs button.on{background:var(--teal);color:#fff}
+.panel{display:none}.panel.on{display:block}.status{margin-top:10px;font-size:13px}.ok{color:#167447}.err{color:var(--danger)}
+.stat{font-size:28px;font-weight:900}.danger-note{background:#fff4f2;border-color:#f4c7c2}
+</style>
+</head>
+<body>
+<main>
+<header><h1>One From Now — Moderator</h1><div class="header-muted">Private control panel for the One From Now community.</div></header>
+
+<section id="login" class="card">
+<h2>Moderator login</h2>
+<p class="muted">Enter the moderator code. The code is checked on the server; it is not stored in this page.</p>
+<input id="code" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Moderator code">
+<button class="btn" onclick="login()">Log in</button>
+<div id="loginStatus" class="status"></div>
+</section>
+
+<section id="app">
+<div class="tabs">
+<button class="on" data-panel="overview">Overview</button>
+<button data-panel="messages">Messages</button>
+<button data-panel="stories">Stories</button>
+<button data-panel="resources">Resources</button>
+<button data-panel="videos">Videos</button>
+<button data-panel="suggestions">Suggestions</button>
+</div>
+
+<div id="overview" class="panel on">
+<div class="grid">
+<div class="card"><div class="muted">Held for review</div><div id="statQueue" class="stat">0</div></div>
+<div class="card"><div class="muted">Community posts</div><div id="statPosts" class="stat">0</div></div>
+<div class="card"><div class="muted">Resources</div><div id="statResources" class="stat">0</div></div>
+<div class="card"><div class="muted">Videos</div><div id="statVideos" class="stat">0</div></div>
+</div>
+<div class="card"><h2>What this controls</h2><p class="muted">Messages and stories are shared through the existing OFN JSONBin store. Resources and videos added here are stored in that same shared store so the public site can use them. The existing public layout is left in place.</p></div>
+</div>
+
+<div id="messages" class="panel">
+<div class="card"><h2>Held messages</h2><p class="muted">Approve or delete posts that were held by OFN's moderation rules.</p><div id="queue"></div></div>
+<div class="card"><h2>Recent community posts</h2><p class="muted">Delete a public info/story post when necessary.</p><div id="posts"></div></div>
+</div>
+
+<div id="stories" class="panel"><div class="card"><h2>Stories</h2><div id="storiesList"></div></div></div>
+
+<div id="resources" class="panel">
+<div class="card">
+<h2>Add a resource</h2>
+<div class="grid">
+<div><label>NAME</label><input id="rName"></div><div><label>STATE</label><input id="rState"></div>
+<div><label>CITY</label><input id="rCity"></div><div><label>ZIP</label><input id="rZip"></div>
+<div><label>ADDRESS</label><input id="rAddress"></div><div><label>PHONE</label><input id="rPhone"></div>
+<div><label>WEBSITE</label><input id="rWebsite" placeholder="https://..."></div><div><label>SERVICES</label><input id="rServices" placeholder="shelter, meals, clothing"></div>
+</div>
+<label>DESCRIPTION</label><textarea id="rDescription"></textarea>
+<button class="btn" onclick="saveResource()">Add resource</button><div id="resourceStatus" class="status"></div>
+</div>
+<div class="card"><h2>Managed resources</h2><div id="resourcesList"></div></div>
+</div>
+
+<div id="videos" class="panel">
+<div class="card">
+<h2>Add a video</h2>
+<p class="muted">For now this accepts a public YouTube or direct video URL. A file-upload button can be added once a Vercel Blob store is connected; no fake upload is being presented as working.</p>
+<label>VIDEO URL</label><input id="vUrl" placeholder="https://youtu.be/... or https://.../video.mp4">
+<label>TITLE</label><input id="vTitle">
+<label>DESCRIPTION</label><textarea id="vDescription"></textarea>
+<button class="btn" onclick="saveVideo()">Add video</button><div id="videoStatus" class="status"></div>
+</div>
+<div class="card"><h2>Managed videos</h2><div id="videosList"></div></div>
+</div>
+
+<div id="suggestions" class="panel"><div class="card"><h2>Suggestions</h2><div id="suggestionsList"></div></div></div>
+</section>
+</main>
+<script>
+let CODE="", STORE={};
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
+async function api(body){
+ const r=await fetch("/api/ofn-admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...body,code:CODE})});
+ const d=await r.json().catch(()=>({}));
+ if(!r.ok) throw new Error(d.error||"Request failed");
+ return d;
+}
+async function login(){
+ const c=$("code").value.trim(); if(!c)return;
+ $("loginStatus").textContent="Checking…";
+ try{const d=await api({action:"login"}); if(!d.ok)throw new Error("Not authorized"); CODE=c; $("login").style.display="none"; $("app").style.display="block"; await refresh();}
+ catch(e){$("loginStatus").textContent=e.message==="Not authorized"?"Wrong moderator code.":"Could not connect to the moderator service."; $("loginStatus").className="status err";}
+}
+async function refresh(){
+ try{STORE=await api({action:"get"}); renderAll();}
+ catch(e){alert(e.message);}
+}
+function renderAll(){
+ const info=STORE.info||[],story=STORE.story||[],q=STORE.modQueue||[],res=STORE.resources||[],vid=STORE.videos||[],sug=STORE.suggestions||[];
+ $("statQueue").textContent=q.length;$("statPosts").textContent=info.length+story.length;$("statResources").textContent=res.length;$("statVideos").textContent=vid.length;
+ $("queue").innerHTML=q.map(m=>'<div class="item"><b>'+esc(m.who||"Anonymous")+'</b><small>'+esc(m.room||"")+' · '+new Date(m.at||Date.now()).toLocaleString()+'<br>'+esc(m.text)+'</small><div class="row"><button class="btn" onclick="queueAction(\''+esc(String(m.id))+'\',\'keep\')">Keep</button><button class="btn danger" onclick="queueAction(\''+esc(String(m.id))+'\',\'delete\')">Delete</button></div></div>').join("")||'<p class="muted">Nothing waiting.</p>';
+ $("posts").innerHTML=renderPosts(info,"Info posts")+renderPosts(story,"Stories")||'<p class="muted">No posts.</p>';
+ $("storiesList").innerHTML=renderPosts(story,"Stories")||'<p class="muted">No stories.</p>';
+ $("resourcesList").innerHTML=res.map(r=>'<div class="item"><b>'+esc(r.name)+'</b><small>'+esc([r.city,r.state,r.zip].filter(Boolean).join(", "))+'<br>'+esc(r.address||"")+'<br>'+esc(r.description||"")+'</small><button class="btn danger" onclick="removeResource(\''+esc(String(r.id))+'\')">Delete</button></div>').join("")||'<p class="muted">No admin-added resources yet.</p>';
+ $("videosList").innerHTML=vid.map(v=>'<div class="item"><b>'+esc(v.title)+'</b><small>'+esc(v.uri)+'<br>'+esc(v.description||"")+'</small><button class="btn danger" onclick="removeVideo(\''+esc(String(v.id))+'\')">Delete</button></div>').join("")||'<p class="muted">No admin-added videos yet.</p>';
+ $("suggestionsList").innerHTML=sug.map((v,i)=>'<div class="item"><b>'+esc(v.name||"Anonymous")+'</b><small>'+esc(v.at?new Date(v.at).toLocaleString():"")+'<br>'+esc(v.message||"")+'</small><button class="btn danger" onclick="removeSuggestion(\''+esc(String(v.id||v.at||i))+'\')">Delete</button></div>').join("")||'<p class="muted">No suggestions saved.</p>';
+}
+function renderPosts(rows,label){return rows.map(p=>'<div class="item"><b>'+esc(label)+' · '+esc(p.who||"Anonymous")+'</b><small>'+esc(p.room||"")+' · '+new Date(p.at||Date.now()).toLocaleString()+'<br>'+esc(p.text||"")+'</small><button class="btn danger" onclick="deletePost(\''+esc(String(p.id))+'\',\''+(label==="Stories"?"story":"info")+'\')">Delete</button></div>').join("")}
+async function queueAction(id,action){try{await api({action:"queue",id,decision:action});await refresh()}catch(e){alert(e.message)}}
+async function deletePost(id,kind){if(!confirm("Delete this post?"))return;try{await api({action:"deletePost",id,kind});await refresh()}catch(e){alert(e.message)}}
+async function saveResource(){
+ const services=$("rServices").value.split(",").map(x=>x.trim()).filter(Boolean);
+ const resource={name:$("rName").value.trim(),state:$("rState").value.trim(),city:$("rCity").value.trim(),zip:$("rZip").value.trim(),address:$("rAddress").value.trim(),phone:$("rPhone").value.trim(),website:$("rWebsite").value.trim(),services,description:$("rDescription").value.trim()};
+ if(!resource.name)return $("resourceStatus").textContent="Name is required.";
+ try{await api({action:"addResource",resource});$("resourceStatus").textContent="Saved.";["rName","rState","rCity","rZip","rAddress","rPhone","rWebsite","rServices","rDescription"].forEach(id=>$(id).value="");await refresh()}catch(e){$("resourceStatus").textContent=e.message}}
+async function removeResource(id){if(!confirm("Delete this resource?"))return;try{await api({action:"deleteResource",id});await refresh()}catch(e){alert(e.message)}}
+async function saveVideo(){
+ const video={uri:$("vUrl").value.trim(),title:$("vTitle").value.trim(),description:$("vDescription").value.trim(),sortOrder:0};
+ if(!video.uri||!video.title)return $("videoStatus").textContent="URL and title are required.";
+ try{await api({action:"addVideo",video});$("videoStatus").textContent="Saved.";["vUrl","vTitle","vDescription"].forEach(id=>$(id).value="");await refresh()}catch(e){$("videoStatus").textContent=e.message}}
+async function removeVideo(id){if(!confirm("Delete this video?"))return;try{await api({action:"deleteVideo",id});await refresh()}catch(e){alert(e.message)}}
+async function removeSuggestion(id){if(!confirm("Delete this suggestion?"))return;try{await api({action:"deleteSuggestion",id});await refresh()}catch(e){alert(e.message)}}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("on"));document.querySelectorAll(".panel").forEach(x=>x.classList.remove("on"));b.classList.add("on");$(b.dataset.panel).classList.add("on")});
+$("code").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+</script>
+</body>
+</html>
