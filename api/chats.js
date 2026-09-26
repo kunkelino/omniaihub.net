@@ -1,12 +1,8 @@
-// One From Now shared community store.
-// Uses the existing JSONBin environment variables already used by OFN.
-//
-// JSONBin env vars:
+// Vercel Serverless Function
+// Saves One From Now chats so every phone / laptop sees the same rooms.
+// Needs two environment variables in Vercel:
 //   JSONBIN_BIN_ID
 //   JSONBIN_KEY
-//
-// The store now also keeps resources, videos, moderation queue, and suggestions.
-// Unknown fields are preserved so older/public chat clients cannot wipe admin data.
 
 const BIN = process.env.JSONBIN_BIN_ID;
 const KEY = process.env.JSONBIN_KEY;
@@ -17,12 +13,7 @@ const SEED = {
     { id: "seed-dtc", who: "Anonymous", text: "down town crossing area", at: "2026-09-19T00:00:00.000Z", reports: 0 },
     { id: "seed-sf", who: "Anonymous", text: "St Francis help full", at: "2026-09-19T00:00:00.000Z", reports: 0 }
   ],
-  story: [],
-  rooms: {},
-  resources: [],
-  videos: [],
-  modQueue: [],
-  suggestions: []
+  story: []
 };
 
 function headers() {
@@ -33,27 +24,14 @@ function headers() {
   };
 }
 
-function mergeRows(a, b) {
+function merge(a, b) {
   const map = new Map();
   (a || []).concat(b || []).forEach((row) => {
     if (!row || row.id == null) return;
-    map.set(String(row.id), row);
+    const id = String(row.id);
+    if (!map.has(id)) map.set(id, row);
   });
   return Array.from(map.values()).sort((x, y) => String(y.at || "").localeCompare(String(x.at || "")));
-}
-
-function normalize(body) {
-  const src = body && typeof body === "object" ? body : {};
-  return {
-    ...src,
-    info: Array.isArray(src.info) ? src.info : SEED.info.slice(),
-    story: Array.isArray(src.story) ? src.story : [],
-    rooms: src.rooms && typeof src.rooms === "object" && !Array.isArray(src.rooms) ? src.rooms : {},
-    resources: Array.isArray(src.resources) ? src.resources : [],
-    videos: Array.isArray(src.videos) ? src.videos : [],
-    modQueue: Array.isArray(src.modQueue) ? src.modQueue : [],
-    suggestions: Array.isArray(src.suggestions) ? src.suggestions : []
-  };
 }
 
 async function readStore() {
@@ -61,17 +39,20 @@ async function readStore() {
   const r = await fetch(`${BIN_URL}/latest`, { headers: headers(), cache: "no-store" });
   if (!r.ok) return { ...SEED };
   const data = await r.json();
-  return normalize(data.record || data);
+  const body = data.record || data;
+  return {
+    info: Array.isArray(body.info) ? body.info : SEED.info.slice(),
+    story: Array.isArray(body.story) ? body.story : []
+  };
 }
 
 async function writeStore(next) {
   if (!BIN_URL || !KEY) return next;
-  const r = await fetch(BIN_URL, {
+  await fetch(BIN_URL, {
     method: "PUT",
     headers: headers(),
     body: JSON.stringify(next)
   });
-  if (!r.ok) throw new Error("JSONBin save failed");
   return next;
 }
 
@@ -88,41 +69,21 @@ module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") return send(res, 204, {});
 
   try {
-    const current = await readStore();
-
     if (req.method === "GET") {
-      const out = {
-        info: mergeRows(SEED.info, current.info),
-        story: current.story,
-        rooms: current.rooms,
-        resources: current.resources,
-        videos: current.videos,
-        modQueue: current.modQueue,
-        suggestions: current.suggestions
-      };
-      return send(res, 200, out);
+      const store = await readStore();
+      store.info = merge(SEED.info, store.info);
+      return send(res, 200, store);
     }
 
     if (req.method === "POST") {
       const incoming = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+      const current = await readStore();
       const next = {
-        ...current,
-        info: mergeRows(SEED.info, mergeRows(current.info, incoming.info)),
-        story: mergeRows(current.story, incoming.story),
-        rooms: incoming.rooms && typeof incoming.rooms === "object" && !Array.isArray(incoming.rooms)
-          ? incoming.rooms
-          : current.rooms
+        info: merge(SEED.info, merge(current.info, incoming.info)),
+        story: merge(current.story, incoming.story)
       };
       await writeStore(next);
-      return send(res, 200, {
-        info: next.info,
-        story: next.story,
-        rooms: next.rooms,
-        resources: next.resources,
-        videos: next.videos,
-        modQueue: next.modQueue,
-        suggestions: next.suggestions
-      });
+      return send(res, 200, next);
     }
 
     return send(res, 405, { error: "Use GET or POST" });
