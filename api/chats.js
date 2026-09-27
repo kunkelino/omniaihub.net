@@ -106,3 +106,4 @@ module.exports = async function handler(req, res) {
     return send(res, 500, { error: String(err && err.message ? err.message : err) });
   }
 };
+
