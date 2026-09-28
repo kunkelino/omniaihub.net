@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact information — Omni AI Hub</title>
+<style>html,body{margin:0;background:#07101c;}img{display:block;width:min(920px,100%);height:auto;margin:0 auto;}</style>
+</head>
+<body>
+<img id="card" alt="Omni AI Hub contact information">
+<script>
+var n=6;
+Promise.all(Array.from({length:n}, function(_,i){return fetch('contact-card-'+i+'.txt').then(function(r){return r.text();});})).then(function(parts){
+  document.getElementById('card').src='data:image/jpeg;base64,'+parts.join('');
+});
+</script>
+</body>
+</html>
