@@ -4,15 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contact information — Omni AI Hub</title>
-<style>html,body{margin:0;background:#07101c;}img{display:block;width:min(920px,100%);height:auto;margin:0 auto;}</style>
+<style>
+html,body{margin:0;min-height:100%;background:#07101c;color:#fff;font-family:Arial,Helvetica,sans-serif;}
+.wrap{max-width:720px;margin:0 auto;padding:48px 22px 64px;}
+.brand{font-size:34px;font-weight:800;letter-spacing:.04em;margin:0;}
+.sub{margin:6px 0 28px;font-size:18px;opacity:.85;}
+.card{background:#10192b;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:22px;}
+.card p{margin:0 0 10px;font-size:20px;font-weight:700;}
+.card a{color:#fff;}
+.line{font-size:16px;line-height:1.6;opacity:.92;}
+</style>
 </head>
 <body>
-<img id="card" alt="Omni AI Hub contact information">
-<script>
-var n=6;
-Promise.all(Array.from({length:n}, function(_,i){return fetch('contact-card-'+i+'.txt').then(function(r){return r.text();});})).then(function(parts){
-  document.getElementById('card').src='data:image/jpeg;base64,'+parts.join('');
-});
-</script>
+<div class="wrap">
+<p class="brand">OMNI AI HUB</p>
+<p class="sub">Boston, MA</p>
+<div class="card">
+<p>Jonathan M Kunkel</p>
+<div class="line"><a href="tel:6464384703">646 438 4703</a></div>
+<div class="line"><a href="mailto:jonathan@omniaihub.net">jonathan@omniaihub.net</a></div>
+</div>
+</div>
 </body>
 </html>
