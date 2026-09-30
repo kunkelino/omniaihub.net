@@ -35,6 +35,8 @@
       "</body>",
       "<script src=\"/lifehub-cloud.js\"><\/script></body>"
     );
+    html=html.replace('if(sessionStorage.getItem(KEY)==="1") openSite();','openSite();');
+    html=html.replace('<div id="gate">','<div id="gate" class="ok">');
     document.open();
     document.write(html);
     document.close();
