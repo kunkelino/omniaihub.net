@@ -55,15 +55,6 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
 .job{font-weight:700;margin:12px 0 4px;color:var(--text);}
 @media(max-width:1100px){#portfolio,.wide-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:800px){#portfolio,.wide-grid{grid-template-columns:1fr;}.name{font-size:28px;}.hero{padding:24px 18px;}}
-
-#gate{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#111827,#312e81);display:flex;align-items:center;justify-content:center;padding:24px;}
-#gate.ok{display:none;}
-#gate .box{width:min(360px,100%);background:#fff;border-radius:20px;padding:28px 22px;text-align:center;color:#172033;}
-#gate h1{margin:0 0 8px;font-size:22px;}
-#gate p{margin:0 0 16px;color:#6b7280;font-size:14px;}
-#gate input{width:100%;text-align:center;letter-spacing:.4em;font-size:28px;padding:12px;border:1px solid #d1d5db;border-radius:12px;}
-#gate button{margin-top:14px;width:100%;border:0;background:#4f46e5;color:#fff;font-weight:800;padding:12px;border-radius:12px;cursor:pointer;}
-#gate .err{color:#dc2626;font-size:13px;min-height:18px;margin-top:8px;}
 </style>
 </head>
 <body>
@@ -84,13 +75,13 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
   <div id="portfolio">
     <a class="box" href="ofn.html"><img src="ofn-preview.jpg" alt="One From Now"><span class="cap">One From Now</span></a>
     <a class="box" href="lifehub.html"><img src="lifehub-preview.jpg" alt="LifeHub"><span class="cap">LifeHub</span></a>
-    <button class="box investor" type="button" id="investorTile" onclick="unlockPrivateApp()">
+    <a class="box investor" href="spk4gln.html" id="investorTile">
       <div class="investor-inner">
         <div class="investor-kicker">Private</div>
         <div class="investor-title">Access</div>
-        <div class="investor-sub">By invitation</div>
+        <div class="investor-sub">Speak4</div>
       </div>
-    </button>
+    </a>
     <div class="box yt" data-id="iSAq5QqCaFI">
       <img src="https://img.youtube.com/vi/iSAq5QqCaFI/sddefault.jpg" alt="YouTube">
       <span class="play-badge">▶</span>
@@ -240,14 +231,6 @@ document.addEventListener("keydown", function(e){
   });
   document.body.classList.remove("yt-video-full");
 });
-
-function unlockPrivateApp(){
-  var v=prompt("Enter access code");
-  if(v==null) return;
-  v=String(v).replace(/\s/g,"");
-  if(v==="8291"){ window.location.href="spk4gln.html"; }
-  else { alert("That code is not valid."); }
-}
 </script>
 
 </body>
