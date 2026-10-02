@@ -31,6 +31,13 @@ a{color:#312e81;}
 .box.yt-full{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;border-radius:0!important;z-index:200000!important;aspect-ratio:auto!important;}
 .box.yt-full iframe{width:100%!important;height:100%!important;object-fit:contain;}
 .box.yt-full .expand{display:block;}
+.passcode-tile{background:linear-gradient(135deg,#111827,#312e81);display:flex;align-items:center;justify-content:center;padding:16px;cursor:default;}
+.passcode-inner{width:100%;max-width:240px;text-align:center;color:#fff;}
+.passcode-title{font-weight:700;font-size:18px;margin-bottom:8px;}
+.passcode-inner label{display:block;font-size:13px;font-weight:700;margin-bottom:8px;letter-spacing:.04em;}
+.passcode-inner input{width:100%;text-align:center;letter-spacing:.28em;font-size:18px;padding:10px;border:0;border-radius:12px;margin-bottom:8px;}
+.passcode-inner button{width:100%;border:0;background:#fff;color:#312e81;font-weight:700;padding:10px;border-radius:12px;cursor:pointer;}
+.passcode-err{min-height:16px;margin-top:6px;font-size:12px;font-weight:700;color:#fecaca;}
 body.yt-video-full{overflow:hidden;}
 .wide{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--shadow);}
 .wide-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
@@ -65,7 +72,15 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
   <div id="portfolio">
     <a class="box" href="ofn.html"><img src="ofn-preview.jpg" alt="One From Now"><span class="cap">One From Now</span></a>
     <a class="box" href="lifehub.html"><img src="lifehub-preview.jpg" alt="LifeHub"><span class="cap">LifeHub</span></a>
-    <a class="box" href="spk4gln.html"><img src="speak4-preview.jpg" alt="Speak4"><span class="cap">Speak4</span></a>
+    <form class="box passcode-tile" id="speak4-gate" action="spk4gln.html">
+      <div class="passcode-inner">
+        <div class="passcode-title">Speak4</div>
+        <label for="speak4-pin">Passcode</label>
+        <input id="speak4-pin" name="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Passcode">
+        <button type="submit">Enter</button>
+        <div class="passcode-err" id="speak4-err"></div>
+      </div>
+    </form>
     <div class="box yt" data-id="iSAq5QqCaFI">
       <img src="https://img.youtube.com/vi/iSAq5QqCaFI/sddefault.jpg" alt="YouTube">
       <span class="play-badge">▶</span>
@@ -205,6 +220,16 @@ document.querySelectorAll(".local-vid").forEach(function(box){
     if(e.target.closest(".expand")) return;
     play();
   });
+});
+document.getElementById("speak4-gate").addEventListener("submit", function(e){
+  e.preventDefault();
+  var pin=(document.getElementById("speak4-pin").value||"").replace(/\D/g,"");
+  if(pin==="435777"){
+    sessionStorage.setItem("speak4_ok","1");
+    location.href="spk4gln.html";
+  } else {
+    document.getElementById("speak4-err").textContent="Wrong passcode";
+  }
 });
 document.addEventListener("keydown", function(e){
   if(e.key!=="Escape") return;
