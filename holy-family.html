@@ -65,27 +65,31 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
+      align-items: stretch;
     }
     .card {
       border: 1px solid rgba(228, 197, 106, 0.45);
       border-radius: 10px;
-      padding: 16px 10px 18px;
+      padding: 16px 10px 62px;
       background: rgba(8, 6, 16, 0.55);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      position: relative;
+      min-height: 100%;
     }
-    .notes { min-height: 2.6em; }
     .card img {
       width: 100%;
-      height: auto;
+      height: 180px;
+      object-fit: contain;
       display: block;
       margin-bottom: 8px;
     }
-    h2 { font-size: clamp(1rem, 2.5vw, 1.7rem); font-weight: 500; margin-bottom: 6px; }
-    .notes { font-size: clamp(0.72rem, 1.6vw, 0.95rem); margin-bottom: 8px; }
-    .price { font-size: clamp(1.1rem, 2.4vw, 1.6rem); margin-bottom: 14px; }
+    h2 { font-size: clamp(0.95rem, 2.4vw, 1.7rem); font-weight: 500; margin-bottom: 6px; min-height: 2.4em; }
+    .notes { font-size: clamp(0.68rem, 1.5vw, 0.95rem); min-height: 2.8em; margin-bottom: 8px; }
+    .price { font-size: clamp(1.05rem, 2.2vw, 1.6rem); }
     button {
+      position: absolute;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
       background: transparent;
       color: #e4c56a;
       border: 1px solid rgba(228, 197, 106, 0.75);
@@ -93,16 +97,22 @@
       padding: 8px 18px;
       font-family: Cinzel, serif;
       letter-spacing: 0.16em;
-      font-size: clamp(0.72rem, 1.6vw, 0.95rem);
+      font-size: clamp(0.68rem, 1.5vw, 0.95rem);
       cursor: pointer;
+      white-space: nowrap;
     }
     button:disabled { opacity: 0.4; }
     .stock { display: block; margin-top: 8px; font-size: 0.72rem; letter-spacing: 0.06em; color: #b9a7d6; }
+    @media (max-width: 700px) {
+      .card { padding-bottom: 54px; }
+      .card img { height: 110px; }
+      button { padding: 7px 10px; bottom: 12px; }
+    }
   </style>
 </head>
 <body>
   <div class="video-pane">
-    <video id="club-video" autoplay loop playsinline src="him-loop.mp4?v=dj2" autoplay muted loop playsinline></video>
+    <video id="club-video" src="him-loop.mp4?v=play3" autoplay muted loop playsinline preload="auto"></video>
   </div>
   <div class="page">
     <h1>MHIM</h1>
@@ -135,30 +145,29 @@
     </main>
   </div>
   <script>
-    const video = document.getElementById('club-video');
-    video.autoplay = true;
+    var video = document.getElementById('club-video');
+    video.muted = true;
     video.loop = true;
     video.playsInline = true;
-    video.muted = true;
-    video.volume = 0.7;
-    function start() {
+    function playVideo() {
+      var p = video.play();
+      if (p && p.catch) p.catch(function(){});
+    }
+    function soundOn() {
       video.muted = false;
       video.volume = 0.7;
-      const p = video.play();
-      if (p) p.then(function(){ video.muted = false; }).catch(function(){
-        video.muted = true;
-        video.play().then(function(){ video.muted = false; }).catch(function(){});
-      });
+      playVideo();
     }
-    start();
-    video.addEventListener('loadeddata', start);
-    video.addEventListener('canplay', start);
-    const inventory = {1:9, 2:9, 3:9};
+    playVideo();
+    video.addEventListener('canplay', playVideo);
+    soundOn();
+    document.addEventListener('pointerdown', soundOn);
+    var inventory = {1:9, 2:9, 3:9};
     function selectCologne(id) {
       if (inventory[id] <= 0) return;
       inventory[id] = Math.max(0, inventory[id] - 2);
-      const stock = document.getElementById('stock-' + id);
-      const btn = stock.parentElement.querySelector('button');
+      var stock = document.getElementById('stock-' + id);
+      var btn = stock.parentElement.querySelector('button');
       if (inventory[id] === 0) {
         stock.textContent = 'Sold Out';
         btn.disabled = true;

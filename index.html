@@ -1,171 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MHIM</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: #07040f;
-      color: #e7c866;
-      font-family: Cinzel, serif;
-      min-height: 100vh;
-    }
-    .video-pane {
-      width: 100%;
-      height: 33.33vh;
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      background: #000;
-      overflow: hidden;
-    }
-    .video-pane video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .page {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 28px 18px 64px;
-      text-align: center;
-      background: radial-gradient(circle at 50% 0%, #1a1030 0%, #07040f 62%);
-    }
-    h1 {
-      font-weight: 500;
-      font-size: clamp(3.2rem, 12vw, 6.6rem);
-      letter-spacing: 0.16em;
-      line-height: 1;
-      color: #e4c56a;
-    }
-    .rule {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      margin: 10px 0 28px;
-      letter-spacing: 0.08em;
-      font-size: clamp(1rem, 2.4vw, 1.35rem);
-      color: #e4c56a;
-    }
-    .rule::before, .rule::after {
-      content: "";
-      width: 54px;
-      height: 1px;
-      background: #e4c56a;
-    }
-    .rule span { font-size: 0.7em; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-    .card {
-      border: 1px solid rgba(228, 197, 106, 0.45);
-      border-radius: 10px;
-      padding: 16px 10px 18px;
-      background: rgba(8, 6, 16, 0.55);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .notes { min-height: 2.6em; }
-    .card img {
-      width: 100%;
-      height: auto;
-      display: block;
-      margin-bottom: 8px;
-    }
-    h2 { font-size: clamp(1rem, 2.5vw, 1.7rem); font-weight: 500; margin-bottom: 6px; }
-    .notes { font-size: clamp(0.72rem, 1.6vw, 0.95rem); margin-bottom: 8px; }
-    .price { font-size: clamp(1.1rem, 2.4vw, 1.6rem); margin-bottom: 14px; }
-    button {
-      background: transparent;
-      color: #e4c56a;
-      border: 1px solid rgba(228, 197, 106, 0.75);
-      border-radius: 8px;
-      padding: 8px 18px;
-      font-family: Cinzel, serif;
-      letter-spacing: 0.16em;
-      font-size: clamp(0.72rem, 1.6vw, 0.95rem);
-      cursor: pointer;
-    }
-    button:disabled { opacity: 0.4; }
-    .stock { display: block; margin-top: 8px; font-size: 0.72rem; letter-spacing: 0.06em; color: #b9a7d6; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jonathan Kunkel — Portfolio</title>
+<style>
+*{box-sizing:border-box;}
+:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#6b7280;--border:#e5e7eb;--primary:#4f46e5;--ink:#312e81;--shadow:0 10px 30px rgba(15,23,42,.08);}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;}
+a{color:#312e81;}
+.page{max-width:1400px;margin:0 auto;padding:28px 18px 60px;}
+.hero{background:linear-gradient(135deg,#111827,#312e81);color:#fff;border-radius:24px;padding:32px 28px;box-shadow:var(--shadow);margin-bottom:22px;}
+.name,.nav a,h3,.title{font-family:Arial,Helvetica,sans-serif;text-shadow:0 1px 0 rgba(255,255,255,.35),0 2px 0 rgba(0,0,0,.18);}
+.name{font-size:34px;font-weight:700;margin:0 0 8px;}
+ .email,.phone{font-size:17px;font-weight:700;}.email{margin-bottom:14px;}
+.email a,.phone a{color:#fff;}
+.location{font-size:20px;font-weight:700;margin-top:8px;opacity:.95;}
+.nav{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;}
+.nav a{color:#fff;font-weight:700;text-decoration:none;border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:10px 16px;}
+.nav a:hover{background:#fff;color:#312e81;}
+.title{font-size:20px;font-weight:700;margin:0 0 14px;}
+#portfolio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;}
+.box{width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#111;display:block;position:relative;text-decoration:none;color:#fff;box-shadow:var(--shadow);cursor:pointer;}
+.box img,.box iframe,.box video{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;border:0;}
+.box .cap{position:absolute;left:0;right:0;bottom:0;padding:10px 12px;background:linear-gradient(transparent,rgba(0,0,0,.75));font-size:13px;font-weight:700;pointer-events:none;}
+.box.playing .cap{display:none;}
+.play-badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:22px;}
+.expand{position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,.55);color:#fff;border:0;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;display:none;}
+  .box.playing .expand{display:block;}
+.box.yt-full{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;border-radius:0!important;z-index:200000!important;aspect-ratio:auto!important;}
+.box.yt-full iframe{width:100%!important;height:100%!important;object-fit:contain;}
+.box.yt-full .expand{display:block;}
+body.yt-video-full{overflow:hidden;}
+.wide{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--shadow);}
+.wide-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
+h3{margin:0 0 10px;font-size:16px;}
+p,li{font-size:14px;line-height:1.5;color:#334155;}
+.tools{margin-top:10px;}
+.tools b{display:block;margin:8px 0 6px;color:var(--text);}
+.tag{display:inline-block;background:#eef2ff;color:#3730a3;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;margin:0 6px 6px 0;}
+.resume{margin:40px auto 0;font-family:Calibri,"Segoe UI",Arial,sans-serif;max-width:820px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 26px;box-shadow:var(--shadow);}
+.resume-name{text-align:center;font-size:22px;font-weight:700;margin:10px 0 6px;color:var(--text);}
+.resume-contact{text-align:center;font-size:14px;margin:0 0 20px;}
+.resume h2{font-size:14px;font-weight:700;text-transform:uppercase;border-bottom:1px solid #000;padding-bottom:3px;margin:18px 0 8px;color:var(--text);}
+.job{font-weight:700;margin:12px 0 4px;color:var(--text);}
+@media(max-width:1100px){#portfolio,.wide-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:800px){#portfolio,.wide-grid{grid-template-columns:1fr;}.name{font-size:28px;}.hero{padding:24px 18px;}}
+</style>
 </head>
 <body>
-  <div class="video-pane">
-    <video id="club-video" autoplay loop playsinline src="him-loop.mp4?v=dj2" autoplay muted loop playsinline></video>
+<div class="page">
+  <div class="hero">
+    <div class="name">Jonathan Kunkel</div>
+    <div class="email"><a href="https://mail.google.com/mail/?view=cm&fs=1&to=Jonathan@omniaihub.net" target="_blank" rel="noopener noreferrer">Jonathan@omniaihub.net</a></div>
+    <div class="phone"><a href="tel:6464384703">646-438-4703</a></div>
+    <div class="location">Boston, Massachusetts</div>
+    <nav class="nav">
+      <a href="#resume">Resume</a>
+      <a href="#contact">Contact</a>
+      <a href="contact-information.html" target="_blank" rel="noopener noreferrer">Contact information</a>
+    </nav>
   </div>
-  <div class="page">
-    <h1>MHIM</h1>
-    <p class="rule"><span>◆</span> Nightclub Reserve <span>◆</span></p>
-    <main class="grid">
-      <article class="card">
-        <img src="bottle-noir.jpg" alt="Noir Entree">
-        <h2>Noir Entree</h2>
-        <p class="notes">Woody · Smoky · Magnetic</p>
-        <p class="price">$195</p>
-        <button onclick="selectCologne(1)">SELECT</button>
-        <span class="stock" id="stock-1">9 Remaining</span>
-      </article>
-      <article class="card">
-        <img src="bottle-velvet.jpg" alt="Velvet Vice">
-        <h2>Velvet Vice</h2>
-        <p class="notes">Spicy · Amber · Bold · Warm</p>
-        <p class="price">$195</p>
-        <button onclick="selectCologne(2)">SELECT</button>
-        <span class="stock" id="stock-2">9 Remaining</span>
-      </article>
-      <article class="card">
-        <img src="bottle-saint.jpg" alt="Midnight Saint">
-        <h2>Midnight Saint</h2>
-        <p class="notes">Aromatic · Leather · Smooth</p>
-        <p class="price">$195</p>
-        <button onclick="selectCologne(3)">SELECT</button>
-        <span class="stock" id="stock-3">9 Remaining</span>
-      </article>
-    </main>
+  <h2 class="title">Portfolio</h2>
+  <div id="portfolio">
+    <a class="box" href="ofn.html"><img src="ofn-preview.jpg" alt="One From Now"><span class="cap">One From Now</span></a>
+    <a class="box" href="lifehub.html"><img src="lifehub-preview.jpg" alt="LifeHub"><span class="cap">LifeHub</span></a>
+    <a class="box" href="spk4gln.html"><img src="speak4-preview.jpg" alt="Speak4"><span class="cap">Speak4</span></a>
+    <div class="box yt" data-id="iSAq5QqCaFI">
+      <img src="https://img.youtube.com/vi/iSAq5QqCaFI/sddefault.jpg" alt="YouTube">
+      <span class="play-badge">▶</span>
+      <span class="cap">YouTube</span>
+      <button class="expand" type="button">Expand</button>
+    </div>
+    <div class="box yt" data-id="6lhyfMfMqyE">
+      <img src="https://img.youtube.com/vi/6lhyfMfMqyE/maxresdefault.jpg" alt="YouTube">
+      <span class="play-badge">▶</span>
+      <span class="cap">YouTube</span>
+      <button class="expand" type="button">Expand</button>
+    </div>
+    <a class="box" href="holy-family.html"><img src="holy-family-tile.jpg" alt="Holy Family Snack Center"><span class="cap">Holy Family Snack Center</span></a>
+    <section class="wide" id="contact">
+      <div class="wide-grid">
+        <div>
+          <h3>Skills</h3>
+          <p>Operations. Microsoft 365. Google Workspace. Google AI. Production. Research. Video assembly. Video editing. Digital design. HTML, CSS, JS, and Python.</p>
+          <div class="tools">
+            <b>Software</b>
+            <span class="tag">CapCut</span>
+            <span class="tag">Gemini</span>
+            <span class="tag">Adobe Photoshop</span>
+            <span class="tag">Adobe Firefly</span>
+            <span class="tag">Google AI Studio</span>
+            <span class="tag">Google Veo</span>
+            <span class="tag">Sora</span>
+            <span class="tag">Runway</span>
+            <span class="tag">Pika</span>
+            <span class="tag">ChatGPT</span>
+            <span class="tag">Grok</span>
+          </div>
+        </div>
+        <div>
+          <h3>About</h3>
+          <p>Builder of LifeHub, One From Now, and additional private applications. Boston-based.</p>
+        </div>
+        <div>
+          <h3>Contact</h3>
+          <p>Jonathan Kunkel<br>
+          <a href="tel:6464384703">(646) 438-4703</a><br><br>
+          <a href="https://mail.google.com/mail/?view=cm&fs=1&to=Jonathan@omniaihub.net" target="_blank" rel="noopener noreferrer">Jonathan@omniaihub.net</a><br>
+          Boston, Massachusetts</p>
+        </div>
+      </div>
+    </section>
   </div>
-  <script>
-    const video = document.getElementById('club-video');
-    video.autoplay = true;
-    video.loop = true;
-    video.playsInline = true;
-    video.muted = true;
-    video.volume = 0.7;
-    function start() {
-      video.muted = false;
-      video.volume = 0.7;
-      const p = video.play();
-      if (p) p.then(function(){ video.muted = false; }).catch(function(){
-        video.muted = true;
-        video.play().then(function(){ video.muted = false; }).catch(function(){});
-      });
-    }
-    start();
-    video.addEventListener('loadeddata', start);
-    video.addEventListener('canplay', start);
-    const inventory = {1:9, 2:9, 3:9};
-    function selectCologne(id) {
-      if (inventory[id] <= 0) return;
-      inventory[id] = Math.max(0, inventory[id] - 2);
-      const stock = document.getElementById('stock-' + id);
-      const btn = stock.parentElement.querySelector('button');
-      if (inventory[id] === 0) {
-        stock.textContent = 'Sold Out';
-        btn.disabled = true;
-      } else {
-        stock.textContent = inventory[id] + ' Remaining';
-      }
-    }
-  </script>
+  <section class="resume" id="resume">
+    <div class="resume-name">Jonathan Kunkel</div>
+    <div class="resume-contact">(646) 438-4703 &nbsp;&nbsp;|&nbsp;&nbsp; <a href="https://mail.google.com/mail/?view=cm&fs=1&to=Jonathan@omniaihub.net" target="_blank" rel="noopener noreferrer">Jonathan@omniaihub.net</a> | Boston, Massachusetts</div>
+    <h2>Professional Summary</h2>
+    <p>Adaptable operations and management professional with a strong background in high-volume queue management, administrative support, and cross-departmental coordination. Proven track record of executing detailed financial audits, maintaining database accuracy, and ensuring strict quality standards across fast-paced customer service and hospitality environments. Adept at building strong business relationships through reliable client support, proactive customer outreach, and effective workflow optimization. Combines hands-on experience in retail production management with a commitment to maintaining optimal operational flow and enhancing overall guest and customer satisfaction.</p>
+    <h2>Skills</h2>
+    <ul>
+      <li><strong>Operations and Administration:</strong> High-Volume Queue Management, Financial Audits & Revenue Reconciliation, Cross-Department Support, Quality Assurance, Client Consultations, Asynchronous Project Delivery</li>
+      <li><strong>Software and Systems:</strong> Microsoft 365, Google Workspace, Workflow Automation Routines, Property Management Systems (FOSSE, MARSHA), Print & Production Software (Solution Builder, BizFit, Flight Deck)</li>
+      <li><strong>Research and Data Management:</strong> Structured Data Entry, Database Accuracy & Maintenance, Targeted Market Research, Open-Web Curation, Profile Verification, Lead Validation, Data Labeling</li>
+      <li><strong>Digital Production and Content Management:</strong> Multimedia & Video Assembly, Audio Polish, Digital Layout Formatting, Script Interpretation, Brand Standard Maintenance</li>
+    </ul>
+    <h2>Experience</h2>
+    <div class="job">Freelance Video Producer and Content Creator (Self-Employed) | Oct 2025 – Present</div>
+    <ul>
+      <li>Conducted structured open-web research to locate, compile, and verify decision-maker contacts, including names, titles, verified emails, phone numbers, and social channels, for targeted B2B outreach</li>
+      <li>Integrated digital tools and workflows into daily routines to accelerate data extraction, list structuring, and lead validation</li>
+      <li>Delivered structured contact databases asynchronously to ensure accurate and timely target pipeline delivery</li>
+    </ul>
+    <div class="job">Digital Data Researcher (Contract) | Gepeto, NJ | Nov 2022 – May 2026</div>
+    <ul>
+      <li>Converted client scripts into short-form visual assets tailored for high engagement across major social media platforms, including TikTok, Instagram, and YouTube</li>
+      <li>Managed the end-to-end multimedia pipeline, overseeing asset generation, sequence rendering, and post-production assembly</li>
+      <li>Iterated visual styles and maintained strict brand consistency and narrative pacing across various client projects</li>
+    </ul>
+    <div class="job">Manager / Print and Marketing Production Specialist | Staples, NY | Nov 2022 – May 2025</div>
+    <ul>
+      <li>Managed high-volume print queues and digital layout formatting utilizing Solution Builder, BizFit, and Flight Deck</li>
+      <li>Designed custom marketing materials, including banners, signage, promotional collateral, and business cards, while strictly maintaining client brand standards</li>
+      <li>Built strong business relationships through reliable client service, expert print consultations, and proactive customer outreach</li>
+    </ul>
+    <div class="job">In-Store Shopper / Cashier | Whole Foods Market, NY | Sep 2020 – Oct 2022</div>
+    <ul>
+      <li>Fulfilled high-volume online grocery orders with speed, operational accuracy, and strict quality standards</li>
+      <li>Recommended product substitutions to maintain inventory availability, customer satisfaction, and overall service quality</li>
+      <li>Supported multiple departments across store operations to ensure smooth order processing and optimal operational flow</li>
+    </ul>
+    <div class="job">Audit Operations and Front Desk | Fairfax Marriott, VA | Aug 2018 – Jan 2020</div>
+    <ul>
+      <li>Completed nightly financial audits, detailed revenue reconciliations, and comprehensive system balance checks for the property</li>
+      <li>Maintained database accuracy and executed daily property management operations utilizing MARSHA and FOSSE systems</li>
+      <li>Managed group reservations, processed VIP guest profiles, and actively promoted Marriott BONVOY loyalty initiatives to enhance guest retention</li>
+    </ul>
+    <h2>Education, Trainings, and Certifications</h2>
+    <div class="job">Grow With Google Professional Training | In Progress (2026)</div>
+    <ul><li>Completing intensive coursework focused on digital workflow optimization, script writing, video generation workflows, and modern Google ecosystems; earning Google certifications</li></ul>
+    <div class="job">Coursera Applied Technical Coursework | In Progress (2026)</div>
+    <ul><li>Developing foundational programming and analytical skills with a focus on core logic, dataset structuring, and workflow automation routines</li></ul>
+    <p>Coursework toward Bachelor’s in Economics | North Lake College, TX</p>
+    <p>GED | I.E.C</p>
+  </section>
+</div>
+<script>
+document.querySelectorAll(".yt").forEach(function(box){
+  function play(){
+    if(box.classList.contains("playing")) return;
+    box.classList.add("playing");
+    var id=box.dataset.id;
+    box.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0&playsinline=1&fs=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><button class="expand" type="button">Expand</button>';
+    box.querySelector(".expand").addEventListener("click", function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      var open=box.classList.contains("yt-full");
+      box.classList.toggle("yt-full", !open);
+      document.body.classList.toggle("yt-video-full", !open);
+      ev.currentTarget.textContent=open?"Expand":"Close";
+    });
+  }
+  box.addEventListener("click", function(e){
+    if(e.target.closest(".expand")) return;
+    play();
+  });
+});
+document.querySelectorAll(".local-vid").forEach(function(box){
+  function play(){
+    if(box.classList.contains("playing")) return;
+    box.classList.add("playing");
+    var src=box.dataset.src;
+    box.innerHTML='<video src="'+src+'" autoplay controls playsinline></video><button class="expand" type="button">Expand</button>';
+    box.querySelector(".expand").addEventListener("click", function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      var open=box.classList.contains("yt-full");
+      box.classList.toggle("yt-full", !open);
+      document.body.classList.toggle("yt-video-full", !open);
+      ev.currentTarget.textContent=open?"Expand":"Close";
+    });
+  }
+  box.addEventListener("click", function(e){
+    if(e.target.closest(".expand")) return;
+    play();
+  });
+});
+document.addEventListener("keydown", function(e){
+  if(e.key!=="Escape") return;
+  document.querySelectorAll(".yt.yt-full").forEach(function(box){
+    box.classList.remove("yt-full");
+    var b=box.querySelector(".expand");
+    if(b) b.textContent="Expand";
+  });
+  document.body.classList.remove("yt-video-full");
+});
+</script>
 </body>
 </html>
