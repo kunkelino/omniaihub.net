@@ -103,6 +103,25 @@
     }
     button:disabled { opacity: 0.4; }
     .stock { display: block; margin-top: 8px; font-size: 0.72rem; letter-spacing: 0.06em; color: #b9a7d6; }
+
+    .order-box {
+      margin-top: 22px;
+      border: 1px solid rgba(228, 197, 106, 0.45);
+      border-radius: 10px;
+      background: rgba(8, 6, 16, 0.55);
+      padding: 16px 18px 18px;
+      text-align: left;
+    }
+    .sub-row, .picked-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      letter-spacing: 0.08em;
+      font-size: clamp(0.85rem, 2vw, 1.05rem);
+    }
+    .picked-line { margin-top: 8px; color: #e4c56a; }
+    .sub-row { margin-top: 12px; font-size: clamp(1rem, 2.2vw, 1.25rem); }
+    .order-box .pay-now { display: block; text-align: center; margin-top: 16px; }
     .pay-now {
       display: inline-block;
       margin-top: 28px;
@@ -151,7 +170,11 @@
         <button onclick="selectCologne(3)">SELECT</button>
       </article>
     </main>
-    <a class="pay-now" href="pay.html">Pay Now</a>
+    <div class="order-box">
+      <div id="picked">Select a cologne</div>
+      <div class="sub-row"><span>Subtotal</span><span id="subtotal">$0</span></div>
+      <a class="pay-now" href="pay.html">Pay Now</a>
+    </div>
   </div>
   <script>
     var video = document.getElementById('club-video');
@@ -183,18 +206,21 @@
     video.addEventListener('canplay', function() {
       if (video.paused) playVideo();
     });
-    var inventory = {1:9, 2:9, 3:9};
+    var names = {1:"Noir Entree", 2:"Velvet Vice", 3:"Midnight Saint"};
+    var picked = [];
     function selectCologne(id) {
-      if (inventory[id] <= 0) return;
-      inventory[id] = Math.max(0, inventory[id] - 2);
-      var stock = document.getElementById('stock-' + id);
-      var btn = stock.parentElement.querySelector('button');
-      if (inventory[id] === 0) {
-        stock.textContent = 'Sold Out';
-        btn.disabled = true;
-      } else {
-        stock.textContent = inventory[id] + ' Remaining';
-      }
+      picked.push({name: names[id], price: 195});
+      var box = document.getElementById("picked");
+      box.innerHTML = "";
+      var total = 0;
+      picked.forEach(function(item) {
+        total += item.price;
+        var line = document.createElement("div");
+        line.className = "picked-line";
+        line.innerHTML = "<span>" + item.name + "</span><span>$195</span>";
+        box.appendChild(line);
+      });
+      document.getElementById("subtotal").textContent = "$" + total;
     }
   </script>
 </body>
