@@ -4,45 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sample Website</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #f4f7fb;
-      --card: #fff;
-      --text: #172033;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --primary: #4f46e5;
-      --ink: #312e81;
-      --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+    body {
+      background: #07040f;
+      color: #e7c866;
+      font-family: Cinzel, serif;
+      min-height: 100vh;
     }
-    html, body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
-      min-height: 100%;
-    }
-    .home-link {
-      position: fixed;
-      top: 12px;
-      left: 12px;
-      z-index: 30;
-      background: #fff;
-      color: var(--ink);
-      font-weight: 700;
-      text-decoration: none;
-      border-radius: 12px;
-      padding: 10px 14px;
-      box-shadow: var(--shadow);
-    }
-    .home-link:hover { background: var(--ink); color: #fff; }
     .video-pane {
       width: 100%;
       height: 33.33vh;
       position: sticky;
       top: 0;
       z-index: 5;
-      background: #111827;
+      background: #000;
       overflow: hidden;
     }
     .video-pane video {
@@ -54,213 +33,169 @@
     .page {
       max-width: 980px;
       margin: 0 auto;
-      padding: 28px 18px 72px;
+      padding: 28px 18px 64px;
+      text-align: center;
+      background: radial-gradient(circle at 50% 0%, #1a1030 0%, #07040f 62%);
     }
     h1 {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--ink);
-      margin-bottom: 6px;
+      font-weight: 500;
+      font-size: clamp(3.2rem, 12vw, 6.6rem);
+      letter-spacing: 0.16em;
+      line-height: 1;
+      color: #e4c56a;
     }
-    .sub {
-      color: var(--muted);
-      margin-bottom: 22px;
-      font-size: 15px;
+    .rule {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 10px 0 28px;
+      letter-spacing: 0.08em;
+      font-size: clamp(1rem, 2.4vw, 1.35rem);
+      color: #e4c56a;
     }
+    .rule::before, .rule::after {
+      content: "";
+      width: 54px;
+      height: 1px;
+      background: #e4c56a;
+    }
+    .rule span { font-size: 0.7em; }
     .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
+      align-items: stretch;
     }
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px 14px 18px;
-      box-shadow: var(--shadow);
-      text-align: center;
+      border: 1px solid rgba(228, 197, 106, 0.45);
+      border-radius: 10px;
+      padding: 16px 10px 62px;
+      background: rgba(8, 6, 16, 0.55);
+      position: relative;
+      min-height: 100%;
     }
     .card img {
       width: 100%;
       height: 180px;
       object-fit: contain;
       display: block;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
-    h2 { font-size: 18px; margin-bottom: 6px; color: var(--ink); }
-    .notes { color: var(--muted); font-size: 13px; min-height: 2.4em; margin-bottom: 8px; }
-    .price { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
-    .select-btn, .pay-now, .cart-x {
-      border: 0;
-      border-radius: 12px;
-      font-family: Arial, Helvetica, sans-serif;
-      font-weight: 700;
+    h2 { font-size: clamp(0.95rem, 2.4vw, 1.7rem); font-weight: 500; margin-bottom: 6px; min-height: 2.4em; }
+    .notes { font-size: clamp(0.68rem, 1.5vw, 0.95rem); min-height: 2.8em; margin-bottom: 8px; }
+    .price { font-size: clamp(1.05rem, 2.2vw, 1.6rem); }
+    button {
+      position: absolute;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      background: transparent;
+      color: #e4c56a;
+      border: 1px solid rgba(228, 197, 106, 0.75);
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-family: Cinzel, serif;
+      letter-spacing: 0.16em;
+      font-size: clamp(0.68rem, 1.5vw, 0.95rem);
       cursor: pointer;
+      white-space: nowrap;
     }
-    .select-btn {
-      width: 100%;
-      background: var(--primary);
-      color: #fff;
-      padding: 12px 14px;
-      font-size: 15px;
-    }
-    .select-btn:hover { background: var(--ink); }
-    .select-btn.added { background: #15803d; }
-    .checkout {
-      margin-top: 22px;
-      display: grid;
-      grid-template-columns: 1fr 220px;
-      gap: 16px;
-      align-items: start;
-    }
-    .cart {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
-      box-shadow: var(--shadow);
-    }
-    .cart h3 { margin-bottom: 10px; color: var(--ink); font-size: 16px; }
-    .cart-empty { color: var(--muted); font-size: 14px; }
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 14px;
-      font-weight: 700;
-    }
-    .cart-x {
-      background: #fee2e2;
-      color: #b91c1c;
-      width: 28px;
-      height: 28px;
-    }
-    .total {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 12px;
-      font-weight: 800;
-      font-size: 16px;
-    }
+    button:disabled { opacity: 0.4; }
+    .stock { display: block; margin-top: 8px; font-size: 0.72rem; letter-spacing: 0.06em; color: #b9a7d6; }
     .pay-now {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 52px;
-      background: var(--primary);
-      color: #fff;
+      display: inline-block;
+      margin-top: 28px;
+      padding: 12px 28px;
+      border: 1px solid #e4c56a;
+      color: #07040f;
+      background: #e4c56a;
       text-decoration: none;
-      font-size: 16px;
+      letter-spacing: 0.16em;
+      border-radius: 8px;
     }
-    .pay-now:hover { background: var(--ink); }
-    .pay-now.disabled {
-      pointer-events: none;
-      opacity: .45;
-    }
-    @media (max-width: 800px) {
-      .grid, .checkout { grid-template-columns: 1fr; }
-      .card img { height: 140px; }
-      h1 { font-size: 24px; }
+    @media (max-width: 700px) {
+      .card { padding-bottom: 54px; }
+      .card img { height: 110px; }
+      button { padding: 7px 10px; bottom: 12px; }
     }
   </style>
 </head>
 <body>
-  <a class="home-link" href="index.html">← Portfolio</a>
   <div class="video-pane">
-    <video id="club-video" src="sample-website.mp4?v=1" autoplay loop muted playsinline preload="auto"></video>
+    <video id="club-video" src="sample-website.mp4?v=1" autoplay loop playsinline preload="auto"></video>
   </div>
   <div class="page">
-    <h1>Nightclub Reserve</h1>
-    <p class="sub">Tap Select. It adds to the cart beside Pay Now.</p>
+    <h1>HIM</h1>
+    <p class="rule"><span>◆</span> Nightclub Reserve <span>◆</span></p>
     <main class="grid">
       <article class="card">
-        <img src="bottle-noir.jpg" alt="Noir Entree">
         <h2>Noir Entree</h2>
+        <img src="bottle-noir.jpg" alt="Noir Entree">
         <p class="notes">Woody · Smoky · Magnetic</p>
         <p class="price">$195</p>
-        <button class="select-btn" type="button" data-id="noir" data-name="Noir Entree" data-price="195">Select</button>
+        <button onclick="selectCologne(1)">SELECT</button>
       </article>
       <article class="card">
-        <img src="bottle-velvet.jpg" alt="Velvet Vice">
         <h2>Velvet Vice</h2>
+        <img src="bottle-velvet.jpg" alt="Velvet Vice">
         <p class="notes">Spicy · Amber · Bold · Warm</p>
         <p class="price">$195</p>
-        <button class="select-btn" type="button" data-id="velvet" data-name="Velvet Vice" data-price="195">Select</button>
+        <button onclick="selectCologne(2)">SELECT</button>
       </article>
       <article class="card">
-        <img src="bottle-saint.jpg" alt="Midnight Saint">
         <h2>Midnight Saint</h2>
+        <img src="bottle-saint.jpg" alt="Midnight Saint">
         <p class="notes">Aromatic · Leather · Smooth</p>
         <p class="price">$195</p>
-        <button class="select-btn" type="button" data-id="saint" data-name="Midnight Saint" data-price="195">Select</button>
+        <button onclick="selectCologne(3)">SELECT</button>
       </article>
     </main>
-    <div class="checkout">
-      <div class="cart">
-        <h3>Cart</h3>
-        <p class="cart-empty" id="cartEmpty">Nothing added yet.</p>
-        <div id="cartList"></div>
-        <div class="total"><span>Total</span><span id="cartTotal">$0</span></div>
-      </div>
-      <a class="pay-now disabled" id="payNow" href="pay.html">Pay Now</a>
-    </div>
+    <a class="pay-now" href="pay.html">Pay Now</a>
   </div>
   <script>
-    var video = document.getElementById("club-video");
-    video.muted = true;
+    var video = document.getElementById('club-video');
     video.loop = true;
     video.playsInline = true;
-    var start = video.play();
-    if (start && start.catch) start.catch(function(){});
-
-    var cart = [];
-    var list = document.getElementById("cartList");
-    var empty = document.getElementById("cartEmpty");
-    var totalEl = document.getElementById("cartTotal");
-    var pay = document.getElementById("payNow");
-
-    function money(n) { return "$" + n.toFixed(0); }
-
-    function render() {
-      list.innerHTML = "";
-      var total = 0;
-      cart.forEach(function(item, i) {
-        total += item.price * item.qty;
-        var row = document.createElement("div");
-        row.className = "cart-item";
-        row.innerHTML = "<span>" + item.name + " × " + item.qty + "</span>";
-        var x = document.createElement("button");
-        x.className = "cart-x";
-        x.type = "button";
-        x.textContent = "×";
-        x.addEventListener("click", function() {
-          cart.splice(i, 1);
-          render();
-        });
-        row.appendChild(x);
-        list.appendChild(row);
-      });
-      empty.style.display = cart.length ? "none" : "block";
-      totalEl.textContent = money(total);
-      pay.classList.toggle("disabled", !cart.length);
-      sessionStorage.setItem("sample_cart", JSON.stringify(cart));
-    }
-
-    document.querySelectorAll(".select-btn").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        var id = btn.dataset.id;
-        var found = cart.find(function(item) { return item.id === id; });
-        if (found) found.qty += 1;
-        else cart.push({ id: id, name: btn.dataset.name, price: Number(btn.dataset.price), qty: 1 });
-        btn.textContent = "Added";
-        btn.classList.add("added");
-        render();
-      });
+    video.volume = 1;
+    video.addEventListener('ended', function() {
+      video.currentTime = 0;
+      playVideo();
     });
-    render();
+    function playVideo() {
+      var p = video.play();
+      if (p && p.catch) p.catch(function(){});
+      return p;
+    }
+    function soundOn() {
+      video.muted = false;
+      video.volume = 1;
+      playVideo();
+    }
+    var start = video.play();
+    if (start && start.catch) {
+      start.catch(function() {
+        video.muted = true;
+        playVideo();
+        document.addEventListener('pointerdown', soundOn, { once: true });
+      });
+    }
+    video.addEventListener('canplay', function() {
+      if (video.paused) playVideo();
+    });
+    var inventory = {1:9, 2:9, 3:9};
+    function selectCologne(id) {
+      if (inventory[id] <= 0) return;
+      inventory[id] = Math.max(0, inventory[id] - 2);
+      var stock = document.getElementById('stock-' + id);
+      var btn = stock.parentElement.querySelector('button');
+      if (inventory[id] === 0) {
+        stock.textContent = 'Sold Out';
+        btn.disabled = true;
+      } else {
+        stock.textContent = inventory[id] + ' Remaining';
+      }
+    }
   </script>
 </body>
 </html>

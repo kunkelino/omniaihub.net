@@ -4,60 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Speak4</title>
-<style>
-*{box-sizing:border-box;}
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#111827,#312e81);font-family:Arial,Helvetica,sans-serif;color:#fff;}
-.card{width:min(360px,92vw);background:#fff;color:#172033;border-radius:20px;padding:28px 22px;text-align:center;box-shadow:0 10px 30px rgba(15,23,42,.18);}
-h1{margin:0 0 8px;font-size:22px;color:#312e81;}
-p{margin:0 0 16px;color:#6b7280;font-size:14px;}
-input{width:100%;text-align:center;letter-spacing:.28em;font-size:24px;padding:12px;border:1px solid #d1d5db;border-radius:12px;}
-button{margin-top:14px;width:100%;border:0;background:#4f46e5;color:#fff;font-weight:800;padding:12px;border-radius:12px;cursor:pointer;}
-.err{color:#dc2626;font-size:13px;min-height:18px;margin-top:8px;}
-a{display:inline-block;margin-top:14px;color:#6b7280;font-size:13px;}
-</style>
 </head>
 <body>
-<div class="card" id="gate">
-  <h1>Speak4</h1>
-  <p>Enter the passcode</p>
-  <input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Passcode">
-  <button type="button" id="go">Enter</button>
-  <div class="err" id="err"></div>
-  <a href="index.html">Back to portfolio</a>
-</div>
 <script>
 (function(){
-  var PIN="435777";
-  var KEY="speak4_ok";
-  function openApp(){
-    var SRCS=[
-      "https://cdn.jsdelivr.net/gh/kunkelino/omniaihub.net@d554167338581631c10f0669f22ee475f26fe8be/spk4gln.html",
-      "https://raw.githubusercontent.com/kunkelino/omniaihub.net/d554167338581631c10f0669f22ee475f26fe8be/spk4gln.html"
-    ];
-    function load(i){
-      if(i>=SRCS.length){ document.body.textContent="Could not load Speak4. Refresh."; return; }
-      fetch(SRCS[i],{cache:"no-store"}).then(function(r){ if(!r.ok) throw new Error(); return r.text(); }).then(function(html){
-        html=html.replace('if(sessionStorage.getItem(KEY)==="1") openSite();','openSite();');
-        html=html.replace('<div id="gate">','<div id="gate" class="ok">');
-        document.open();
-        document.write(html);
-        document.close();
-      }).catch(function(){ load(i+1); });
-    }
-    load(0);
+  var SRCS=[
+    "https://cdn.jsdelivr.net/gh/kunkelino/omniaihub.net@d554167338581631c10f0669f22ee475f26fe8be/spk4gln.html",
+    "https://raw.githubusercontent.com/kunkelino/omniaihub.net/d554167338581631c10f0669f22ee475f26fe8be/spk4gln.html"
+  ];
+  function load(i){
+    if(i>=SRCS.length){ document.body.textContent="Could not load Speak4. Refresh."; return; }
+    fetch(SRCS[i],{cache:"no-store"}).then(function(r){ if(!r.ok) throw new Error(); return r.text(); }).then(function(html){
+      html=html.replace('if(sessionStorage.getItem(KEY)==="1") openSite();','openSite();');
+      html=html.replace('<div id="gate">','<div id="gate" class="ok">');
+      document.open();
+      document.write(html);
+      document.close();
+    }).catch(function(){ load(i+1); });
   }
-  function check(){
-    var pin=(document.getElementById("pin").value||"").replace(/\D/g,"");
-    if(pin===PIN){
-      sessionStorage.setItem(KEY,"1");
-      openApp();
-    } else {
-      document.getElementById("err").textContent="Wrong passcode";
-    }
-  }
-  document.getElementById("go").addEventListener("click", check);
-  document.getElementById("pin").addEventListener("keydown", function(e){ if(e.key==="Enter") check(); });
-  if(sessionStorage.getItem(KEY)==="1") openApp();
+  load(0);
 })();
 </script>
 </body>
