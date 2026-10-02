@@ -73,8 +73,6 @@
       .video-pane {
         width: 50%;
         height: 100vh;
-        position: sticky;
-        top: 0;
       }
     }
 
@@ -92,21 +90,6 @@
       pointer-events: none;
     }
 
-    #sound-btn {
-      position: absolute;
-      right: 18px;
-      bottom: 18px;
-      z-index: 3;
-      border: 1px solid var(--accent-gold);
-      background: rgba(7, 3, 13, 0.72);
-      color: var(--accent-gold);
-      font-family: 'Cinzel', serif;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 8px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-    }
     .video-badge {
       position: absolute;
       top: 24px;
@@ -287,10 +270,9 @@
   <div class="split-layout">
     <div class="video-pane">
       <div class="video-badge">Nightfall Edition</div>
-      <video id="club-video" autoplay loop playsinline>
-        <source src="night-entry.mp4" type="video/mp4">
+      <video autoplay muted loop playsinline>
+        <source src="holy-family-club.mp4" type="video/mp4">
       </video>
-      <button id="sound-btn" type="button">Play music</button>
       <div class="video-gradient-overlay"></div>
     </div>
 
@@ -355,17 +337,6 @@
       2: 9,
       3: 9
     };
-
-    const clubVideo = document.getElementById('club-video');
-    const soundBtn = document.getElementById('sound-btn');
-    function startMusic() {
-      clubVideo.muted = false;
-      clubVideo.volume = 0.9;
-      clubVideo.play();
-      soundBtn.textContent = 'Music on';
-    }
-    soundBtn.addEventListener('click', startMusic);
-    clubVideo.play().catch(function(){});
 
     function selectCologne(id, dropBy = 2) {
       const flash = document.getElementById('flash-overlay');
