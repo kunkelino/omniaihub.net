@@ -3,25 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HIM</title>
+  <title>MHIM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg-dark: #07030d;
-      --bg-purple: #160a29;
-      --accent-gold: #d4af37;
-      --accent-glow: rgba(212, 175, 55, 0.35);
-      --card-bg: rgba(18, 8, 32, 0.72);
-      --text-light: #f5f3f7;
-      --text-muted: #cbb89a;
-    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: radial-gradient(circle at 50% 0%, #2a1548 0%, var(--bg-dark) 55%);
-      color: var(--text-light);
-      font-family: 'Montserrat', sans-serif;
+      background: #07040f;
+      color: #e7c866;
+      font-family: Cinzel, serif;
       min-height: 100vh;
     }
     .video-pane {
@@ -37,182 +28,133 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: contrast(1.05) brightness(0.92);
+      display: block;
     }
     .page {
-      max-width: 1100px;
+      max-width: 980px;
       margin: 0 auto;
-      padding: 36px 20px 80px;
+      padding: 28px 18px 64px;
       text-align: center;
+      background: radial-gradient(circle at 50% 0%, #1a1030 0%, #07040f 62%);
     }
-    .brand-title {
-      font-family: 'Cinzel', serif;
-      font-weight: 700;
-      font-size: clamp(3.4rem, 10vw, 6.4rem);
-      letter-spacing: 0.18em;
-      color: #e7c866;
-      text-shadow: 0 0 24px var(--accent-glow);
+    h1 {
+      font-weight: 500;
+      font-size: clamp(3.2rem, 12vw, 6.6rem);
+      letter-spacing: 0.16em;
       line-height: 1;
+      color: #e4c56a;
     }
-    .brand-rule {
+    .rule {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      margin: 14px 0 34px;
-      color: var(--accent-gold);
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      font-family: 'Cinzel', serif;
-      font-size: 1.05rem;
+      gap: 16px;
+      margin: 10px 0 28px;
+      letter-spacing: 0.08em;
+      font-size: clamp(1rem, 2.4vw, 1.35rem);
+      color: #e4c56a;
     }
-    .brand-rule::before,
-    .brand-rule::after {
+    .rule::before, .rule::after {
       content: "";
-      width: 72px;
+      width: 54px;
       height: 1px;
-      background: var(--accent-gold);
+      background: #e4c56a;
     }
-    .cologne-grid {
+    .rule span { font-size: 0.7em; }
+    .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 22px;
+      gap: 16px;
     }
-    .cologne-card {
-      background: linear-gradient(180deg, rgba(42, 22, 68, 0.55), rgba(10, 6, 18, 0.85));
-      border: 1px solid rgba(212, 175, 55, 0.28);
-      border-radius: 8px;
-      padding: 28px 16px 22px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    .card {
+      border: 1px solid rgba(228, 197, 106, 0.45);
+      border-radius: 10px;
+      padding: 16px 10px 18px;
+      background: rgba(8, 6, 16, 0.55);
     }
-    .bottle-img {
-      width: 150px;
-      height: 190px;
-      object-fit: contain;
-      margin: 0 auto 18px;
+    .card img {
+      width: 100%;
+      height: auto;
       display: block;
-      filter: drop-shadow(0 12px 18px rgba(0,0,0,0.55));
-    }
-    .bottle-title {
-      font-family: 'Cinzel', serif;
-      font-size: 1.55rem;
-      color: #e7c866;
       margin-bottom: 8px;
     }
-    .bottle-notes {
-      color: var(--text-muted);
-      font-size: 0.92rem;
-      margin-bottom: 14px;
-    }
-    .price {
-      font-family: 'Cinzel', serif;
-      color: #e7c866;
-      font-size: 1.35rem;
-      margin-bottom: 16px;
-    }
-    .btn-select {
+    h2 { font-size: clamp(1rem, 2.5vw, 1.7rem); font-weight: 500; margin-bottom: 6px; }
+    .notes { font-size: clamp(0.72rem, 1.6vw, 0.95rem); margin-bottom: 8px; }
+    .price { font-size: clamp(1.1rem, 2.4vw, 1.6rem); margin-bottom: 14px; }
+    button {
       background: transparent;
-      color: #e7c866;
-      border: 1px solid rgba(212, 175, 55, 0.7);
-      padding: 10px 28px;
-      font-family: 'Cinzel', serif;
+      color: #e4c56a;
+      border: 1px solid rgba(228, 197, 106, 0.75);
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-family: Cinzel, serif;
       letter-spacing: 0.16em;
-      text-transform: uppercase;
+      font-size: clamp(0.72rem, 1.6vw, 0.95rem);
       cursor: pointer;
-      border-radius: 4px;
     }
-    .btn-select:hover { background: rgba(212, 175, 55, 0.12); }
-    .btn-select:disabled { opacity: 0.45; cursor: not-allowed; }
-    .stock-indicator {
-      display: block;
-      margin-top: 10px;
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      color: #b9a7d6;
-    }
-    .stock-indicator.low { color: #ff9e9e; }
-    .portfolio-link {
-      display: inline-block;
-      margin-top: 36px;
-      color: rgba(231, 200, 102, 0.7);
-      font-size: 0.8rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      text-decoration: none;
-    }
-    @media (max-width: 700px) {
-      .cologne-grid { gap: 10px; }
-      .cologne-card { padding: 16px 8px 14px; }
-      .bottle-img { width: 92px; height: 120px; }
-      .bottle-title { font-size: 1rem; }
-      .bottle-notes { font-size: 0.72rem; }
-      .price { font-size: 1rem; }
-      .btn-select { padding: 8px 10px; letter-spacing: 0.08em; font-size: 0.72rem; }
-    }
+    button:disabled { opacity: 0.4; }
+    .stock { display: block; margin-top: 8px; font-size: 0.72rem; letter-spacing: 0.06em; color: #b9a7d6; }
   </style>
 </head>
 <body>
   <div class="video-pane">
-    <video id="club-video" autoplay loop playsinline>
-      <source src="night-entry.mp4?v=him" type="video/mp4">
-    </video>
+    <video id="club-video" autoplay loop playsinline src="him-loop.mp4?v=jazz"></video>
   </div>
   <div class="page">
-    <h1 class="brand-title">HIM</h1>
-    <p class="brand-rule">Nightclub Reserve</p>
-    <main class="cologne-grid">
-      <article class="cologne-card">
-        <img class="bottle-img" src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=500&q=80" alt="Noir Entree bottle">
-        <h2 class="bottle-title">Noir Entree</h2>
-        <p class="bottle-notes">Woody · Smoky · Magnetic</p>
-        <div class="price">$195</div>
-        <button class="btn-select" onclick="selectCologne(1, 2)">Select</button>
-        <span class="stock-indicator" id="stock-1">9 Remaining</span>
+    <h1>MHIM</h1>
+    <p class="rule"><span>◆</span> Nightclub Reserve <span>◆</span></p>
+    <main class="grid">
+      <article class="card">
+        <img src="bottle-noir.jpg" alt="Noir Entree">
+        <h2>Noir Entree</h2>
+        <p class="notes">Woody · Smoky · Magnetic</p>
+        <p class="price">$195</p>
+        <button onclick="selectCologne(1)">SELECT</button>
+        <span class="stock" id="stock-1">9 Remaining</span>
       </article>
-      <article class="cologne-card">
-        <img class="bottle-img" src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=500&q=80" alt="Velvet Vice bottle">
-        <h2 class="bottle-title">Velvet Vice</h2>
-        <p class="bottle-notes">Spicy · Amber · Bold</p>
-        <div class="price">$195</div>
-        <button class="btn-select" onclick="selectCologne(2, 2)">Select</button>
-        <span class="stock-indicator" id="stock-2">9 Remaining</span>
+      <article class="card">
+        <img src="bottle-velvet.jpg" alt="Velvet Vice">
+        <h2>Velvet Vice</h2>
+        <p class="notes">Spicy · Amber · Bold</p>
+        <p class="price">$195</p>
+        <button onclick="selectCologne(2)">SELECT</button>
+        <span class="stock" id="stock-2">9 Remaining</span>
       </article>
-      <article class="cologne-card">
-        <img class="bottle-img" src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=500&q=80" alt="Midnight Saint bottle">
-        <h2 class="bottle-title">Midnight Saint</h2>
-        <p class="bottle-notes">Aromatic · Leather · Smooth</p>
-        <div class="price">$195</div>
-        <button class="btn-select" onclick="selectCologne(3, 2)">Select</button>
-        <span class="stock-indicator" id="stock-3">9 Remaining</span>
+      <article class="card">
+        <img src="bottle-saint.jpg" alt="Midnight Saint">
+        <h2>Midnight Saint</h2>
+        <p class="notes">Aromatic · Leather · Smooth</p>
+        <p class="price">$195</p>
+        <button onclick="selectCologne(3)">SELECT</button>
+        <span class="stock" id="stock-3">9 Remaining</span>
       </article>
     </main>
-    <a class="portfolio-link" href="portfolio.html">Portfolio</a>
   </div>
   <script>
-    const clubVideo = document.getElementById('club-video');
-    clubVideo.volume = 0.33;
-    function startAudio() {
-      clubVideo.muted = false;
-      clubVideo.volume = 0.33;
-      const playPromise = clubVideo.play();
-      if (playPromise) playPromise.catch(function(){});
+    const video = document.getElementById('club-video');
+    video.muted = false;
+    video.volume = 0.7;
+    video.loop = true;
+    function start() {
+      video.muted = false;
+      video.volume = 0.7;
+      const p = video.play();
+      if (p) p.catch(function(){});
     }
-    startAudio();
-    document.addEventListener('pointerdown', startAudio, {once: true});
-    const inventory = {1: 9, 2: 9, 3: 9};
-    function selectCologne(id, dropBy) {
+    start();
+    video.addEventListener('loadeddata', start);
+    document.addEventListener('visibilitychange', function(){ if (!document.hidden) start(); });
+    const inventory = {1:9, 2:9, 3:9};
+    function selectCologne(id) {
       if (inventory[id] <= 0) return;
-      inventory[id] = Math.max(0, inventory[id] - dropBy);
-      const stockEl = document.getElementById('stock-' + id);
-      const btn = stockEl.parentElement.querySelector('.btn-select');
+      inventory[id] = Math.max(0, inventory[id] - 2);
+      const stock = document.getElementById('stock-' + id);
+      const btn = stock.parentElement.querySelector('button');
       if (inventory[id] === 0) {
-        stockEl.textContent = 'Sold Out';
-        stockEl.classList.add('low');
+        stock.textContent = 'Sold Out';
         btn.disabled = true;
-        btn.textContent = 'Sold Out';
       } else {
-        stockEl.textContent = inventory[id] + ' Remaining';
-        if (inventory[id] <= 3) stockEl.classList.add('low');
+        stock.textContent = inventory[id] + ' Remaining';
       }
     }
   </script>
