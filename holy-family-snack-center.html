@@ -103,6 +103,17 @@
     }
     button:disabled { opacity: 0.4; }
     .stock { display: block; margin-top: 8px; font-size: 0.72rem; letter-spacing: 0.06em; color: #b9a7d6; }
+    .pay-now {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 12px 28px;
+      border: 1px solid #e4c56a;
+      color: #07040f;
+      background: #e4c56a;
+      text-decoration: none;
+      letter-spacing: 0.16em;
+      border-radius: 8px;
+    }
     @media (max-width: 700px) {
       .card { padding-bottom: 54px; }
       .card img { height: 110px; }
@@ -112,7 +123,7 @@
 </head>
 <body>
   <div class="video-pane">
-    <video id="club-video" src="him-loop.mp4?v=play3" autoplay muted loop playsinline preload="auto"></video>
+    <video id="club-video" src="him-loop.mp4?v=club" autoplay muted loop playsinline preload="auto"></video>
   </div>
   <div class="page">
     <h1>MHIM</h1>
@@ -143,6 +154,7 @@
         <span class="stock" id="stock-3">9 Remaining</span>
       </article>
     </main>
+    <a class="pay-now" href="pay.html">Pay Now</a>
   </div>
   <script>
     var video = document.getElementById('club-video');
