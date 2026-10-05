@@ -1,419 +1,52 @@
-```html
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta
-    name="viewport"
-    content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no"
-  >
-
-  <title>They're Watching You</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      background: #050505;
-      color: #f4efe6;
-      font-family: Georgia, "Times New Roman", serif;
-      height: 100%;
-    }
-
-    body {
-      min-height: 100dvh;
-      overflow: hidden;
-      touch-action: none;
-    }
-
-    .app {
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .top {
-      text-align: center;
-      padding: 12px 16px 0;
-    }
-
-    .kicker {
-      letter-spacing: .42em;
-      font-size: 10px;
-      font-family: Arial, sans-serif;
-      opacity: .55;
-    }
-
-    h1 {
-      margin: 6px 0 0;
-      font-weight: 500;
-      letter-spacing: .08em;
-      font-size: clamp(22px, 6.2vw, 40px);
-    }
-
-    .sub {
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      opacity: .72;
-      min-height: 18px;
-      margin-top: 6px;
-    }
-
-    .stage {
-      position: relative;
-      flex: 1;
-      margin: 10px 8px 42px;
-      border-radius: 18px;
-      overflow: hidden;
-      background: #111;
-      touch-action: none;
-      box-shadow: 0 20px 60px #000;
-    }
-
-    /*
-      All three videos occupy the exact same space.
-      Opacity is used to switch between them instead of
-      changing the source of a single video.
-    */
-    .video-layer {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      background: #111;
-
-      opacity: 0;
-      pointer-events: none;
-
-      transition: opacity 0s linear;
-    }
-
-    .video-layer.active {
-      opacity: 1;
-    }
-
-    .shade {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(0,0,0,.18),
-          transparent 12%,
-          transparent 78%,
-          rgba(0,0,0,.28)
-        );
-      z-index: 4;
-    }
-
-    .finger {
-      position: absolute;
-      z-index: 6;
-      width: 30px;
-      height: 30px;
-      border: 1.5px solid rgba(255,255,255,.9);
-      border-radius: 50%;
-      transform: translate(-50%,-50%);
-      opacity: 0;
-      pointer-events: none;
-      box-shadow: 0 0 0 8px rgba(255,255,255,.08);
-    }
-
-    .back {
-      position: absolute;
-      z-index: 7;
-      left: 12px;
-      top: 12px;
-      color: #fff;
-      text-decoration: none;
-      font-family: Arial, sans-serif;
-      font-size: 12px;
-      letter-spacing: .08em;
-      background: rgba(0,0,0,.45);
-      padding: 7px 10px;
-      border-radius: 999px;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Games — Jonathan Kunkel</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#f4f7fb;color:#172033;font-family:Arial,Helvetica,sans-serif}
+.page{max-width:1100px;margin:0 auto;padding:28px 18px 60px}.hero{background:linear-gradient(135deg,#111827,#312e81);color:#fff;border-radius:24px;padding:28px;box-shadow:0 10px 30px rgba(15,23,42,.08);margin-bottom:22px}
+h1{margin:0 0 6px;font-size:30px}.sub{opacity:.8}.back{display:inline-block;margin-top:16px;color:#fff;text-decoration:none;font-weight:700;border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:9px 13px}
+#gate{background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:28px;max-width:420px;margin:40px auto;box-shadow:0 10px 30px rgba(15,23,42,.08);text-align:center}
+input{width:100%;text-align:center;letter-spacing:.28em;font-size:20px;padding:12px;border:1px solid #d1d5db;border-radius:12px;margin:12px 0}
+button{width:100%;border:0;background:#312e81;color:#fff;font-weight:700;padding:12px;border-radius:12px;cursor:pointer}
+.err{min-height:18px;margin-top:8px;color:#b91c1c;font-size:12px;font-weight:700}
+#games{display:none}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.game{display:block;background:#080808;color:#fff;border-radius:18px;overflow:hidden;text-decoration:none;box-shadow:0 10px 30px rgba(15,23,42,.12)}
+.game-preview{aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;background:radial-gradient(circle at 50% 25%,#454d58,#181b20 55%,#050505)}
+.game-preview strong{font-size:25px;line-height:.95}.game-cap{padding:14px;font-weight:700}.game-cap span{display:block;font-size:12px;opacity:.65;font-weight:400;margin-top:4px}
+</style>
 </head>
-
 <body>
-
-<div class="app">
-
-  <header class="top">
-    <div class="kicker">OMNIAIHUB</div>
-
-    <h1>THEY'RE WATCHING YOU</h1>
-
-    <div class="sub">
-      They're talking. Point somewhere.
-    </div>
-  </header>
-
-  <section class="stage" id="stage">
-
-    <!--
-      All three videos are loaded at the same time.
-      Only one is visible at any given moment.
-    -->
-
-    <video
-      id="video-loop"
-      class="video-layer active"
-      src="loop.mp4"
-      playsinline
-      muted
-      autoplay
-      loop
-      preload="auto"
-    ></video>
-
-    <video
-      id="video-curtain"
-      class="video-layer"
-      src="curtain.mp4"
-      playsinline
-      preload="auto"
-    ></video>
-
-    <video
-      id="video-up"
-      class="video-layer"
-      src="up.mp4"
-      playsinline
-      preload="auto"
-    ></video>
-
-    <div class="shade"></div>
-
-    <a
-      class="back"
-      href="../games.html"
-    >
-      Games
-    </a>
-
-    <div class="finger" id="finger"></div>
-
-  </section>
-
+<div class="page">
+<header class="hero"><h1>Games</h1><div class="sub">Private interactive experiments by Jonathan Kunkel & OmniAIHub.net</div><a class="back" href="index.html">← Back to Portfolio</a></header>
+<section id="gate">
+<h2>Private Games</h2><p>Enter the passcode to continue.</p>
+<form id="pin-form">
+<input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Passcode">
+<button type="submit">Enter Games</button>
+<div class="err" id="err"></div>
+</form>
+</section>
+<section id="games">
+<div class="grid">
+<a class="game" href="games/room.html">
+<div class="game-preview" style="background:#111 url('games/room/talk.jpg') center/cover"><strong>THEY'RE<br>WATCHING<br>YOU</strong></div>
+<div class="game-cap">They're Watching You<span>Move your finger. They stop and look.</span></div>
+</a>
 </div>
-
+</section>
+</div>
 <script>
-  const stage = document.getElementById("stage");
-  const finger = document.getElementById("finger");
-
-  const videos = {
-    loop: document.getElementById("video-loop"),
-    curtain: document.getElementById("video-curtain"),
-    up: document.getElementById("video-up")
-  };
-
-  let shown = "loop";
-
-
-  /*
-    Prepare all videos immediately.
-
-    The browser is told to preload every video so that
-    switching between them doesn't require changing
-    the source of a video element.
-  */
-  Object.values(videos).forEach(video => {
-    video.preload = "auto";
-
-    /*
-      Force the browser to begin loading the video.
-    */
-    video.load();
-  });
-
-
-  /*
-    Keep the loop video playing continuously.
-  */
-  videos.loop.muted = true;
-  videos.loop.loop = true;
-
-  videos.loop.play().catch(() => {});
-
-
-  /*
-    Switch videos instantly by changing opacity.
-
-    There is NO src change here.
-    There is NO replacing of the video element.
-  */
-  function play(which) {
-
-    const target = videos[which];
-
-    if (!target) return;
-
-    if (shown === which) {
-      if (target.paused) {
-        target.play().catch(() => {});
-      }
-      return;
-    }
-
-    const previous = videos[shown];
-
-    /*
-      Make sure the target starts from the beginning.
-    */
-    try {
-      target.currentTime = 0;
-    } catch (e) {}
-
-    /*
-      Preserve the original behavior:
-      loop is muted, directional videos can have audio.
-    */
-    if (which === "loop") {
-      target.muted = true;
-      target.loop = true;
-    } else {
-      target.muted = false;
-      target.loop = false;
-    }
-
-    /*
-      Start the new video BEFORE making it visible.
-      Because the video is already preloaded, this should
-      eliminate the black/loading transition.
-    */
-    const startPromise = target.play();
-
-    if (startPromise) {
-      startPromise
-        .catch(() => {})
-        .finally(() => {
-
-          /*
-            Instantly show the new video.
-          */
-          target.classList.add("active");
-
-          /*
-            Immediately hide the previous video.
-          */
-          if (previous) {
-            previous.classList.remove("active");
-          }
-
-          shown = which;
-        });
-    } else {
-
-      target.classList.add("active");
-
-      if (previous) {
-        previous.classList.remove("active");
-      }
-
-      shown = which;
-    }
-  }
-
-
-  /*
-    When either directional video finishes,
-    immediately return to the looping video.
-  */
-  videos.curtain.addEventListener("ended", () => {
-    finger.style.opacity = "0";
-    play("loop");
-  });
-
-  videos.up.addEventListener("ended", () => {
-    finger.style.opacity = "0";
-    play("loop");
-  });
-
-
-  /*
-    Determine which video the user is pointing toward.
-  */
-  function aim(x, y) {
-
-    const r = stage.getBoundingClientRect();
-
-    const nx = Math.max(
-      0,
-      Math.min(1, (x - r.left) / r.width)
-    );
-
-    const ny = Math.max(
-      0,
-      Math.min(1, (y - r.top) / r.height)
-    );
-
-    /*
-      Show the finger indicator.
-    */
-    finger.style.opacity = "1";
-    finger.style.left = (nx * 100) + "%";
-    finger.style.top = (ny * 100) + "%";
-
-
-    /*
-      Right side = curtain
-      Left side = looking up
-    */
-    if (nx >= 0.5) {
-      play("curtain");
-    } else {
-      play("up");
-    }
-  }
-
-
-  /*
-    Mouse / touch / pointer support.
-  */
-  stage.addEventListener(
-    "pointerdown",
-    e => {
-      stage.setPointerCapture?.(e.pointerId);
-      aim(e.clientX, e.clientY);
-    },
-    { passive: false }
-  );
-
-
-  stage.addEventListener(
-    "pointermove",
-    e => {
-      if (e.buttons || e.pointerType === "touch") {
-        aim(e.clientX, e.clientY);
-      }
-    },
-    { passive: false }
-  );
-
-
-  stage.addEventListener(
-    "touchmove",
-    e => e.preventDefault(),
-    { passive: false }
-  );
-
-
-  /*
-    Start on the looping video.
-  */
-  play("loop");
+const ok=()=>sessionStorage.getItem("games_ok")==="1";
+function show(){document.getElementById("gate").style.display="none";document.getElementById("games").style.display="block"}
+if(ok()) show();
+document.getElementById("pin-form").addEventListener("submit",e=>{
+e.preventDefault();
+if((document.getElementById("pin").value||"").replace(/\D/g,"")==="435777"){sessionStorage.setItem("games_ok","1");show()}
+else document.getElementById("err").textContent="Wrong passcode";
+});
 </script>
-
 </body>
 </html>
-```
