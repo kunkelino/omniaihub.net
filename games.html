@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Games — Jonathan Kunkel</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#f4f7fb;color:#172033;font-family:Arial,Helvetica,sans-serif}
+.page{max-width:1100px;margin:0 auto;padding:28px 18px 60px}.hero{background:linear-gradient(135deg,#111827,#312e81);color:#fff;border-radius:24px;padding:28px;box-shadow:0 10px 30px rgba(15,23,42,.08);margin-bottom:22px}
+h1{margin:0 0 6px;font-size:30px}.sub{opacity:.8}.back{display:inline-block;margin-top:16px;color:#fff;text-decoration:none;font-weight:700;border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:9px 13px}
+#gate{background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:28px;max-width:420px;margin:40px auto;box-shadow:0 10px 30px rgba(15,23,42,.08);text-align:center}
+input{width:100%;text-align:center;letter-spacing:.28em;font-size:20px;padding:12px;border:1px solid #d1d5db;border-radius:12px;margin:12px 0}
+button{width:100%;border:0;background:#312e81;color:#fff;font-weight:700;padding:12px;border-radius:12px;cursor:pointer}
+.err{min-height:18px;margin-top:8px;color:#b91c1c;font-size:12px;font-weight:700}
+#games{display:none}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.game{display:block;background:#080808;color:#fff;border-radius:18px;overflow:hidden;text-decoration:none;box-shadow:0 10px 30px rgba(15,23,42,.12)}
+.game-preview{aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;background:radial-gradient(circle at 50% 25%,#454d58,#181b20 55%,#050505)}
+.game-preview strong{font-size:25px;line-height:.95}.game-cap{padding:14px;font-weight:700}.game-cap span{display:block;font-size:12px;opacity:.65;font-weight:400;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="hero"><h1>Games</h1><div class="sub">Private interactive experiments by Jonathan Kunkel & OmniAIHub.net</div><a class="back" href="index.html">← Back to Portfolio</a></header>
+<section id="gate">
+<h2>Private Games</h2><p>Enter the passcode to continue.</p>
+<form id="pin-form">
+<input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Passcode">
+<button type="submit">Enter Games</button>
+<div class="err" id="err"></div>
+</form>
+</section>
+<section id="games">
+<div class="grid">
+<a class="game" href="games/pointer-ai.html">
+<div class="game-preview"><strong>AI KNOWS<br>WHERE YOU'RE<br>LOOKING</strong></div>
+<div class="game-cap">AI Knows Where You're Looking<span>Move your finger. Watch them point.</span></div>
+</a>
+</div>
+</section>
+</div>
+<script>
+const ok=()=>sessionStorage.getItem("games_ok")==="1";
+function show(){document.getElementById("gate").style.display="none";document.getElementById("games").style.display="block"}
+if(ok()) show();
+document.getElementById("pin-form").addEventListener("submit",e=>{
+e.preventDefault();
+if((document.getElementById("pin").value||"").replace(/\D/g,"")==="435777"){sessionStorage.setItem("games_ok","1");show()}
+else document.getElementById("err").textContent="Wrong passcode";
+});
+</script>
+</body>
+</html>
