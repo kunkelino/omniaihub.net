@@ -124,9 +124,11 @@ const videos = [
 // Keep these names when replacing the video files.
 const clips = {
   loop: "loop.mp4",
-  centerLeft: "leftcenter.mp4",
+  screenLeft: "rightcenter.mp4",
   centerDown: "centerdown.mp4",
-  centerRight: "rightcenter.mp4"
+  centerRight: "leftcenter.mp4",
+  curtain: "curtain.mp4",
+  centerUp: "up.mp4"
 };
 
 let active = 0;
@@ -285,19 +287,36 @@ function aim(x, y) {
   finger.style.top = (ny * 100) + "%";
 
   /*
-    The screen is divided into THREE equal vertical zones:
+    SCREEN HOTSPOTS:
 
-    LEFT   = leftcenter.mp4
-    CENTER = centerdown.mp4
-    RIGHT  = rightcenter.mp4
+    LEFT SIDE            = rightcenter.mp4
+    CENTER BOTTOM        = centerdown.mp4
+    CENTER RIGHT         = leftcenter.mp4
+    CENTER TOP           = up.mp4
+    VERY TOP-RIGHT       = curtain.mp4
 
-    The user's vertical position does not matter inside each zone.
+    The curtain hotspot is the upper-right corner of the screen.
+    The regular right-side hotspot is the center-right portion.
   */
-  if (nx < 1/3) {
-    playDirection("centerLeft");
-  } else if (nx < 2/3) {
+
+  // Very top-right corner: curtain.
+  if (nx >= 2/3 && ny < 1/3) {
+    playDirection("curtain");
+
+  // Center top: up.
+  } else if (nx >= 1/3 && nx < 2/3 && ny < 1/3) {
+    playDirection("centerUp");
+
+  // Left side.
+  } else if (nx < 1/3) {
+    playDirection("screenLeft");
+
+  // Center bottom.
+  } else if (nx >= 1/3 && nx < 2/3 && ny >= 2/3) {
     playDirection("centerDown");
-  } else {
+
+  // Regular center-right.
+  } else if (nx >= 2/3) {
     playDirection("centerRight");
   }
 }
