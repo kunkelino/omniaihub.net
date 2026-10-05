@@ -124,9 +124,9 @@ const videos = [
 // Keep these names when replacing the video files.
 const clips = {
   loop: "loop.mp4",
-  centerLeft: "center left.mp4",
-  centerDown: "center down.mp4",
-  centerRight: "center right.mp4"
+  centerLeft: "leftcenter.mp4",
+  centerDown: "centerdown.mp4",
+  centerRight: "rightcenter.mp4"
 };
 
 let active = 0;
@@ -287,9 +287,9 @@ function aim(x, y) {
   /*
     The screen is divided into THREE equal vertical zones:
 
-    LEFT   = center left.mp4
-    CENTER = center down.mp4
-    RIGHT  = center right.mp4
+    LEFT   = leftcenter.mp4
+    CENTER = centerdown.mp4
+    RIGHT  = rightcenter.mp4
 
     The user's vertical position does not matter inside each zone.
   */
