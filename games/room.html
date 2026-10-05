@@ -13,14 +13,12 @@ body{min-height:100dvh;overflow:hidden;touch-action:none}
 .kicker{letter-spacing:.42em;font-size:10px;font-family:Arial,sans-serif;opacity:.55}
 h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.2vw,40px)}
 .sub{font-family:Arial,sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;opacity:.72;min-height:18px;margin-top:6px}
-.stage{position:relative;flex:1;margin:10px 8px 42px;border-radius:18px;overflow:hidden;background:#1a140f center/cover no-repeat;touch-action:none;box-shadow:0 20px 60px #000}
-.stage{background-image:url("room/empty.jpg")}
-.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.2),transparent 16%,transparent 72%,rgba(0,0,0,.35))}
-.person{position:absolute;width:30%;transform:translate(-50%,0);transform-origin:50% 78%;will-change:transform}
-.person img{width:100%;height:auto;display:block;filter:drop-shadow(0 14px 10px rgba(0,0,0,.45));pointer-events:none}
-.person .stand{position:absolute;left:0;top:0;width:100%;opacity:0}
-.finger{position:absolute;z-index:8;width:30px;height:30px;border:1.5px solid rgba(255,255,255,.9);border-radius:50%;transform:translate(-50%,-50%);opacity:0;pointer-events:none;box-shadow:0 0 0 8px rgba(255,255,255,.08)}
-.back{position:absolute;z-index:9;left:12px;top:12px;color:#fff;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;letter-spacing:.08em;background:rgba(0,0,0,.45);padding:7px 10px;border-radius:999px}
+.stage{position:relative;flex:1;margin:10px 8px 42px;border-radius:18px;overflow:hidden;background:#111;touch-action:none;box-shadow:0 20px 60px #000}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.look{opacity:0}
+.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.22),transparent 14%,transparent 74%,rgba(0,0,0,.35))}
+.finger{position:absolute;z-index:6;width:30px;height:30px;border:1.5px solid rgba(255,255,255,.9);border-radius:50%;transform:translate(-50%,-50%);opacity:0;pointer-events:none;box-shadow:0 0 0 8px rgba(255,255,255,.08)}
+.back{position:absolute;z-index:7;left:12px;top:12px;color:#fff;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;letter-spacing:.08em;background:rgba(0,0,0,.45);padding:7px 10px;border-radius:999px}
 </style>
 </head>
 <body>
@@ -31,6 +29,10 @@ h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.2v
     <div class="sub" id="line">Move your finger.</div>
   </header>
   <section class="stage" id="stage">
+    <video id="talk" src="room/talk.mp4" autoplay muted loop playsinline></video>
+    <video class="look" id="left" src="room/look-left.mp4" muted playsinline></video>
+    <video class="look" id="right" src="room/look-right.mp4" muted playsinline></video>
+    <video class="look" id="down" src="room/look-down.mp4" muted playsinline></video>
     <div class="shade"></div>
     <a class="back" href="../games.html">Games</a>
     <div class="finger" id="finger"></div>
@@ -41,74 +43,41 @@ h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.2v
 const stage = document.getElementById("stage");
 const line = document.getElementById("line");
 const finger = document.getElementById("finger");
-const cast = [
-  {sit:"room/p1.png", stand:"room/p1s.png", x:18, y:50, home:-18, delay:0.15, canStand:true},
-  {sit:"room/p2.png", x:34, y:51, home:12, delay:0.35, canStand:false},
-  {sit:"room/p3.png", x:50, y:50, home:-6, delay:0.55, canStand:false},
-  {sit:"room/p4.png", x:66, y:49, home:8, delay:0.7, canStand:false},
-  {sit:"room/p5.png", stand:"room/p5s.png", x:82, y:49, home:-14, delay:0.4, canStand:true}
-];
-cast.forEach((p,i)=>{
-  const el = document.createElement("div");
-  el.className = "person";
-  el.style.left = p.x+"%";
-  el.style.top = p.y+"%";
-  el.style.zIndex = String(3+i);
-  el.innerHTML = '<img class="sit" alt=""><img class="stand" alt="">';
-  el.querySelector(".sit").src = p.sit;
-  if (p.stand) el.querySelector(".stand").src = p.stand;
-  stage.appendChild(el);
-  p.el = el;
-  p.standEl = el.querySelector(".stand");
-  p.yaw = p.home;
-  p.lean = 0;
-  p.rise = 0;
-  p.hold = 0;
-});
-let px = 0.5, py = 0.62, has = false, still = 0, last = null;
+const talk = document.getElementById("talk");
+const clips = {
+  left: document.getElementById("left"),
+  right: document.getElementById("right"),
+  down: document.getElementById("down")
+};
+let has = false, want = null, shown = null;
+function play(v){ v.currentTime = 0; v.play().catch(()=>{}); }
 function aim(x,y){
   const r = stage.getBoundingClientRect();
   const nx = Math.max(0, Math.min(1, (x-r.left)/r.width));
   const ny = Math.max(0, Math.min(1, (y-r.top)/r.height));
-  const moved = last ? Math.hypot(nx-last[0], ny-last[1]) : 1;
-  still = moved < 0.012 ? still+1 : 0;
-  last = [nx,ny];
-  px = nx; py = ny; has = true;
+  has = true;
   finger.style.opacity = "1";
   finger.style.left = (nx*100)+"%";
   finger.style.top = (ny*100)+"%";
+  want = ny > 0.62 ? "down" : (nx < 0.46 ? "left" : "right");
+  if (shown !== want){
+    Object.values(clips).forEach(v => { v.style.opacity = "0"; v.pause(); });
+    shown = want;
+    play(clips[want]);
+    clips[want].style.opacity = "1";
+    line.textContent = "What is that?";
+  }
 }
-stage.addEventListener("pointerdown", e=>{ stage.setPointerCapture?.(e.pointerId); aim(e.clientX,e.clientY); }, {passive:false});
-stage.addEventListener("pointermove", e=>{ if(e.buttons||e.pointerType==="touch"||has) aim(e.clientX,e.clientY); }, {passive:false});
-stage.addEventListener("pointerup", ()=>{ has = false; still = 0; finger.style.opacity = "0"; });
-stage.addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
-function tick(now){
-  let nearest = 0, best = 99;
-  cast.forEach((p,i)=>{
-    const dx = px - p.x/100;
-    const dy = py - (p.y/100+0.12);
-    const dist = Math.hypot(dx, dy);
-    if (dist < best){ best = dist; nearest = i; }
-    const idle = p.home + Math.sin(now/1700+i)*4;
-    const want = has ? Math.max(-34, Math.min(34, dx*78)) : idle;
-    p.yaw += (want - p.yaw) * 0.045;
-    const wantLean = has ? Math.max(-10, Math.min(10, dx*16 + dy*6)) : Math.sin(now/1900+i)*1.2;
-    p.lean += (wantLean - p.lean) * 0.04;
-    const riseWant = has && still > 18 && p.canStand && i === nearest ? 1 : 0;
-    p.rise += (riseWant - p.rise) * 0.03;
-    const bob = has ? 0 : Math.sin(now/620+i)*1.4;
-    p.el.style.transform = "translate(-50%,"+((-p.rise*46)+bob)+"px) rotate("+(p.lean*0.35)+"deg)";
-    p.el.style.filter = "";
-    const img = p.el.querySelector(".sit");
-    img.style.transform = "rotate("+(p.yaw*0.22)+"deg)";
-    img.style.transformOrigin = "50% 28%";
-    if (p.standEl) p.standEl.style.opacity = String(p.rise);
-    img.style.opacity = String(1-p.rise*0.85);
-  });
-  line.textContent = !has ? "Move your finger." : (still>18 ? "They're getting up to look." : "They're looking where you point.");
-  requestAnimationFrame(tick);
-}
-requestAnimationFrame(tick);
+stage.addEventListener("pointerdown", e => { stage.setPointerCapture?.(e.pointerId); talk.play().catch(()=>{}); aim(e.clientX,e.clientY); }, {passive:false});
+stage.addEventListener("pointermove", e => { if (e.buttons || e.pointerType === "touch" || has) aim(e.clientX,e.clientY); }, {passive:false});
+stage.addEventListener("pointerup", () => {
+  has = false; shown = null; want = null;
+  finger.style.opacity = "0";
+  Object.values(clips).forEach(v => { v.style.opacity = "0"; });
+  line.textContent = "Move your finger.";
+});
+stage.addEventListener("touchmove", e => e.preventDefault(), {passive:false});
+talk.play().catch(()=>{});
 </script>
 </body>
 </html>
