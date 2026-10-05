@@ -12,7 +12,6 @@
     .top{text-align:center;padding:12px 16px 0}
     .kicker{letter-spacing:.42em;font-size:10px;font-family:Arial,sans-serif;opacity:.55}
     h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.2vw,40px)}
-    .sub{font-family:Arial,sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;opacity:.72;min-height:18px;margin-top:6px}
     .stage{position:relative;flex:1;margin:10px 8px 42px;border-radius:18px;overflow:hidden;background:#111;touch-action:none;box-shadow:0 20px 60px #000}
     video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#111}
     .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.18),transparent 12%,transparent 78%,rgba(0,0,0,.28))}
@@ -25,74 +24,154 @@
   <header class="top">
     <div class="kicker">OMNIAIHUB</div>
     <h1>THEY'RE WATCHING YOU</h1>
-    <div class="sub" id="line">They're talking. Point somewhere.</div>
   </header>
+
   <section class="stage" id="stage">
-    <video id="player" playsinline muted></video>
+    <video id="player" playsinline muted preload="auto"></video>
     <div class="shade"></div>
     <a class="back" href="../games.html">Games</a>
     <div class="finger" id="finger"></div>
   </section>
 </div>
+
 <script>
 const stage = document.getElementById("stage");
-const line = document.getElementById("line");
 const finger = document.getElementById("finger");
 const player = document.getElementById("player");
 
 const clips = {
-  loop: "loop.mp4",        
-  curtain: "curtain.mp4",   
-  up: "up.mp4"             
+  loop: "loop.mp4",
+  curtain: "curtain.mp4",
+  up: "up.mp4"
 };
 
-let shown = null;
+let mode = "loop";
+let loopPosition = 0;
+let returningToLoop = false;
+let directionTimer = null;
+
+// Preload all three videos so the direction clips can start quickly.
+const preloaded = {};
+for (const [name, src] of Object.entries(clips)) {
+  const v = document.createElement("video");
+  v.preload = "auto";
+  v.muted = true;
+  v.playsInline = true;
+  v.src = src;
+  v.load();
+  preloaded[name] = v;
+}
+
+function setPlayerSource(src, startAt = 0) {
+  player.pause();
+  player.src = src;
+  player.load();
+
+  const start = () => {
+    try {
+      player.currentTime = Math.max(0, startAt || 0);
+    } catch(e) {}
+
+    player.play().catch(() => {});
+    player.removeEventListener("loadedmetadata", start);
+  };
+
+  if (player.readyState >= 1) start();
+  else player.addEventListener("loadedmetadata", start, {once:true});
+}
+
+function playLoop(atTime = 0) {
+  returningToLoop = false;
+  mode = "loop";
+  player.loop = true;
+  player.muted = true;
+  setPlayerSource(clips.loop, atTime);
+}
+
+function playDirection(which) {
+  if (mode === which) return;
+
+  // Remember exactly where the looping scene was when the user pointed.
+  if (mode === "loop") {
+    loopPosition = player.currentTime || 0;
+  }
+
+  clearTimeout(directionTimer);
+  returningToLoop = true;
+  mode = which;
+  player.loop = false;
+  player.muted = true;
+
+  // Direction videos use the same filenames you already uploaded.
+  // They can be shortened later without changing this code.
+  setPlayerSource(clips[which], 0);
+
+  // Safety fallback: if an edited direction video is longer than 3 seconds,
+  // return to the loop after 3 seconds anyway.
+  directionTimer = setTimeout(() => {
+    if (mode === which && returningToLoop) returnToLoop();
+  }, 3000);
+}
+
+function returnToLoop() {
+  clearTimeout(directionTimer);
+  returningToLoop = false;
+  finger.style.opacity = "0";
+
+  const resumeAt = loopPosition;
+  playLoop(resumeAt);
+}
 
 player.addEventListener("ended", () => {
-  if (shown !== "loop") {
-    finger.style.opacity = "0"; 
-    play("loop");
+  if (mode !== "loop" && returningToLoop) {
+    returnToLoop();
   }
 });
 
-function play(which){
-  if (shown === which && !player.paused && player.currentTime > 0.2) return;
-  
-  shown = which;
-  player.src = clips[which];
-  
-  player.loop = (which === "loop");
-  player.muted = (which === "loop"); 
-  
-  player.currentTime = 0;
-  player.play().catch(()=>{});
-
-  if (which === "curtain") {
-    line.textContent = "Looking toward the curtain.";
-  } else if (which === "up") {
-    line.textContent = "Looking up.";
-  } else {
-    line.textContent = "They're talking. Point somewhere.";
+// If a direction video is edited to be shorter than 3 seconds,
+// its natural end immediately returns to the loop.
+player.addEventListener("timeupdate", () => {
+  if (mode !== "loop" && returningToLoop && player.currentTime >= 3) {
+    returnToLoop();
   }
-}
+});
 
-function aim(x,y){
+function aim(x, y) {
   const r = stage.getBoundingClientRect();
   const nx = Math.max(0, Math.min(1, (x - r.left) / r.width));
   const ny = Math.max(0, Math.min(1, (y - r.top) / r.height));
-  
+
   finger.style.opacity = "1";
   finger.style.left = (nx * 100) + "%";
   finger.style.top = (ny * 100) + "%";
-  
-  play(nx >= 0.5 ? "curtain" : "up");
+
+  // Right half = curtain. Left half = looking up.
+  // The exact direction clips can be replaced later using the same filenames.
+  playDirection(nx >= 0.5 ? "curtain" : "up");
 }
 
-stage.addEventListener("pointerdown", e => { stage.setPointerCapture?.(e.pointerId); aim(e.clientX, e.clientY); }, {passive:false});
-stage.addEventListener("pointermove", e => { if (e.buttons || e.pointerType === "touch") aim(e.clientX, e.clientY); }, {passive:false});
+stage.addEventListener("pointerdown", e => {
+  e.preventDefault();
+  stage.setPointerCapture?.(e.pointerId);
+  aim(e.clientX, e.clientY);
+}, {passive:false});
+
+// Keep the point visible while the user moves, but don't restart the
+// direction video repeatedly while the pointer is held down.
+stage.addEventListener("pointermove", e => {
+  if (e.buttons || e.pointerType === "touch") {
+    const r = stage.getBoundingClientRect();
+    const nx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    const ny = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+    finger.style.opacity = "1";
+    finger.style.left = (nx * 100) + "%";
+    finger.style.top = (ny * 100) + "%";
+  }
+}, {passive:false});
+
 stage.addEventListener("touchmove", e => e.preventDefault(), {passive:false});
 
-play("loop");
+playLoop(0);
 </script>
 </body>
 </html>
