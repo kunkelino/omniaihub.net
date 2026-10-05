@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
-  <title>What? Are You Looking At?</title>
+  <title>What Are You Looking At?</title>
   <style>
     *{box-sizing:border-box}
     html,body{margin:0;background:#050505;color:#f4efe6;font-family:Georgia,"Times New Roman",serif;height:100%}
@@ -101,7 +101,7 @@
 <div class="app">
   <header class="top">
     <div class="kicker">OMNIAIHUB</div>
-    <h1>WHAT? ARE YOU LOOKING AT?</h1>
+    <h1>WHAT ARE YOU LOOKING AT?</h1>
   </header>
 
   <section class="stage" id="stage">
@@ -164,7 +164,7 @@ function loadVideo(index, src, startAt = 0) {
         video.currentTime = Math.max(0, startAt || 0);
       } catch(e) {}
 
-      video.muted = !audioUnlocked;
+      video.muted = false;
       video.volume = 1;
       resolve(video);
     };
@@ -223,7 +223,7 @@ async function playDirection(which) {
   if (token !== transitionToken) return;
 
   directionVideo.loop = false;
-  directionVideo.muted = !audioUnlocked;
+  directionVideo.muted = false;
   directionVideo.volume = 1;
 
   // Fade from the loop into the direction clip.
@@ -252,7 +252,7 @@ async function returnToLoop() {
   if (token !== transitionToken) return;
 
   loopVideo.loop = true;
-  loopVideo.muted = !audioUnlocked;
+  loopVideo.muted = false;
   loopVideo.volume = 1;
 
   // Start the loop underneath, then cross-fade back to it.
@@ -343,7 +343,7 @@ stage.addEventListener("pointermove", e => {
 
 stage.addEventListener("touchmove", e => e.preventDefault(), {passive:false});
 
-// Start the main loop.
+// Start the main loop with audio enabled.
 startLoop(0);
 </script>
 </body>
