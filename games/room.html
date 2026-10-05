@@ -26,13 +26,14 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-
   <header class="top">
     <div class="kicker">OMNIAIHUB</div>
     <h1>THEY'RE WATCHING YOU</h1>
-    <div class="sub" id="line">Move your finger.</div>
+    <div class="sub" id="line">They're talking. Point somewhere.</div>
   </header>
   <section class="stage" id="stage">
     <video id="talk" src="room/talk.mp4" autoplay muted loop playsinline></video>
     <video class="look" id="left" src="room/look-left.mp4" muted playsinline></video>
     <video class="look" id="right" src="room/look-right.mp4" muted playsinline></video>
     <video class="look" id="down" src="room/look-down.mp4" muted playsinline></video>
+    <video class="look" id="stand" src="room/stand.mp4" muted playsinline></video>
     <div class="shade"></div>
     <a class="back" href="../games.html">Games</a>
     <div class="finger" id="finger"></div>
@@ -47,10 +48,11 @@ const talk = document.getElementById("talk");
 const clips = {
   left: document.getElementById("left"),
   right: document.getElementById("right"),
-  down: document.getElementById("down")
+  down: document.getElementById("down"),
+  stand: document.getElementById("stand")
 };
-let has = false, want = null, shown = null;
-function play(v){ v.currentTime = 0; v.play().catch(()=>{}); }
+let has = false, shown = null;
+function play(v){ try { v.currentTime = 0; } catch(e){} v.play().catch(()=>{}); }
 function aim(x,y){
   const r = stage.getBoundingClientRect();
   const nx = Math.max(0, Math.min(1, (x-r.left)/r.width));
@@ -59,22 +61,22 @@ function aim(x,y){
   finger.style.opacity = "1";
   finger.style.left = (nx*100)+"%";
   finger.style.top = (ny*100)+"%";
-  want = ny > 0.62 ? "down" : (nx < 0.46 ? "left" : "right");
+  const want = (nx < 0.32 && ny < 0.42) ? "stand" : (ny > 0.62 ? "down" : (nx < 0.46 ? "left" : "right"));
   if (shown !== want){
     Object.values(clips).forEach(v => { v.style.opacity = "0"; v.pause(); });
     shown = want;
     play(clips[want]);
     clips[want].style.opacity = "1";
-    line.textContent = "What is that?";
+    line.textContent = want === "stand" ? "He's getting up to look." : "What is that?";
   }
 }
 stage.addEventListener("pointerdown", e => { stage.setPointerCapture?.(e.pointerId); talk.play().catch(()=>{}); aim(e.clientX,e.clientY); }, {passive:false});
 stage.addEventListener("pointermove", e => { if (e.buttons || e.pointerType === "touch" || has) aim(e.clientX,e.clientY); }, {passive:false});
 stage.addEventListener("pointerup", () => {
-  has = false; shown = null; want = null;
+  has = false; shown = null;
   finger.style.opacity = "0";
   Object.values(clips).forEach(v => { v.style.opacity = "0"; });
-  line.textContent = "Move your finger.";
+  line.textContent = "They're talking. Point somewhere.";
 });
 stage.addEventListener("touchmove", e => e.preventDefault(), {passive:false});
 talk.play().catch(()=>{});
