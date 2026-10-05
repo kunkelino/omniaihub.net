@@ -37,7 +37,7 @@
     );
     html=html.replace('if(sessionStorage.getItem(KEY)==="1") openSite();','openSite();');
     html=html.replace('<div id="gate">','<div id="gate" class="ok">');
-    html=html.replace("</body>", "<script src=\"/copyright.js\"></script></body>");
+    html=html.replace("</body>", "<script src=\"/copyright.js\"><\/script></body>");
     document.open();
     document.write(html);
     document.close();
