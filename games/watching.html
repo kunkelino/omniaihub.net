@@ -13,20 +13,24 @@ body{min-height:100vh;overflow:hidden;touch-action:none}
 .kicker{letter-spacing:.42em;font-size:10px;font-family:Arial,sans-serif;opacity:.55}
 h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.4vw,42px)}
 .sub{font-family:Arial,sans-serif;font-size:13px;letter-spacing:.18em;text-transform:uppercase;opacity:.72;min-height:18px;margin-top:6px}
-.stage{position:relative;flex:1;margin:10px 8px 46px;border-radius:18px;overflow:hidden;background:#111 center/cover no-repeat;touch-action:none;box-shadow:0 20px 60px #000}
-.stage{background-image:url("watching/room.jpg")}
-.grade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 18%,transparent 62%,rgba(0,0,0,.55));pointer-events:none}
-.grain{position:absolute;inset:-20%;pointer-events:none;opacity:.18;mix-blend-mode:overlay;background-image:radial-gradient(rgba(255,255,255,.4) .6px,transparent .7px);background-size:3px 3px;animation:drift 8s linear infinite}
+.stage{position:relative;flex:1;margin:10px 8px 46px;border-radius:18px;overflow:hidden;background:#111 center/cover no-repeat;touch-action:none;box-shadow:0 20px 60px #000;background-image:url("watching/room.jpg")}
+.grade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.28),transparent 16%,transparent 48%,rgba(0,0,0,.62));pointer-events:none}
+.grain{position:absolute;inset:-20%;pointer-events:none;opacity:.16;mix-blend-mode:overlay;background-image:radial-gradient(rgba(255,255,255,.4) .6px,transparent .7px);background-size:3px 3px;animation:drift 8s linear infinite}
 @keyframes drift{to{transform:translate3d(-20px,12px,0)}}
-.actor{position:absolute;width:34vw;max-width:210px;min-width:118px;aspect-ratio:3/4;transform:translate(-50%,-40%);filter:drop-shadow(0 18px 16px rgba(0,0,0,.55));will-change:transform}
-.rig{position:absolute;inset:0;transform-origin:50% 78%;will-change:transform}
-.plate,.eyes{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:46% 46% 18% 18%;transform-origin:50% 62%}
-.eyeclip{position:absolute;left:18%;right:18%;top:27%;height:16%;overflow:hidden;border-radius:40%;pointer-events:none}
-.eyeclip .eyes{width:168%;height:620%;max-width:none;border-radius:0;left:-34%;top:-168%;object-fit:cover}
-.point{position:absolute;right:-6%;top:48%;width:42%;height:8px;border-radius:8px;background:linear-gradient(90deg,#c9a27a,#8d6248);transform-origin:0 50%;opacity:0;pointer-events:none}
-.point:after{content:"";position:absolute;right:-7px;top:-5px;width:16px;height:16px;border-radius:50%;background:#c9a27a}
-.finger{position:absolute;width:28px;height:28px;border:1.5px solid rgba(255,255,255,.8);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:6;opacity:0;box-shadow:0 0 0 7px rgba(255,255,255,.08)}
-.back{position:absolute;z-index:7;left:12px;top:12px;color:#fff;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;letter-spacing:.08em;background:rgba(0,0,0,.45);padding:7px 10px;border-radius:999px}
+.sofa{position:absolute;left:6%;right:6%;bottom:7%;height:34%;border-radius:18px 18px 10px 10px;background:linear-gradient(180deg,#6d5b4c 0%,#4a3b32 42%,#2c241e 100%);box-shadow:0 18px 30px rgba(0,0,0,.45),inset 0 10px 18px rgba(255,255,255,.06);z-index:2}
+.sofa:before{content:"";position:absolute;left:4%;right:4%;top:-16%;height:28%;border-radius:16px 16px 6px 6px;background:linear-gradient(180deg,#7a6756,#514338)}
+.cushion{position:absolute;top:18%;bottom:16%;width:22%;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.12));box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
+.chair{position:absolute;right:4%;bottom:18%;width:24%;height:38%;border-radius:16px 16px 8px 8px;background:linear-gradient(180deg,#5c4c40,#322820);box-shadow:0 16px 24px rgba(0,0,0,.4);z-index:2}
+.chair:before{content:"";position:absolute;left:8%;right:8%;top:-22%;height:34%;border-radius:12px;background:#6a5848}
+.table{position:absolute;left:28%;right:30%;bottom:4%;height:11%;border-radius:8px;background:#2a211b;box-shadow:0 8px 16px rgba(0,0,0,.4);z-index:5}
+.person{position:absolute;width:27vw;max-width:168px;min-width:108px;height:46%;transform:translate(-50%,0);z-index:4;filter:drop-shadow(0 16px 12px rgba(0,0,0,.45));will-change:transform}
+.body{position:absolute;left:18%;right:18%;bottom:0;height:62%;border-radius:40% 40% 12% 12%;transform-origin:50% 100%}
+.neck{position:absolute;left:42%;right:42%;bottom:54%;height:10%;background:#c9a27a;border-radius:6px}
+.headwrap{position:absolute;left:8%;right:8%;top:0;height:52%;transform-origin:50% 88%;will-change:transform}
+.face{width:100%;height:100%;object-fit:cover;border-radius:46% 46% 42% 42%;box-shadow:0 8px 16px rgba(0,0,0,.35)}
+.talk{position:absolute;left:38%;right:38%;bottom:18%;height:7%;border-radius:40%;background:rgba(40,20,16,.55);transform-origin:50% 0;opacity:.0}
+.finger{position:absolute;width:28px;height:28px;border:1.5px solid rgba(255,255,255,.85);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:8;opacity:0;box-shadow:0 0 0 7px rgba(255,255,255,.08)}
+.back{position:absolute;z-index:9;left:12px;top:12px;color:#fff;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;letter-spacing:.08em;background:rgba(0,0,0,.45);padding:7px 10px;border-radius:999px}
 </style>
 </head>
 <body>
@@ -39,6 +43,9 @@ h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.4v
   <section class="stage" id="stage">
     <div class="grade"></div>
     <div class="grain"></div>
+    <div class="sofa" aria-hidden="true"><div class="cushion" style="left:6%"></div><div class="cushion" style="left:39%"></div><div class="cushion" style="left:70%"></div></div>
+    <div class="chair" aria-hidden="true"></div>
+    <div class="table" aria-hidden="true"></div>
     <a class="back" href="../games.html">Games</a>
     <div class="finger" id="finger"></div>
   </section>
@@ -49,30 +56,30 @@ const stage = document.getElementById("stage");
 const line = document.getElementById("line");
 const finger = document.getElementById("finger");
 const cast = [
-  {src:"watching/p1.jpg", x:22, y:58, delay:0.05, gain:1, home:-0.35, stand:false, point:false, notice:0.02},
-  {src:"watching/p2.jpg", x:78, y:56, delay:0.42, gain:0.92, home:0.4, stand:false, point:true, notice:0.28},
-  {src:"watching/p3.jpg", x:50, y:64, delay:0.95, gain:0.8, home:-0.05, stand:false, point:false, notice:0.55},
-  {src:"watching/p4.jpg", x:18, y:78, delay:0.62, gain:0.88, home:0.2, stand:true, point:false, notice:0.4},
-  {src:"watching/p5.jpg", x:84, y:76, delay:1.15, gain:0.74, home:-0.25, stand:false, point:false, notice:0.7},
-  {src:"watching/p6.jpg", x:48, y:42, delay:0.28, gain:0.7, home:0.15, stand:false, point:false, notice:0.18}
+  {src:"watching/p4.jpg", x:20, y:46, color:"#6e7c8a", delay:0.15, talkTo:1},
+  {src:"watching/p1.jpg", x:38, y:44, color:"#d7d2cb", delay:0.4, talkTo:0},
+  {src:"watching/p3.jpg", x:56, y:47, color:"#7a2f32", delay:0.7, talkTo:2},
+  {src:"watching/p6.jpg", x:74, y:45, color:"#5d6b52", delay:0.95, talkTo:2},
+  {src:"watching/p2.jpg", x:84, y:40, color:"#31425c", delay:0.55, talkTo:3, chair:true}
 ];
 cast.forEach((p,i)=>{
   const el = document.createElement("div");
-  el.className = "actor";
+  el.className = "person";
   el.style.left = p.x+"%";
   el.style.top = p.y+"%";
-  el.style.zIndex = String(10+Math.round(p.y));
-  el.innerHTML = '<div class="rig"><img class="plate" alt=""><div class="eyeclip"><img class="eyes" alt=""></div><div class="point"></div></div>';
-  el.querySelectorAll("img").forEach(img=>img.src=p.src);
+  el.style.zIndex = String(6+i);
+  el.innerHTML = '<div class="body"></div><div class="neck"></div><div class="headwrap"><img class="face" alt=""><div class="talk"></div></div>';
+  el.querySelector(".body").style.background = "linear-gradient(180deg,"+p.color+","+p.color+"cc)";
+  el.querySelector(".face").src = p.src;
   stage.appendChild(el);
   p.el = el;
-  p.rig = el.querySelector(".rig");
-  p.plate = el.querySelector(".plate");
-  p.eyes = el.querySelector(".eyes");
-  p.arm = el.querySelector(".point");
-  p.gx = p.home; p.gy = 0.05; p.tx = p.home; p.ty = 0;
+  p.head = el.querySelector(".headwrap");
+  p.body = el.querySelector(".body");
+  p.talk = el.querySelector(".talk");
+  p.look = 0;
+  p.lean = 0;
 });
-let px = 0.5, py = 0.55, has = false, t0 = 0, moved = 0, audioOn = false;
+let px = 0.5, py = 0.45, has = false, t0 = 0, moved = 0, audioOn = false;
 function setTarget(clientX, clientY){
   const r = stage.getBoundingClientRect();
   const nx = Math.max(0, Math.min(1, (clientX-r.left)/r.width));
@@ -88,7 +95,7 @@ function setTarget(clientX, clientY){
 stage.addEventListener("pointerdown", e=>{ stage.setPointerCapture?.(e.pointerId); setTarget(e.clientX,e.clientY); }, {passive:false});
 stage.addEventListener("pointermove", e=>{ if(e.buttons||e.pointerType==="touch"||has) setTarget(e.clientX,e.clientY); }, {passive:false});
 stage.addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
-let ctx, noise, filter, murmur;
+let ctx, noise;
 function startAudio(){
   if(audioOn) return;
   audioOn = true;
@@ -99,64 +106,38 @@ function startAudio(){
   const len = ctx.sampleRate*2;
   const buf = ctx.createBuffer(1,len,ctx.sampleRate);
   const data = buf.getChannelData(0);
-  let b0=0,b1=0,b2=0;
+  let b0=0,b1=0;
   for(let i=0;i<len;i++){
     const w = Math.random()*2-1;
-    b0 = 0.997*b0+0.029*w; b1 = 0.985*b1+0.06*w; b2 = b1+b0*0.4;
-    data[i] = b2*0.35;
+    b0 = 0.997*b0+0.029*w; b1 = 0.985*b1+0.06*w;
+    data[i] = (b1+b0*0.4)*0.35;
   }
   noise = ctx.createBufferSource();
   noise.buffer = buf; noise.loop = true;
-  filter = ctx.createBiquadFilter();
-  filter.type = "lowpass"; filter.frequency.value = 420;
-  const gain = ctx.createGain(); gain.gain.value = 0.045;
+  const filter = ctx.createBiquadFilter();
+  filter.type = "lowpass"; filter.frequency.value = 380;
+  const gain = ctx.createGain(); gain.gain.value = 0.04;
   noise.connect(filter); filter.connect(gain); gain.connect(ctx.destination); noise.start();
-  murmur = setInterval(()=>{
-    if(!ctx) return;
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = "triangle";
-    o.frequency.value = 140+Math.random()*90;
-    g.gain.value = 0.0001;
-    o.connect(g); g.connect(ctx.destination);
-    const now = ctx.currentTime;
-    g.gain.exponentialRampToValueAtTime(0.012, now+0.05);
-    g.gain.exponentialRampToValueAtTime(0.0001, now+0.28+Math.random()*0.3);
-    o.start(now); o.stop(now+0.7);
-  }, 1700);
 }
 function tick(now){
   const elapsed = has ? (now-t0)/1000 : 0;
-  const awareness = has ? Math.max(0, Math.min(1, elapsed/8 + Math.min(0.25, moved*0.15))) : 0;
-  if(!has) line.textContent = "Move your finger.";
-  else if(awareness < 0.34) line.textContent = "Move your finger.";
-  else if(awareness < 0.62) line.textContent = "They can see you.";
-  else line.textContent = "They can see you.";
-  const edge = Math.min(px, 1-px, py, 1-py);
+  const awareness = has ? Math.max(0, Math.min(1, elapsed/6 + Math.min(0.3, moved*0.18))) : 0;
+  line.textContent = !has || awareness < 0.4 ? "Move your finger." : "They can see you.";
   cast.forEach((p,i)=>{
-    const noticed = awareness > p.notice;
-    const lag = Math.exp(-0.045/(0.08+p.delay));
-    const idleX = p.home + Math.sin(now/900 + i)*0.08;
-    const idleY = Math.cos(now/1100 + i*1.3)*0.05;
-    const wantX = noticed ? (px-0.5)*2 : idleX;
-    const wantY = noticed ? (py-0.5)*1.4 : idleY;
-    p.tx += (wantX-p.tx)*(noticed?0.045+ (1-p.delay)*0.03:0.02);
-    p.ty += (wantY-p.ty)*(noticed?0.04:0.02);
-    const lean = noticed ? Math.min(1, Math.max(0, (awareness-0.45)/0.4)) : 0;
-    const stand = p.stand && awareness>0.72 && edge<0.18 ? 1 : 0;
-    const point = p.point && awareness>0.8 ? 1 : 0;
-    const glance = (i===4 && point) ? Math.sin(now/500) : 0;
-    const rx = p.ty*7*p.gain;
-    const ry = (p.tx+glance*0.25)*12*p.gain;
-    const breath = Math.sin(now/700+i)*1.2;
-    p.rig.style.transform = "translateY("+(stand?-46:0)+"px) scale("+(1+stand*0.08)+") rotate("+(p.tx*lean*4)+"deg)";
-    p.plate.style.transform = "translate("+ (p.tx*10) +"px,"+ (p.ty*6+breath) +"px) rotateX("+rx+"deg) rotateY("+ry+"deg)";
-    p.eyes.style.transform = "translate("+ (p.tx*18) +"px,"+ (p.ty*10) +"px)";
-    p.arm.style.opacity = String(point);
-    p.arm.style.transform = "rotate("+ ((px-p.x/100)*70) +"deg) scaleX("+(0.4+point*0.8)+")";
-    if(i===5 && awareness>0.5){
-      p.plate.style.transform += " rotate("+ (Math.sin(now/800)*2) +"deg)";
-    }
+    const noticed = awareness > 0.08 + p.delay*0.35;
+    const mate = cast[p.talkTo] || p;
+    const idle = ((mate.x/100) - (p.x/100)) * 1.4;
+    const want = noticed ? (px - p.x/100) * 2.2 : idle + Math.sin(now/1400+i)*0.08;
+    p.look += (want - p.look) * (noticed ? 0.06 : 0.03);
+    const wantLean = noticed ? Math.max(-1, Math.min(1, (px - p.x/100)*1.6)) : Math.sin(now/1600+i)*0.08;
+    p.lean += (wantLean - p.lean) * 0.04;
+    const bob = Math.sin(now/680+i)*2.2;
+    const talking = !noticed && Math.sin(now/420+i*1.7) > 0.35;
+    p.el.style.transform = "translate(-50%,0) translateX("+ (p.lean*10) +"px)";
+    p.body.style.transform = "rotate("+ (p.lean*7) +"deg)";
+    p.head.style.transform = "translateY("+bob+"px) rotate("+ (p.look*16) +"deg) rotateX("+ (noticed?(py-0.45)*10:0) +"deg)";
+    p.talk.style.opacity = talking ? "0.85" : "0.15";
+    p.talk.style.transform = "scaleY("+ (talking?1.6:0.5) +")";
   });
   requestAnimationFrame(tick);
 }
