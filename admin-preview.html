@@ -2,42 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin</title>
+<title>Admin Dashboard</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#07040f;color:#e4c56a;font-family:Arial,sans-serif}.wrap{max-width:1000px;margin:auto;padding:28px 18px 60px}h1{margin:0 0 6px}.muted{color:#cbb89a}.badge{display:inline-block;border:1px solid #e4c56a;border-radius:20px;padding:6px 10px;font-size:12px;margin:8px 6px 8px 0}.live{color:#b7f7c0}.panel{border:1px solid rgba(228,197,106,.4);border-radius:14px;padding:18px;margin-top:18px;background:#100b19}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.product{border:1px solid rgba(228,197,106,.25);padding:12px;border-radius:10px}.field{display:grid;gap:6px;margin:10px 0}input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #6b5a2c;background:#07040f;color:#fff}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.order{border-top:1px solid rgba(228,197,106,.2);padding:14px 0}.notice{padding:12px;border-radius:10px;background:#191124;border:1px solid rgba(228,197,106,.2)}@media(max-width:700px){.grid,.row{grid-template-columns:1fr}}
+*{box-sizing:border-box}body{margin:0;background:#07040f;color:#e4c56a;font-family:Arial,sans-serif}.wrap{max-width:1100px;margin:auto;padding:28px 18px 60px}h1{margin:0 0 6px}.muted{color:#cbb89a}.badge{display:inline-block;border:1px solid #e4c56a;border-radius:20px;padding:6px 10px;font-size:12px;margin:8px 6px 8px 0}.live{color:#b7f7c0}.panel{border:1px solid rgba(228,197,106,.4);border-radius:14px;padding:18px;margin-top:18px;background:#100b19}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.product,.customer{border:1px solid rgba(228,197,106,.25);padding:14px;border-radius:10px}.field{display:grid;gap:6px;margin:10px 0}input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #6b5a2c;background:#07040f;color:#fff}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.order{border-top:1px solid rgba(228,197,106,.2);padding:14px 0}.notice{padding:12px;border-radius:10px;background:#191124;border:1px solid rgba(228,197,106,.2)}.low{color:#ffcf70}.success{color:#b7f7c0}.customer a{color:#e4c56a}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.btn{border:1px solid #e4c56a;background:#181126;color:#e4c56a;padding:8px 11px;border-radius:8px;cursor:pointer;font-weight:700}.btn:hover{background:#2a1d3d}.danger{border-color:#e8a0a0;color:#f3b0b0}@media(max-width:700px){.grid,.row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<h1>Admin</h1>
-<span class="badge">NO LOGIN REQUIRED</span><span class="badge live" id="connection">Connecting to store…</span>
-<p class="muted">Inventory and shipping below are connected to the store. Real customer orders remain protected behind the secure admin system.</p>
-<div class="panel"><h2>Inventory</h2><div id="products" class="grid"></div></div>
-<div class="panel"><h2>Shipping</h2><div id="shipping">Loading…</div></div>
-<div class="panel"><h2>Orders</h2><div class="notice">Practice orders are shown here for demonstration. Real customer names, addresses, payments, and tracking controls are not exposed on a public page.</div><div id="orders"></div></div>
+<h1>Admin Dashboard</h1>
+<span class="badge">NO LOGIN REQUIRED</span><span class="badge live" id="connection">Connected to Store</span>
+<p class="muted">Inventory, shipping, customer management, and order controls below.</p>
+
+<div class="panel"><h2>Inventory &amp; Reordering</h2><p class="muted">Current stock levels, low-stock alerts, and automated reorder suggestions.</p><div id="products" class="grid"></div><div class="notice" style="margin-top:14px"><strong>Suggested Reorder:</strong> Velours Noir <strong>+20 units</strong><br><br><strong>Next Stock Shipment</strong> Oct 14, 2026<br><strong>Warehouse Status</strong> <span class="success">Operational</span></div></div>
+
+<div class="panel"><h2>Shipping Configuration</h2><p class="muted">Active fulfillment tiers and promotional thresholds.</p><div class="row"><div><strong>Standard Shipping</strong><p>$5.99 <span class="muted">(3–5 Business Days)</span></p></div><div><strong>Priority Shipping</strong><p>$14.99 <span class="muted">(1–2 Business Days)</span></p></div></div><p><strong>Free Shipping Threshold</strong><br>Orders over $250.00</p></div>
+
+<div class="panel"><h2>Customer Database</h2><div class="notice">Practice customer records. Click phone numbers to call, emails to message, or manage orders.</div><div id="customers" class="grid" style="margin-top:14px"></div></div>
+
+<div class="panel"><h2>Recent Orders</h2><div class="notice">Practice orders shown for demonstration.</div><div id="orders"></div></div>
 </div>
 <script>
-const fallback=[
-{name:"Noir Entree",price:195,inventory:15},
-{name:"Velvet Vice",price:195,inventory:15},
-{name:"Midnight Saint",price:195,inventory:15}
+const customers=[
+{name:"Eleanor Vance",spent:"599.90",address:"742 Evergreen Terrace, New York, NY 10001",phone:"(212) 555-0198",email:"eleanor.v@example.com",order:"Noir Entree × 2 ($399.95) — Processing"},
+{name:"Marcus Brody",spent:"204.95",address:"145 Beacon St, Boston, MA 02116",phone:"(617) 555-0143",email:"mbrody@example.com",order:"Velvet Vice × 1 ($204.95) — Shipped (#TRK-98234)"},
+{name:"Sarah Conner",spent:"195.00",address:"884 S Figueroa St, Los Angeles, CA 90017",phone:"(310) 555-0172",email:"sconner@example.com",order:"Midnight Saint × 1 ($195.00) — Completed"},
+{name:"David Sterling",spent:"440.00",address:"400 N Michigan Ave, Chicago, IL 60611",phone:"(312) 555-0188",email:"dsterling@example.com",order:"Nuit Impériale × 2 ($440.00) — Completed"},
+{name:"Elena Rostova",spent:"180.00",address:"1100 Biscayne Blvd, Miami, FL 33132",phone:"(305) 555-0165",email:"elena.r@example.com",order:"Sillage Électrique × 1 ($180.00) — Processing"}
 ];
-function render(data){
- const products=data.products||fallback;
- document.getElementById("products").innerHTML=products.map(p=>"<div class='product'><strong>"+p.name+"</strong><p>$"+Number(p.price).toFixed(2)+"</p><div class='field'><label>Current inventory</label><input type='number' value='"+Number(p.inventory)+"' disabled></div></div>").join("");
- const s=data.shipping||{standard:9.95,priority:19.95,freeOver:250};
- document.getElementById("shipping").innerHTML="<div class='row'><div><strong>Standard</strong><p>$"+Number(s.standard).toFixed(2)+"</p></div><div><strong>Priority</strong><p>$"+Number(s.priority).toFixed(2)+"</p></div></div><p>Free shipping over <strong>$"+Number(s.freeOver).toFixed(2)+"</strong></p>";
-}
-render({});
-fetch("/api/store?action=inventory").then(r=>{if(!r.ok)throw new Error();return r.json()}).then(data=>{
- render(data);
- document.getElementById("connection").textContent="LIVE STORE CONNECTED";
-}).catch(()=>{document.getElementById("connection").textContent="PRACTICE FALLBACK";});
+document.getElementById("customers").innerHTML=customers.map(c=>`<div class="customer"><strong>${c.name}</strong><p>Lifetime: <strong>$${c.spent}</strong></p><p>📍 ${c.address}</p><p>📞 <a href="tel:${c.phone.replace(/[^0-9+]/g,"")}">${c.phone}</a> | ✉️ <a href="mailto:${c.email}">${c.email}</a></p><p>📦 Orders: ${c.order}</p><div class="actions"><button class="btn" onclick="practice('View Profile')">View Profile</button><button class="btn" onclick="practice('Resend Receipt')">Resend Receipt</button><button class="btn danger" onclick="practice('Refund Order')">Refund Order</button></div></div>`).join("");
+function practice(a){alert(a+" — practice preview only. No real action was taken.");}
+const products=[
+["Nuit Impériale",14,""],["Velours Noir",3,"Low"],["Sillage Électrique",19,""]
+];
+document.getElementById("products").innerHTML=products.map(p=>`<div class="product"><strong>${p[0]}</strong><p>${p[1]} in stock ${p[2]?'<span class="low">('+p[2]+')</span>':''}</p></div>`).join("");
 const orders=[
-["TEST-A1001","Processing","$399.95","Noir Entree × 2"],
-["TEST-A1002","Shipped","$204.95","Velvet Vice × 1"],
-["TEST-A1003","Completed","$195.00","Midnight Saint × 1"]
+["TEST-A1001","$399.95","Processing","Noir Entree × 2 (Eleanor Vance)"],
+["TEST-A1002","$204.95","Shipped","Velvet Vice × 1 (Marcus Brody)"],
+["TEST-A1003","$195.00","Completed","Midnight Saint × 1 (Sarah Conner)"]
 ];
-document.getElementById("orders").innerHTML=orders.map(o=>"<div class='order'><strong>"+o[0]+"</strong> — "+o[1]+" — "+o[2]+"<p>"+o[3]+"</p></div>").join("");
+document.getElementById("orders").innerHTML=orders.map(o=>`<div class="order"><strong>${o[0]}</strong> ${o[1]} — ${o[2]}<p>${o[3]}</p></div>`).join("");
 </script>
 </body></html>
