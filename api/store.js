@@ -94,7 +94,7 @@ module.exports=async function handler(req,res){
         normalized.push({id:p.id,name:p.name,price:p.price,quantity:qty});subtotal+=p.price*qty;
       }
       const shippingMethod=body.shippingMethod==="priority"?"priority":"standard";
-      const shipping=subtotal>=data.shipping.freeOver?0:data.shipping[shippingMethod];
+      const shipping=data.shipping[shippingMethod];
       for(const item of normalized)data.products.find(p=>p.id===item.id).inventory-=item.quantity;
       const order={
         id:"TEST-"+Date.now().toString(36).toUpperCase(),createdAt:new Date().toISOString(),status:"Test order",
