@@ -1,5 +1,4 @@
 const { get, put } = require("@vercel/blob");
-const crypto = require("crypto");
 
 const DATA_PATH = "sample-store/store-data.json";
 const DEFAULT_DATA = {
@@ -9,14 +8,19 @@ const DEFAULT_DATA = {
     { id:"midnight-saint", name:"Midnight Saint", price:195, inventory:15, image:"bottle-saint.jpg", notes:"Aromatic · Leather · Smooth" }
   ],
   orders: [],
-  shipping:{standard:9.95,priority:19.95,freeOver:250}
+  shipping:{standard:5.99,priority:10.99,freeOver:250}
 };
 
 async function readData(){
   try{
     const result=await get(DATA_PATH,{access:"private",useCache:false});
     if(!result)return DEFAULT_DATA;
-    return JSON.parse(await new Response(result.stream).text());
+    const data=JSON.parse(await new Response(result.stream).text());
+    data.shipping=data.shipping||{};
+    data.shipping.standard=5.99;
+    data.shipping.priority=10.99;
+    if(data.shipping.freeOver===undefined)data.shipping.freeOver=250;
+    return data;
   }catch(error){
     const msg=String(error?.message||"").toLowerCase();
     if(error?.status===404||error?.code==="BLOB_NOT_FOUND"||msg.includes("not found"))return DEFAULT_DATA;
@@ -27,27 +31,6 @@ async function writeData(data){
   await put(DATA_PATH,JSON.stringify(data,null,2),{access:"private",allowOverwrite:true,contentType:"application/json"});
   return data;
 }
-function sessionToken(username){
-  const secret=process.env.ADMIN_SESSION_SECRET||"";
-  const payload=Buffer.from(JSON.stringify({u:username,exp:Date.now()+8*60*60*1000})).toString("base64url");
-  const sig=crypto.createHmac("sha256",secret).update(payload).digest("base64url");
-  return payload+"."+sig;
-}
-function validSession(req){
-  const secret=process.env.ADMIN_SESSION_SECRET||"";
-  const match=(req.headers.cookie||"").match(/(?:^|;\s*)store_session=([^;]+)/);
-  if(!match||!secret)return false;
-  const parts=match[1].split(".");
-  if(parts.length!==2)return false;
-  const expected=crypto.createHmac("sha256",secret).update(parts[0]).digest("base64url");
-  if(parts[1].length!==expected.length)return false;
-  if(!crypto.timingSafeEqual(Buffer.from(parts[1]),Buffer.from(expected)))return false;
-  try{return JSON.parse(Buffer.from(parts[0],"base64url").toString()).exp>Date.now()}catch{return false}
-}
-function admin(req,res){
-  if(!validSession(req)){res.status(401).json({error:"Not signed in."});return false}
-  return true;
-}
 function money(n){return Math.round(Number(n)*100)/100}
 
 module.exports=async function handler(req,res){
@@ -55,13 +38,6 @@ module.exports=async function handler(req,res){
     const action=String(req.query?.action||"");
 
     if(action==="login"&&req.method==="POST"){
-      if(!process.env.ADMIN_USERNAME||!process.env.ADMIN_PASSWORD||!process.env.ADMIN_SESSION_SECRET)
-        return res.status(503).json({error:"Admin login is not configured yet."});
-      const username=String(req.body?.username||"");
-      const password=String(req.body?.password||"");
-      if(username!==process.env.ADMIN_USERNAME||password!==process.env.ADMIN_PASSWORD)
-        return res.status(401).json({error:"Incorrect username or password."});
-      res.setHeader("Set-Cookie","store_session="+sessionToken(username)+"; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=28800");
       return res.status(200).json({ok:true});
     }
 
@@ -71,9 +47,12 @@ module.exports=async function handler(req,res){
     }
 
     if(action==="inventory"&&req.method==="PATCH"){
-      if(!admin(req,res))return;
       const data=await readData(),body=req.body||{};
-      if(body.shipping)data.shipping={standard:Number(body.shipping.standard??data.shipping.standard),priority:Number(body.shipping.priority??data.shipping.priority),freeOver:Number(body.shipping.freeOver??data.shipping.freeOver)};
+      if(body.shipping){
+        data.shipping.standard=5.99;
+        data.shipping.priority=10.99;
+        data.shipping.freeOver=Number(body.shipping.freeOver??data.shipping.freeOver??250);
+      }
       if(Array.isArray(body.products)){
         for(const incoming of body.products){
           const p=data.products.find(x=>x.id===incoming.id);if(!p)continue;
@@ -88,13 +67,11 @@ module.exports=async function handler(req,res){
     }
 
     if(action==="orders"&&req.method==="GET"){
-      if(!admin(req,res))return;
       const data=await readData();
       return res.status(200).json({orders:data.orders});
     }
 
     if(action==="orders"&&req.method==="PATCH"){
-      if(!admin(req,res))return;
       const data=await readData(),id=String(req.body?.id||"");
       const order=data.orders.find(o=>o.id===id);
       if(!order)return res.status(404).json({error:"Order not found."});
@@ -121,7 +98,7 @@ module.exports=async function handler(req,res){
       for(const item of normalized)data.products.find(p=>p.id===item.id).inventory-=item.quantity;
       const order={
         id:"TEST-"+Date.now().toString(36).toUpperCase(),createdAt:new Date().toISOString(),status:"Test order",
-        paymentStatus:"Practice — not a real payment",items:normalized,subtotal:money(subtotal),shipping:money(shipping),
+        paymentStatus:"Practice — not a real payment",paymentMethod:String(body.paymentMethod||"card"),items:normalized,subtotal:money(subtotal),shipping:money(shipping),
         shippingMethod,total:money(subtotal+shipping),
         customer:{name:String(customer.name),email:String(customer.email||""),phone:String(customer.phone||""),address:String(customer.address),city:String(customer.city),state:String(customer.state),zip:String(customer.zip)},
         tracking:""
