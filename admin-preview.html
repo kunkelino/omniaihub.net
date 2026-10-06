@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Store Admin Preview</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#07040f;color:#e4c56a;font-family:Arial,sans-serif}.wrap{max-width:1000px;margin:auto;padding:28px 18px 60px}h1{margin:0 0 6px}.muted{color:#cbb89a}.preview{display:inline-block;border:1px solid #e4c56a;border-radius:20px;padding:6px 10px;font-size:12px;margin:8px 0}.panel{border:1px solid rgba(228,197,106,.4);border-radius:14px;padding:18px;margin-top:18px;background:#100b19}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.product{border:1px solid rgba(228,197,106,.25);padding:12px;border-radius:10px}.field{display:grid;gap:6px;margin:10px 0}input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #6b5a2c;background:#07040f;color:#fff}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.order{border-top:1px solid rgba(228,197,106,.2);padding:14px 0}.note{color:#b7f7c0}@media(max-width:700px){.grid,.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Store Admin</h1><span class="preview">PRACTICE PREVIEW — NO REAL DATA</span>
+<p class="muted">This page is for looking around. Nothing here connects to the real store, changes inventory, or processes orders.</p>
+<div class="panel"><h2>Inventory</h2><div id="products" class="grid"></div></div>
+<div class="panel"><h2>Shipping</h2><div class="row">
+<div><strong>Standard</strong><p>$9.95</p></div><div><strong>Priority</strong><p>$19.95</p></div></div>
+<p>Free shipping over <strong>$250.00</strong></p></div>
+<div class="panel"><h2>Sample Orders</h2><div id="orders"></div></div>
+</div>
+<script>
+const products=[
+["noir-entree","Noir Entree",195,15,"Woody · Smoky · Magnetic"],
+["velvet-vice","Velvet Vice",195,15,"Spicy · Amber · Bold · Warm"],
+["midnight-saint","Midnight Saint",195,15,"Aromatic · Leather · Smooth"]
+];
+document.getElementById("products").innerHTML=products.map(p=>"<div class='product'><strong>"+p[1]+"</strong><p>$"+p[2].toFixed(2)+"</p><div class='field'><label>Practice inventory</label><input type='number' value='"+p[3]+"' disabled></div><p class='muted'>"+p[4]+"</p></div>").join("");
+const orders=[
+{ id:"TEST-A1001",status:"Processing",total:399.95,name:"Sample Customer",items:"Noir Entree × 2",address:"123 Example Street",city:"Boston, MA 02110",tracking:""},
+{ id:"TEST-A1002",status:"Shipped",total:204.95,name:"Practice Buyer",items:"Velvet Vice × 1",address:"456 Example Avenue",city:"Boston, MA 02111",tracking:"9400 1000 0000 0000"},
+{ id:"TEST-A1003",status:"Completed",total:0,name:"Demo Customer",items:"Midnight Saint × 1",address:"789 Example Road",city:"Boston, MA 02112",tracking:"PRACTICE-TRACK"}
+];
+document.getElementById("orders").innerHTML=orders.map(o=>"<div class='order'><strong>"+o.id+"</strong> — "+o.status+" — $"+o.total.toFixed(2)+"<p>"+o.items+"</p><p>"+o.name+"<br>"+o.address+"<br>"+o.city+"</p><div class='row'><select disabled><option>"+o.status+"</option></select><input disabled value='"+o.tracking+"' placeholder='Tracking number'></div></div>").join("");
+</script>
+</body></html>
