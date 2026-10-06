@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Admin</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#07040f;color:#e4c56a;font-family:Arial,sans-serif}.wrap{max-width:1000px;margin:auto;padding:28px 18px 60px}h1{margin:0 0 6px}.muted{color:#cbb89a}.badge{display:inline-block;border:1px solid #e4c56a;border-radius:20px;padding:6px 10px;font-size:12px;margin:8px 6px 8px 0}.live{color:#b7f7c0}.panel{border:1px solid rgba(228,197,106,.4);border-radius:14px;padding:18px;margin-top:18px;background:#100b19}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.product,.customer{border:1px solid rgba(228,197,106,.25);padding:12px;border-radius:10px}.field{display:grid;gap:6px;margin:10px 0}input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #6b5a2c;background:#07040f;color:#fff}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.order{border-top:1px solid rgba(228,197,106,.2);padding:14px 0}.notice{padding:12px;border-radius:10px;background:#191124;border:1px solid rgba(228,197,106,.2)}.customer a{color:#e4c56a}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.btn{border:1px solid #e4c56a;background:#181126;color:#e4c56a;padding:8px 11px;border-radius:8px;cursor:pointer;font-weight:700}.btn:hover{background:#2a1d3d}.danger{border-color:#e8a0a0;color:#f3b0b0}.search{max-width:400px;margin:10px 0}details{margin-top:10px}summary{cursor:pointer;font-weight:700;font-size:18px;padding:4px 0}@media(max-width:700px){.grid,.row{grid-template-columns:1fr}}
+*{box-sizing:border-box}body{margin:0;background:#07040f;color:#e4c56a;font-family:Arial,sans-serif}.wrap{max-width:1000px;margin:auto;padding:28px 18px 60px}h1{margin:0 0 6px}.muted{color:#cbb89a}.badge{display:inline-block;border:1px solid #e4c56a;border-radius:20px;padding:6px 10px;font-size:12px;margin:8px 6px 8px 0}.live{color:#b7f7c0}.panel{border:1px solid rgba(228,197,106,.4);border-radius:14px;padding:18px;margin-top:18px;background:#100b19}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.product{border:1px solid rgba(228,197,106,.25);padding:12px;border-radius:10px}.field{display:grid;gap:6px;margin:10px 0}input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #6b5a2c;background:#07040f;color:#fff}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.order{border-top:1px solid rgba(228,197,106,.2);padding:14px 0}.notice{padding:12px;border-radius:10px;background:#191124;border:1px solid rgba(228,197,106,.2)}@media(max-width:700px){.grid,.row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -14,16 +14,6 @@
 <p class="muted">Inventory and shipping below are connected to the store. Real customer orders remain protected behind the secure admin system.</p>
 <div class="panel"><h2>Inventory</h2><div id="products" class="grid"></div></div>
 <div class="panel"><h2>Shipping</h2><div id="shipping">Loading…</div></div>
-
-<div class="panel"><h2>Customer Database</h2>
-<div class="notice">Practice customer database. Open the customer list to see contact information, addresses, past orders, and admin actions. These are fictional records only.</div>
-<details open>
-<summary>Open Customer Database</summary>
-<input class="search" id="customerSearch" placeholder="Search customers">
-<div id="customers" class="grid"></div>
-</details>
-</div>
-
 <div class="panel"><h2>Orders</h2><div class="notice">Practice orders are shown here for demonstration. Real customer names, addresses, payments, and tracking controls are not exposed on a public page.</div><div id="orders"></div></div>
 </div>
 <script>
@@ -43,30 +33,11 @@ fetch("/api/store?action=inventory").then(r=>{if(!r.ok)throw new Error();return 
  render(data);
  document.getElementById("connection").textContent="LIVE STORE CONNECTED";
 }).catch(()=>{document.getElementById("connection").textContent="PRACTICE FALLBACK";});
-
-const customers=[
-{id:"C-1001",name:"Michael Carter",email:"michael.carter@example.com",phone:"(617) 555-0142",address:"125 Beacon Street",city:"Boston, MA 02116",orders:["Noir Entree × 1","Midnight Saint × 1"],spent:390},
-{id:"C-1002",name:"Sarah Mitchell",email:"sarah.mitchell@example.com",phone:"(617) 555-0187",address:"48 Charles Street",city:"Boston, MA 02114",orders:["Velvet Vice × 2"],spent:390},
-{id:"C-1003",name:"David Reynolds",email:"david.reynolds@example.com",phone:"(781) 555-0129",address:"77 Main Street",city:"Cambridge, MA 02139",orders:["Noir Entree × 2","Velvet Vice × 1"],spent:585},
-{id:"C-1004",name:"Jessica Brooks",email:"jessica.brooks@example.com",phone:"(857) 555-0166",address:"310 Harrison Avenue",city:"Boston, MA 02118",orders:["Midnight Saint × 2"],spent:390},
-{id:"C-1005",name:"Robert Thompson",email:"robert.thompson@example.com",phone:"(508) 555-0194",address:"22 Pleasant Street",city:"Worcester, MA 01609",orders:["Noir Entree × 1","Velvet Vice × 1","Midnight Saint × 1"],spent:585}
-];
-
-function practiceAction(action){alert(action+" — practice preview only. No real action was taken.");}
-function renderCustomers(list){
- document.getElementById("customers").innerHTML=list.map(c=>"<div class='customer'><strong>"+c.name+"</strong><p>"+c.id+"</p><p><a href='tel:"+c.phone.replace(/[^0-9+]/g,"")+"'>"+c.phone+"</a><br><a href='mailto:"+c.email+"'>"+c.email+"</a></p><p>"+c.address+"<br>"+c.city+"</p><p><strong>Past orders:</strong><br>"+c.orders.join("<br>")+"</p><p><strong>Lifetime spend:</strong> $"+c.spent.toFixed(2)+"</p><div class='actions'><button class='btn' onclick='practiceAction("View "+c.name+"")'>View Customer</button><button class='btn' onclick='practiceAction("Email "+c.name+"")'>Email</button><button class='btn' onclick='practiceAction("Resend order for "+c.name+"")'>Resend</button><button class='btn danger' onclick='practiceAction("Refund order for "+c.name+"")'>Refund</button></div></div>").join("");
-}
-renderCustomers(customers);
-document.getElementById("customerSearch").addEventListener("input",function(){
- const q=this.value.toLowerCase();
- renderCustomers(customers.filter(c=>(c.name+" "+c.email+" "+c.phone+" "+c.city).toLowerCase().includes(q)));
-});
-
 const orders=[
 ["TEST-A1001","Processing","$399.95","Noir Entree × 2"],
 ["TEST-A1002","Shipped","$204.95","Velvet Vice × 1"],
 ["TEST-A1003","Completed","$195.00","Midnight Saint × 1"]
 ];
-document.getElementById("orders").innerHTML=orders.map(o=>"<div class='order'><strong>"+o[0]+"</strong> — "+o[1]+" — "+o[2]+"<p>"+o[3]+"</p><div class='actions'><button class='btn' onclick='practiceAction("View "+o[0]+"")'>View Order</button><button class='btn' onclick='practiceAction("Resend receipt for "+o[0]+"")'>Resend Receipt</button><button class='btn danger' onclick='practiceAction("Refund "+o[0]+"")'>Refund</button><button class='btn' onclick='practiceAction("Update status for "+o[0]+"")'>Update Status</button></div></div>").join("");
+document.getElementById("orders").innerHTML=orders.map(o=>"<div class='order'><strong>"+o[0]+"</strong> — "+o[1]+" — "+o[2]+"<p>"+o[3]+"</p></div>").join("");
 </script>
 </body></html>
