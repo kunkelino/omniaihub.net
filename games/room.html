@@ -21,7 +21,10 @@ h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.2v
 .top{padding-top:8px}.kicker{font-size:8px}h1{font-size:clamp(18px,6vw,28px)}
 .stage{width:min(calc(100vw - 16px),calc((100dvh - 92px) * 9 / 16));aspect-ratio:9/16;margin:8px auto 18px}
 }
-@media (orientation:landscape){.stage{width:min(calc(100vw - 16px),1200px);aspect-ratio:16/9}}
+@media (orientation:landscape){
+.stage{width:min(92vw,1280px);aspect-ratio:16/9}
+.video{transform:none;transform-origin:center center;object-position:center center}
+}
 </style>
 </head>
 <body>
@@ -100,16 +103,9 @@ function showDirection(which){
 
   transitionBusy=true;
 
-  /* Save the exact point in the loop before touching it. */
   loopPosition=loopVideo.currentTime||0;
   loopVideo.pause();
 
-  /*
-    The response video has already been loaded as its own element.
-    There is NO src change, NO load(), NO fade and NO opacity transition.
-    We wait for the first decoded frame when necessary, then switch the
-    already-positioned video directly underneath the same screen.
-  */
   const start=()=>{
     try{next.currentTime=0}catch(e){}
 
@@ -137,10 +133,6 @@ function returnToLoop(){
 
   transitionBusy=true;
 
-  /*
-    The loop never left the page and was never reloaded.
-    Jump directly to the exact frame where the touch interrupted it.
-  */
   try{loopVideo.currentTime=loopPosition||0}catch(e){}
 
   loopVideo.muted=!audioUnlocked;
@@ -149,9 +141,6 @@ function returnToLoop(){
 
   loopVideo.play().catch(()=>{});
 
-  /*
-    Instant switch only. No CSS transition, no fade, no black frame.
-  */
   loopVideo.classList.add("visible");
   hideAllDirectionVideos();
 
@@ -204,7 +193,6 @@ stage.addEventListener("pointermove",e=>{
 
 stage.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 
-/* Start the main loop immediately and begin preloading every response clip. */
 loopVideo.play().catch(()=>{});
 preloadDirectionVideos();
 </script>
