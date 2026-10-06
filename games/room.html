@@ -3,17 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
-<title>What Are You Looking At?</title>
+<title>What Are You Looking At</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;background:#050505;color:#f4efe6;font-family:Georgia,"Times New Roman",serif;height:100%}body{min-height:100dvh;overflow:hidden;touch-action:none}.app{min-height:100dvh;display:flex;flex-direction:column}.top{text-align:center;padding:12px 16px 0;flex:none}.kicker{letter-spacing:.42em;font-size:10px;font-family:Arial,sans-serif;opacity:.55}h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.2vw,40px)}.stage{position:relative;flex:none;width:min(calc(100vw - 16px),1200px);aspect-ratio:16/9;margin:10px auto 42px;border-radius:18px;overflow:hidden;background:#111;touch-action:none;box-shadow:0 20px 60px #000}.video{position:absolute;left:0;top:0;width:100%;height:100%;transform:scale(1.12);transform-origin:center top;object-fit:cover;object-position:center top;background:#111;opacity:0;pointer-events:none}.video.visible{opacity:1}.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.18),transparent 12%,transparent 78%,rgba(0,0,0,.28));z-index:4}.finger{position:absolute;z-index:6;width:30px;height:30px;border:1.5px solid rgba(255,255,255,.9);border-radius:50%;transform:translate(-50%,-50%);opacity:0;pointer-events:none;box-shadow:0 0 0 8px rgba(255,255,255,.08)}@media (orientation:portrait){.top{padding-top:8px}.kicker{font-size:8px}h1{font-size:clamp(18px,6vw,28px)}.stage{width:min(calc(100vw - 16px),calc((100dvh - 92px) * 9 / 16));aspect-ratio:9/16;margin:8px auto 18px}}@media (orientation:landscape){.stage{width:min(calc(100vw - 16px),1200px);aspect-ratio:16/9}}
+*{box-sizing:border-box}
+html,body{margin:0;background:#050505;color:#f4efe6;font-family:Georgia,"Times New Roman",serif;height:100%}
+body{min-height:100dvh;overflow:hidden;touch-action:none}
+.app{min-height:100dvh;display:flex;flex-direction:column}
+.top{text-align:center;padding:12px 16px 0;flex:none}
+.kicker{letter-spacing:.42em;font-size:10px;font-family:Arial,sans-serif;opacity:.55}
+h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.2vw,40px)}
+.stage{position:relative;flex:none;width:min(calc(100vw - 16px),1200px);aspect-ratio:16/9;margin:10px auto 42px;border-radius:18px;overflow:hidden;background:#111;touch-action:none;box-shadow:0 20px 60px #000}
+.video{position:absolute;left:0;top:0;width:100%;height:100%;transform:scale(1.12);transform-origin:center top;object-fit:cover;object-position:center top;background:#111;opacity:0;pointer-events:none}
+.video.visible{opacity:1}
+.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.18),transparent 12%,transparent 78%,rgba(0,0,0,.28));z-index:20}
+.finger{position:absolute;z-index:22;width:30px;height:30px;border:1.5px solid rgba(255,255,255,.9);border-radius:50%;transform:translate(-50%,-50%);opacity:0;pointer-events:none;box-shadow:0 0 0 8px rgba(255,255,255,.08)}
+@media (orientation:portrait){
+.top{padding-top:8px}.kicker{font-size:8px}h1{font-size:clamp(18px,6vw,28px)}
+.stage{width:min(calc(100vw - 16px),calc((100dvh - 92px) * 9 / 16));aspect-ratio:9/16;margin:8px auto 18px}
+}
+@media (orientation:landscape){.stage{width:min(calc(100vw - 16px),1200px);aspect-ratio:16/9}}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="kicker">OMNIAIHUB</div><h1>WHAT ARE YOU LOOKING AT?</h1></header>
+<header class="top"><div class="kicker">OMNIAIHUB</div><h1>WHAT ARE YOU LOOKING AT</h1></header>
 <section class="stage" id="stage">
   <video id="loopVideo" class="video visible" src="loop.mp4" playsinline webkit-playsinline autoplay loop preload="auto" muted></video>
-  <video id="directionVideo" class="video" playsinline webkit-playsinline preload="auto"></video>
+
+  <!-- Every response clip is kept as its own video element and preloaded.
+       This avoids waiting for a new video source when the screen is touched. -->
+  <video id="screenLeft" class="video" src="rightcenter.mp4" playsinline webkit-playsinline preload="auto"></video>
+  <video id="centerDown" class="video" src="centerdown.mp4" playsinline webkit-playsinline preload="auto"></video>
+  <video id="centerRight" class="video" src="leftcenter.mp4" playsinline webkit-playsinline preload="auto"></video>
+  <video id="curtain" class="video" src="curtain.mp4" playsinline webkit-playsinline preload="auto"></video>
+  <video id="centerUp" class="video" src="up.mp4" playsinline webkit-playsinline preload="auto"></video>
+
   <div class="shade"></div><div class="finger" id="finger"></div>
 </section>
 </div>
@@ -21,14 +45,13 @@
 const stage=document.getElementById("stage");
 const finger=document.getElementById("finger");
 const loopVideo=document.getElementById("loopVideo");
-const directionVideo=document.getElementById("directionVideo");
 
-const clips={
-  screenLeft:"rightcenter.mp4",
-  centerDown:"centerdown.mp4",
-  centerRight:"leftcenter.mp4",
-  curtain:"curtain.mp4",
-  centerUp:"up.mp4"
+const videos={
+  screenLeft:document.getElementById("screenLeft"),
+  centerDown:document.getElementById("centerDown"),
+  centerRight:document.getElementById("centerRight"),
+  curtain:document.getElementById("curtain"),
+  centerUp:document.getElementById("centerUp")
 };
 
 let mode="loop";
@@ -36,13 +59,26 @@ let loopPosition=0;
 let audioUnlocked=false;
 let transitionBusy=false;
 
+const allDirectionVideos=Object.values(videos);
+
 function unlockAudio(){
   audioUnlocked=true;
   loopVideo.muted=false;
   loopVideo.volume=1;
-  directionVideo.muted=false;
-  directionVideo.volume=1;
+
+  allDirectionVideos.forEach(video=>{
+    video.muted=false;
+    video.volume=1;
+  });
+
   loopVideo.play().catch(()=>{});
+}
+
+function preloadDirectionVideos(){
+  allDirectionVideos.forEach(video=>{
+    video.preload="auto";
+    video.load();
+  });
 }
 
 loopVideo.addEventListener("loadedmetadata",()=>{
@@ -50,72 +86,87 @@ loopVideo.addEventListener("loadedmetadata",()=>{
   loopVideo.play().catch(()=>{});
 });
 
+function hideAllDirectionVideos(){
+  allDirectionVideos.forEach(video=>{
+    video.classList.remove("visible");
+  });
+}
+
 function showDirection(which){
   if(transitionBusy)return;
+
+  const next=videos[which];
+  if(!next)return;
+
   transitionBusy=true;
 
+  /* Save the exact point in the loop before touching it. */
   loopPosition=loopVideo.currentTime||0;
   loopVideo.pause();
 
-  directionVideo.pause();
-  directionVideo.src=clips[which];
-  directionVideo.currentTime=0;
-  directionVideo.loop=false;
-  directionVideo.muted=!audioUnlocked;
-  directionVideo.volume=1;
-  directionVideo.load();
-
+  /*
+    The response video has already been loaded as its own element.
+    There is NO src change, NO load(), NO fade and NO opacity transition.
+    We wait for the first decoded frame when necessary, then switch the
+    already-positioned video directly underneath the same screen.
+  */
   const start=()=>{
-    directionVideo.currentTime=0;
-    directionVideo.muted=!audioUnlocked;
-    directionVideo.volume=1;
+    try{next.currentTime=0}catch(e){}
 
-    /*
-      The old fade is intentionally gone.
-      Wait until the clip is ready, then make one video visible and the
-      other invisible in the same instant. Both videos share the exact
-      same position/size, so there is no fade, flash, or crossfade.
-    */
-    directionVideo.classList.add("visible");
+    next.muted=!audioUnlocked;
+    next.volume=1;
+
+    next.classList.add("visible");
     loopVideo.classList.remove("visible");
 
     mode=which;
-    directionVideo.play().catch(()=>{});
+    next.play().catch(()=>{});
     transitionBusy=false;
   };
 
-  if(directionVideo.readyState>=1)start();
-  else directionVideo.addEventListener("loadedmetadata",start,{once:true});
+  if(next.readyState>=2){
+    start();
+  }else{
+    next.addEventListener("canplay",start,{once:true});
+    next.load();
+  }
 }
 
 function returnToLoop(){
   if(mode==="loop"||transitionBusy)return;
 
   transitionBusy=true;
+
+  /*
+    The loop never left the page and was never reloaded.
+    Jump directly to the exact frame where the touch interrupted it.
+  */
   try{loopVideo.currentTime=loopPosition||0}catch(e){}
 
   loopVideo.muted=!audioUnlocked;
   loopVideo.volume=1;
   loopVideo.loop=true;
+
   loopVideo.play().catch(()=>{});
 
   /*
-    No CSS transition and no fade.
-    The loop is already loaded, so switch directly back to its saved frame.
+    Instant switch only. No CSS transition, no fade, no black frame.
   */
   loopVideo.classList.add("visible");
-  directionVideo.classList.remove("visible");
+  hideAllDirectionVideos();
 
   mode="loop";
   finger.style.opacity="0";
 
   setTimeout(()=>{
-    directionVideo.pause();
+    allDirectionVideos.forEach(video=>video.pause());
     transitionBusy=false;
-  },50);
+  },0);
 }
 
-directionVideo.addEventListener("ended",returnToLoop);
+allDirectionVideos.forEach(video=>{
+  video.addEventListener("ended",returnToLoop);
+});
 
 function aim(x,y){
   const r=stage.getBoundingClientRect();
@@ -153,7 +204,9 @@ stage.addEventListener("pointermove",e=>{
 
 stage.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 
+/* Start the main loop immediately and begin preloading every response clip. */
 loopVideo.play().catch(()=>{});
+preloadDirectionVideos();
 </script>
 </body>
 </html>
