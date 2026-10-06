@@ -5,26 +5,171 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
 <title>What Are You Looking At?</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;background:#050505;color:#f4efe6;font-family:Georgia,"Times New Roman",serif;height:100%}body{min-height:100dvh;overflow:hidden;touch-action:none}.app{min-height:100dvh;display:flex;flex-direction:column}.top{text-align:center;padding:12px 16px 0;flex:none}.kicker{letter-spacing:.42em;font-size:10px;font-family:Arial,sans-serif;opacity:.55}h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.2vw,40px)}.stage{position:relative;flex:none;width:min(calc(100vw - 16px),1200px);aspect-ratio:16/9;margin:10px auto 42px;border-radius:18px;overflow:hidden;background:#111;touch-action:none;box-shadow:0 20px 60px #000}.video{position:absolute;left:0;top:0;width:100%;height:100%;transform:scale(1.12);transform-origin:center top;object-fit:cover;object-position:center top;background:#111;opacity:0;transition:opacity .55s ease-in-out;pointer-events:none}.video.visible{opacity:1}.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.18),transparent 12%,transparent 78%,rgba(0,0,0,.28));z-index:4}.finger{position:absolute;z-index:6;width:30px;height:30px;border:1.5px solid rgba(255,255,255,.9);border-radius:50%;transform:translate(-50%,-50%);opacity:0;pointer-events:none;box-shadow:0 0 0 8px rgba(255,255,255,.08)}@media (orientation:portrait){.top{padding-top:8px}.kicker{font-size:8px}h1{font-size:clamp(18px,6vw,28px)}.stage{width:min(calc(100vw - 16px),calc((100dvh - 92px) * 9 / 16));aspect-ratio:9/16;margin:8px auto 18px}}@media (orientation:landscape){.stage{width:min(calc(100vw - 16px),1200px);aspect-ratio:16/9}}
+*{box-sizing:border-box}html,body{margin:0;background:#050505;color:#f4efe6;font-family:Georgia,"Times New Roman",serif;height:100%}body{min-height:100dvh;overflow:hidden;touch-action:none}.app{min-height:100dvh;display:flex;flex-direction:column}.top{text-align:center;padding:12px 16px 0;flex:none}.kicker{letter-spacing:.42em;font-size:10px;font-family:Arial,sans-serif;opacity:.55}h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.2vw,40px)}.stage{position:relative;flex:none;width:min(calc(100vw - 16px),1200px);aspect-ratio:16/9;margin:10px auto 42px;border-radius:18px;overflow:hidden;background:#111;touch-action:none;box-shadow:0 20px 60px #000}.video{position:absolute;left:0;top:0;width:100%;height:100%;transform:scale(1.12);transform-origin:center top;object-fit:cover;object-position:center top;background:#111;opacity:0;transition:opacity .12s linear;pointer-events:none}.video.visible{opacity:1}.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.18),transparent 12%,transparent 78%,rgba(0,0,0,.28));z-index:4}.finger{position:absolute;z-index:6;width:30px;height:30px;border:1.5px solid rgba(255,255,255,.9);border-radius:50%;transform:translate(-50%,-50%);opacity:0;pointer-events:none;box-shadow:0 0 0 8px rgba(255,255,255,.08)}@media (orientation:portrait){.top{padding-top:8px}.kicker{font-size:8px}h1{font-size:clamp(18px,6vw,28px)}.stage{width:min(calc(100vw - 16px),calc((100dvh - 92px) * 9 / 16));aspect-ratio:9/16;margin:8px auto 18px}}@media (orientation:landscape){.stage{width:min(calc(100vw - 16px),1200px);aspect-ratio:16/9}}
 </style>
 </head>
 <body>
-<div class="app"><header class="top"><div class="kicker">OMNIAIHUB</div><h1>WHAT ARE YOU LOOKING AT?</h1></header><section class="stage" id="stage"><video id="videoA" class="video" playsinline preload="auto"></video><video id="videoB" class="video" playsinline preload="auto"></video><div class="shade"></div><div class="finger" id="finger"></div></section></div>
+<div class="app">
+<header class="top"><div class="kicker">OMNIAIHUB</div><h1>WHAT ARE YOU LOOKING AT?</h1></header>
+<section class="stage" id="stage">
+  <video id="loopVideo" class="video visible" src="loop.mp4" playsinline webkit-playsinline autoplay loop preload="auto" muted></video>
+  <video id="directionVideo" class="video" playsinline webkit-playsinline preload="auto"></video>
+  <div class="shade"></div><div class="finger" id="finger"></div>
+</section>
+</div>
 <script>
-const stage=document.getElementById("stage"),finger=document.getElementById("finger"),videos=[document.getElementById("videoA"),document.getElementById("videoB")];
-const clips={loop:"loop.mp4",screenLeft:"rightcenter.mp4",centerDown:"centerdown.mp4",centerRight:"leftcenter.mp4",curtain:"curtain.mp4",centerUp:"up.mp4"};
-let active=0,mode="loop",loopPosition=0,audioUnlocked=false,transitionBusy=false,transitionToken=0;
-function unlockAudio(){audioUnlocked=true;for(const video of videos){video.muted=false;video.volume=1}}
-function otherIndex(){return active===0?1:0}
-function loadVideo(index,src,startAt=0){const video=videos[index];video.pause();video.src=src;video.load();return new Promise(resolve=>{const start=()=>{try{video.currentTime=Math.max(0,startAt||0)}catch(e){}video.muted=false;video.volume=1;resolve(video)};if(video.readyState>=1)start();else video.addEventListener("loadedmetadata",start,{once:true})})}
-async function startLoop(startAt=0){const token=++transitionToken;transitionBusy=true;const index=mode==="loop"?active:otherIndex();const video=await loadVideo(index,clips.loop,startAt);if(token!==transitionToken)return;video.loop=true;video.muted=!audioUnlocked;video.volume=1;await video.play().catch(()=>{});videos[active].classList.remove("visible");video.classList.add("visible");active=index;mode="loop";setTimeout(()=>{if(token===transitionToken)transitionBusy=false},600)}
-async function playDirection(which){if(transitionBusy||mode===which)return;const loopVideo=videos[active];if(mode==="loop"){loopPosition=loopVideo.currentTime||0;loopVideo.pause()}const next=otherIndex(),token=++transitionToken;transitionBusy=true;const directionVideo=await loadVideo(next,clips[which],0);if(token!==transitionToken)return;directionVideo.loop=false;directionVideo.muted=false;directionVideo.volume=1;directionVideo.classList.add("visible");loopVideo.classList.remove("visible");active=next;mode=which;await directionVideo.play().catch(()=>{});transitionBusy=false}
-async function returnToLoop(){if(mode==="loop"||transitionBusy)return;const directionVideo=videos[active],loopIndex=otherIndex(),token=++transitionToken;transitionBusy=true;const loopVideo=await loadVideo(loopIndex,clips.loop,loopPosition);if(token!==transitionToken)return;loopVideo.loop=true;loopVideo.muted=false;loopVideo.volume=1;await loopVideo.play().catch(()=>{});loopVideo.classList.add("visible");directionVideo.classList.remove("visible");active=loopIndex;mode="loop";finger.style.opacity="0";setTimeout(()=>{directionVideo.pause();if(token===transitionToken)transitionBusy=false},600)}
-videos.forEach((video,index)=>video.addEventListener("ended",()=>{if(index===active&&mode!=="loop")returnToLoop()}));
-function aim(x,y){const r=stage.getBoundingClientRect(),nx=Math.max(0,Math.min(1,(x-r.left)/r.width)),ny=Math.max(0,Math.min(1,(y-r.top)/r.height));finger.style.opacity="1";finger.style.left=(nx*100)+"%";finger.style.top=(ny*100)+"%";if(nx>=2/3&&ny<1/3)playDirection("curtain");else if(nx>=1/3&&nx<2/3&&ny<1/3)playDirection("centerUp");else if(nx<1/3)playDirection("screenLeft");else if(nx>=1/3&&nx<2/3&&ny>=2/3)playDirection("centerDown");else if(nx>=2/3)playDirection("centerRight")}
-stage.addEventListener("pointerdown",e=>{e.preventDefault();unlockAudio();stage.setPointerCapture?.(e.pointerId);aim(e.clientX,e.clientY)},{passive:false});
-stage.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch"){const r=stage.getBoundingClientRect(),nx=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),ny=Math.max(0,Math.min(1,(e.clientY-r.top)/r.height));finger.style.opacity="1";finger.style.left=(nx*100)+"%";finger.style.top=(ny*100)+"%"}},{passive:false});
-stage.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});startLoop(0);
+const stage=document.getElementById("stage");
+const finger=document.getElementById("finger");
+const loopVideo=document.getElementById("loopVideo");
+const directionVideo=document.getElementById("directionVideo");
+
+const clips={
+  screenLeft:"rightcenter.mp4",
+  centerDown:"centerdown.mp4",
+  centerRight:"leftcenter.mp4",
+  curtain:"curtain.mp4",
+  centerUp:"up.mp4"
+};
+
+let mode="loop";
+let loopPosition=0;
+let audioUnlocked=false;
+let transitionBusy=false;
+
+function unlockAudio(){
+  audioUnlocked=true;
+  loopVideo.muted=false;
+  loopVideo.volume=1;
+  directionVideo.muted=false;
+  directionVideo.volume=1;
+  loopVideo.play().catch(()=>{});
+}
+
+/*
+  The loop video is loaded directly in the HTML with autoplay+preload.
+  That lets the browser begin decoding it immediately instead of waiting
+  for JavaScript to fetch/load it.
+
+  IMPORTANT: iPhone/iPad Safari can block audible autoplay until the user
+  interacts with the page. We cannot override Apple's autoplay policy.
+  When the browser permits autoplay, the loop starts with sound immediately.
+  Otherwise the first touch enables the sound instantly.
+*/
+
+loopVideo.addEventListener("loadedmetadata",()=>{
+  loopVideo.loop=true;
+  loopVideo.play().catch(()=>{});
+});
+
+function showDirection(which){
+  if(transitionBusy)return;
+  transitionBusy=true;
+
+  loopPosition=loopVideo.currentTime||0;
+  loopVideo.pause();
+
+  directionVideo.pause();
+  directionVideo.src=clips[which];
+  directionVideo.currentTime=0;
+  directionVideo.loop=false;
+  directionVideo.muted=!audioUnlocked;
+  directionVideo.volume=1;
+  directionVideo.load();
+
+  const start=()=>{
+    directionVideo.currentTime=0;
+    directionVideo.muted=!audioUnlocked;
+    directionVideo.volume=1;
+
+    directionVideo.classList.add("visible");
+    loopVideo.classList.remove("visible");
+
+    mode=which;
+    directionVideo.play().catch(()=>{});
+    transitionBusy=false;
+  };
+
+  if(directionVideo.readyState>=1)start();
+  else directionVideo.addEventListener("loadedmetadata",start,{once:true});
+}
+
+function returnToLoop(){
+  if(mode==="loop"||transitionBusy)return;
+
+  transitionBusy=true;
+
+  /*
+    DO NOT reload loop.mp4 here.
+    It has remained loaded in loopVideo the entire time.
+    We simply jump back to the exact saved timestamp and resume it.
+    This eliminates the previous reload/blank-frame delay.
+  */
+  try{loopVideo.currentTime=loopPosition||0}catch(e){}
+
+  loopVideo.muted=!audioUnlocked;
+  loopVideo.volume=1;
+  loopVideo.loop=true;
+
+  loopVideo.play().catch(()=>{});
+
+  /*
+    Start the loop first, then switch the picture immediately.
+    No crossfade is used because overlapping two copies of the video can
+    create a visible ghost and doubled audio. The loop itself remains
+    continuously decoded/loaded.
+  */
+  loopVideo.classList.add("visible");
+  directionVideo.classList.remove("visible");
+
+  mode="loop";
+  finger.style.opacity="0";
+
+  setTimeout(()=>{
+    directionVideo.pause();
+    transitionBusy=false;
+  },120);
+}
+
+directionVideo.addEventListener("ended",returnToLoop);
+
+function aim(x,y){
+  const r=stage.getBoundingClientRect();
+  const nx=Math.max(0,Math.min(1,(x-r.left)/r.width));
+  const ny=Math.max(0,Math.min(1,(y-r.top)/r.height));
+
+  finger.style.opacity="1";
+  finger.style.left=(nx*100)+"%";
+  finger.style.top=(ny*100)+"%";
+
+  if(nx>=2/3&&ny<1/3)showDirection("curtain");
+  else if(nx>=1/3&&nx<2/3&&ny<1/3)showDirection("centerUp");
+  else if(nx<1/3)showDirection("screenLeft");
+  else if(nx>=1/3&&nx<2/3&&ny>=2/3)showDirection("centerDown");
+  else if(nx>=2/3)showDirection("centerRight");
+}
+
+stage.addEventListener("pointerdown",e=>{
+  e.preventDefault();
+  unlockAudio();
+  stage.setPointerCapture?.(e.pointerId);
+  aim(e.clientX,e.clientY);
+},{passive:false});
+
+stage.addEventListener("pointermove",e=>{
+  if(e.buttons||e.pointerType==="touch"){
+    const r=stage.getBoundingClientRect();
+    const nx=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));
+    const ny=Math.max(0,Math.min(1,(e.clientY-r.top)/r.height));
+    finger.style.opacity="1";
+    finger.style.left=(nx*100)+"%";
+    finger.style.top=(ny*100)+"%";
+  }
+},{passive:false});
+
+stage.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
+
+/* Kick the loop immediately. */
+loopVideo.play().catch(()=>{});
 </script>
 </body>
 </html>
