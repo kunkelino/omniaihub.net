@@ -43,7 +43,7 @@ function render(){
  document.getElementById("count").textContent=count;document.getElementById("subtotal").textContent="$"+total.toFixed(2);
  document.getElementById("checkout").style.pointerEvents=count?"auto":"none";document.getElementById("checkout").style.opacity=count?"1":".45";
 }
-async function init(){try{const r=await fetch("/api/inventory");if(!r.ok)throw new Error();const d=await r.json();products=d.products;document.getElementById("status").textContent="Inventory connected.";render()}catch(e){document.getElementById("status").textContent="Backend storage is not connected yet.";products=[{id:"noir-entree",name:"Noir Entree",price:195,inventory:15,image:"bottle-noir.jpg",notes:"Woody · Smoky · Magnetic"},{id:"velvet-vice",name:"Velvet Vice",price:195,inventory:15,image:"bottle-velvet.jpg",notes:"Spicy · Amber · Bold · Warm"},{id:"midnight-saint",name:"Midnight Saint",price:195,inventory:15,image:"bottle-saint.jpg",notes:"Aromatic · Leather · Smooth"}];render()}}
+async function init(){try{const r=await fetch("/api/store?action=inventory");if(!r.ok)throw new Error();const d=await r.json();products=d.products;document.getElementById("status").textContent="Inventory connected.";render()}catch(e){document.getElementById("status").textContent="Backend storage is not connected yet.";products=[{id:"noir-entree",name:"Noir Entree",price:195,inventory:15,image:"bottle-noir.jpg",notes:"Woody · Smoky · Magnetic"},{id:"velvet-vice",name:"Velvet Vice",price:195,inventory:15,image:"bottle-velvet.jpg",notes:"Spicy · Amber · Bold · Warm"},{id:"midnight-saint",name:"Midnight Saint",price:195,inventory:15,image:"bottle-saint.jpg",notes:"Aromatic · Leather · Smooth"}];render()}}
 init();
 </script>
 <script src="/copyright.js"></script>
