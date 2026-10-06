@@ -240,6 +240,18 @@ document.getElementById("games-gate").addEventListener("submit", function(e){
     document.getElementById("games-err").textContent="Wrong passcode";
   }
 });
+document.getElementById("games-pin").addEventListener("keydown", function(e){
+  if(e.key==="Enter"){
+    e.preventDefault();
+    document.getElementById("games-gate").requestSubmit();
+  }
+});
+document.getElementById("speak4-pin").addEventListener("keydown", function(e){
+  if(e.key==="Enter"){
+    e.preventDefault();
+    document.getElementById("speak4-gate").requestSubmit();
+  }
+});
 document.getElementById("speak4-gate").addEventListener("submit", function(e){
   e.preventDefault();
   var pin=(document.getElementById("speak4-pin").value||"").replace(/\D/g,"");
