@@ -47,7 +47,7 @@ function render(){
  let subtotal=0;$("cart").innerHTML="";
  cart.forEach(i=>{const p=products.find(x=>x.id===i.id);if(!p)return;subtotal+=p.price*i.quantity;const d=document.createElement("div");d.className="line";d.innerHTML="<span>"+p.name+" × "+i.quantity+"</span><span>$"+(p.price*i.quantity).toFixed(2)+"</span>";$("cart").appendChild(d)});
  $("subtotal").textContent="$"+subtotal.toFixed(2);
- const cost=subtotal>=Number(shipping.freeOver||250)?0:Number(shipping[method]||0);
+ const cost=Number(shipping[method]||0);
  $("shippingCost").textContent=cost?"$"+cost.toFixed(2):"FREE";
  $("total").textContent="$"+(subtotal+cost).toFixed(2);
 }
