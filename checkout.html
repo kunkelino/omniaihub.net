@@ -1,13 +1,73 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Checkout</title>
-<style>body{margin:0;background:#07040f;color:#e4c56a;font-family:Arial,sans-serif}.wrap{max-width:620px;margin:auto;padding:28px 18px 60px}h1{letter-spacing:.12em}.panel{border:1px solid rgba(228,197,106,.4);border-radius:14px;padding:18px;margin-top:18px}.field{display:grid;gap:6px;margin:10px 0}input,select{padding:11px;border-radius:8px;border:1px solid #6b5a2c;background:#07040f;color:#fff}button{padding:12px 18px;border:1px solid #e4c56a;background:#e4c56a;color:#07040f;border-radius:8px;font-weight:700}.line{display:flex;justify-content:space-between;margin:8px 0}.muted{color:#cbb89a}.error{color:#ffb4b4}.success{color:#b7f7c0}</style></head>
-<body><div class="wrap"><h1>CHECKOUT</h1><div class="panel"><div id="cart"></div><div class="line"><strong>Subtotal</strong><strong id="subtotal">$0.00</strong></div><div class="field"><label>Shipping</label><select id="shipping"><option value="standard">Standard</option><option value="priority">Priority</option></select></div><div class="line"><strong>Shipping cost</strong><strong id="shippingCost">$0.00</strong></div><div class="line"><strong>Total</strong><strong id="total">$0.00</strong></div></div>
-<div class="panel"><h2>Ship to</h2><div class="field"><label>Name</label><input id="name"></div><div class="field"><label>Email</label><input id="email" type="email"></div><div class="field"><label>Phone</label><input id="phone"></div><div class="field"><label>Street address</label><input id="address"></div><div class="field"><label>City</label><input id="city"></div><div class="field"><label>State</label><input id="state" maxlength="2"></div><div class="field"><label>ZIP</label><input id="zip"></div><button id="place">Place practice order</button><p class="muted">Practice mode only: this records the order and removes inventory. It does not charge a card.</p><p id="msg"></p></div></div>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checkout</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#07040f;color:#e4c56a;font-family:Arial,sans-serif}.wrap{max-width:720px;margin:auto;padding:28px 18px 60px}h1{letter-spacing:.12em;text-align:center}.panel{border:1px solid rgba(228,197,106,.4);border-radius:14px;padding:20px;margin-top:18px;background:#100b19}.field{display:grid;gap:6px;margin:10px 0}input{padding:12px;border-radius:8px;border:1px solid #6b5a2c;background:#07040f;color:#fff;font-size:16px}.line{display:flex;justify-content:space-between;gap:12px;margin:9px 0}.muted{color:#cbb89a}.error{color:#ffb4b4}.success{color:#b7f7c0}.shipping{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ship-option{border:1px solid rgba(228,197,106,.45);border-radius:10px;padding:13px;background:#07040f;color:#e4c56a;text-align:left;cursor:pointer}.ship-option.active{background:#e4c56a;color:#07040f}.ship-option strong{display:block;font-size:16px}.ship-option span{font-size:13px}.payment-grid{display:grid;gap:12px}.pay-option{width:100%;padding:15px;border:1px solid rgba(228,197,106,.55);border-radius:10px;background:#07040f;color:#fff;font-weight:700;font-size:16px;cursor:pointer;text-align:left}.pay-option.active{border-color:#e4c56a;background:#181126}.logos{float:right;display:flex;gap:5px}.logo{background:#fff;color:#111;padding:3px 5px;border-radius:4px;font-size:10px;font-weight:900}.place{width:100%;margin-top:16px;padding:14px;border:1px solid #e4c56a;background:#e4c56a;color:#07040f;border-radius:9px;font-weight:800;font-size:16px;cursor:pointer}.place:disabled{opacity:.5;cursor:not-allowed}.qr-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}.qr-row img{width:130px;height:130px;object-fit:contain;background:#fff;border-radius:8px;padding:6px}@media(max-width:520px){.shipping{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>CHECKOUT</h1>
+<div class="panel"><h2>Order</h2><div id="cart"></div><div class="line"><strong>Subtotal</strong><strong id="subtotal">$0.00</strong></div>
+<div class="shipping"><button class="ship-option active" data-method="standard"><strong>Standard — $5.99</strong><span>3–5 business days</span></button><button class="ship-option" data-method="priority"><strong>Priority — $10.99</strong><span>1–2 business days</span></button></div>
+<div class="line"><strong>Shipping</strong><strong id="shippingCost">$5.99</strong></div><div class="line"><strong>Total</strong><strong id="total">$0.00</strong></div></div>
+
+<div class="panel"><h2>Customer Information</h2>
+<div class="field"><label>Full name</label><input id="name" autocomplete="name"></div>
+<div class="field"><label>Email</label><input id="email" type="email" autocomplete="email"></div>
+<div class="field"><label>Phone number</label><input id="phone" type="tel" autocomplete="tel"></div>
+<div class="field"><label>Street address</label><input id="address" autocomplete="street-address"></div>
+<div class="field"><label>City</label><input id="city" autocomplete="address-level2"></div>
+<div class="field"><label>State</label><input id="state" maxlength="2" autocomplete="address-level1"></div>
+<div class="field"><label>ZIP code</label><input id="zip" autocomplete="postal-code"></div>
+</div>
+
+<div class="panel"><h2>Payment Method</h2><div class="payment-grid">
+<button class="pay-option active" data-payment="card">Credit Card <span class="logos"><span class="logo">VISA</span><span class="logo">MC</span><span class="logo">AMEX</span></span></button>
+<button class="pay-option" data-payment="paypal">Pay with PayPal</button>
+<button class="pay-option" data-payment="venmo-zelle">Pay with Venmo or Zelle</button>
+</div><div id="paymentInfo" class="muted" style="margin-top:12px">Practice mode: selecting Credit Card does not collect or charge card information.</div>
+<div id="qr" class="qr-row" hidden><img src="venmo-qr.png" alt="Venmo QR"><img src="zelle-qr.png" alt="Zelle QR"></div>
+<button class="place" id="place">Place Practice Order</button><p id="msg"></p>
+</div>
+</div>
 <script>
-const $=id=>document.getElementById(id),cart=JSON.parse(localStorage.getItem("sampleCart")||"[]");let shipping={standard:9.95,priority:19.95,freeOver:250};
-async function init(){const r=await fetch("/api/store?action=inventory");if(!r.ok){$("msg").textContent="Backend storage is not connected yet.";return}const d=await r.json();shipping=d.shipping;render(d.products);}
-function render(products){let subtotal=0;$("cart").innerHTML="";cart.forEach(i=>{const p=products.find(x=>x.id===i.id);if(!p)return;subtotal+=p.price*i.quantity;const d=document.createElement("div");d.className="line";d.innerHTML="<span>"+p.name+" × "+i.quantity+"</span><span>$"+(p.price*i.quantity).toFixed(2)+"</span>";$("cart").appendChild(d)});$("subtotal").textContent="$"+subtotal.toFixed(2);const cost=subtotal>=shipping.freeOver?0:(shipping[$("shipping").value]||0);$("shippingCost").textContent="$"+cost.toFixed(2);$("total").textContent="$"+(subtotal+cost).toFixed(2);}
-$("shipping").onchange=()=>init();
-$("place").onclick=async()=>{const body={items:cart,shippingMethod:$("shipping").value,customer:{name:$("name").value,email:$("email").value,phone:$("phone").value,address:$("address").value,city:$("city").value,state:$("state").value,zip:$("zip").value}};$("msg").textContent="Saving order…";const r=await fetch("/api/store?action=order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const j=await r.json();if(!r.ok){$("msg").className="error";$("msg").textContent=j.error||"Could not place order.";return}localStorage.removeItem("sampleCart");$("place").disabled=true;$("msg").className="success";$("msg").innerHTML="Practice order "+j.order.id+" created. Inventory was reduced.<br><br><strong>Your receipt will be emailed to you.</strong>";};
+const $=id=>document.getElementById(id);
+const cart=JSON.parse(localStorage.getItem("sampleCart")||"[]");
+let products=[],shipping={standard:5.99,priority:10.99,freeOver:250},method="standard",payment="card";
+
+async function init(){
+ const r=await fetch("/api/store?action=inventory");
+ if(!r.ok){$("msg").className="error";$("msg").textContent="Backend storage is not connected yet.";return}
+ const d=await r.json();products=d.products;shipping=d.shipping||shipping;render();
+}
+function render(){
+ let subtotal=0;$("cart").innerHTML="";
+ cart.forEach(i=>{const p=products.find(x=>x.id===i.id);if(!p)return;subtotal+=p.price*i.quantity;const d=document.createElement("div");d.className="line";d.innerHTML="<span>"+p.name+" × "+i.quantity+"</span><span>$"+(p.price*i.quantity).toFixed(2)+"</span>";$("cart").appendChild(d)});
+ $("subtotal").textContent="$"+subtotal.toFixed(2);
+ const cost=subtotal>=Number(shipping.freeOver||250)?0:Number(shipping[method]||0);
+ $("shippingCost").textContent=cost?"$"+cost.toFixed(2):"FREE";
+ $("total").textContent="$"+(subtotal+cost).toFixed(2);
+}
+document.querySelectorAll(".ship-option").forEach(b=>b.onclick=()=>{method=b.dataset.method;document.querySelectorAll(".ship-option").forEach(x=>x.classList.remove("active"));b.classList.add("active");render()});
+document.querySelectorAll(".pay-option").forEach(b=>b.onclick=()=>{
+ payment=b.dataset.payment;document.querySelectorAll(".pay-option").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ $("qr").hidden=payment!=="venmo-zelle";
+ $("paymentInfo").textContent=payment==="card"?"Practice mode: selecting Credit Card does not collect or charge card information.":payment==="paypal"?"PayPal will open in a new window. Practice orders are not charged here.":"Use the Venmo or Zelle QR codes below. Practice orders are not charged here.";
+ if(payment==="paypal")window.open("https://www.paypal.com/","_blank","noopener,noreferrer");
+});
+$("place").onclick=async()=>{
+ const required=["name","email","phone","address","city","state","zip"];
+ const missing=required.find(id=>!$(id).value.trim());if(missing){$("msg").className="error";$("msg").textContent="Please complete all customer information.";$(missing).focus();return}
+ if(!cart.length){$("msg").className="error";$("msg").textContent="Your cart is empty.";return}
+ $("place").disabled=true;$("msg").textContent="Saving practice order…";
+ const body={items:cart,shippingMethod:method,paymentMethod:payment,customer:{name:$("name").value,email:$("email").value,phone:$("phone").value,address:$("address").value,city:$("city").value,state:$("state").value,zip:$("zip").value}};
+ const r=await fetch("/api/store?action=order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const j=await r.json();
+ if(!r.ok){$("place").disabled=false;$("msg").className="error";$("msg").textContent=j.error||"Could not place order.";return}
+ localStorage.removeItem("sampleCart");$("msg").className="success";$("msg").innerHTML="Practice order <strong>"+j.order.id+"</strong> created. Inventory was reduced.<br><br><strong>No payment was charged.</strong>";
+};
 init();
-</script></body></html>
+</script>
+</body></html>
