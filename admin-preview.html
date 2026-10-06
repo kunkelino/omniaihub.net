@@ -4,40 +4,78 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Admin</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#07040f;color:#e4c56a;font-family:Arial,sans-serif}.wrap{max-width:1000px;margin:auto;padding:28px 18px 60px}h1{margin:0 0 6px}.muted{color:#cbb89a}.badge{display:inline-block;border:1px solid #e4c56a;border-radius:20px;padding:6px 10px;font-size:12px;margin:8px 6px 8px 0}.live{color:#b7f7c0}.panel{border:1px solid rgba(228,197,106,.4);border-radius:14px;padding:18px;margin-top:18px;background:#100b19}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.product{border:1px solid rgba(228,197,106,.25);padding:12px;border-radius:10px}.field{display:grid;gap:6px;margin:10px 0}input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #6b5a2c;background:#07040f;color:#fff}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.order{border-top:1px solid rgba(228,197,106,.2);padding:14px 0}.notice{padding:12px;border-radius:10px;background:#191124;border:1px solid rgba(228,197,106,.2)}@media(max-width:700px){.grid,.row{grid-template-columns:1fr}}
+*{box-sizing:border-box}body{margin:0;background:#07040f;color:#e4c56a;font-family:Arial,sans-serif}.wrap{max-width:1100px;margin:auto;padding:28px 18px 60px}h1{margin:0 0 6px}.muted{color:#cbb89a}.badge{display:inline-block;border:1px solid #e4c56a;border-radius:20px;padding:6px 10px;font-size:12px;margin:8px 6px 8px 0}.live{color:#b7f7c0}.panel{border:1px solid rgba(228,197,106,.4);border-radius:14px;padding:18px;margin-top:18px;background:#100b19}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.product,.customer,.order{border:1px solid rgba(228,197,106,.25);padding:14px;border-radius:10px}.field{display:grid;gap:6px;margin:10px 0}input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #6b5a2c;background:#07040f;color:#fff}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.btn{border:1px solid #e4c56a;background:#181126;color:#e4c56a;padding:8px 11px;border-radius:8px;cursor:pointer;font-weight:700}.btn:hover{background:#2a1d3d}.danger{border-color:#e8a0a0;color:#f3b0b0}.customer a{color:#e4c56a}.order{border-top:1px solid rgba(228,197,106,.2);border-left:0;border-right:0;border-bottom:0;border-radius:0}.notice{padding:12px;border-radius:10px;background:#191124;border:1px solid rgba(228,197,106,.2)}.search{max-width:400px;margin:10px 0}.total{font-size:20px;font-weight:700}.low{color:#ffb0b0;font-weight:700}@media(max-width:800px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <h1>Admin</h1>
 <span class="badge">NO LOGIN REQUIRED</span><span class="badge live" id="connection">Connecting to store…</span>
-<p class="muted">Inventory and shipping below are connected to the store. Real customer orders remain protected behind the secure admin system.</p>
-<div class="panel"><h2>Inventory</h2><div id="products" class="grid"></div></div>
+<p class="muted">Store dashboard. Inventory and shipping are connected to the store. Customer records below are fictional practice records until secure customer storage is connected.</p>
+
+<div class="panel"><h2>Inventory & Reorder</h2><div id="products" class="grid"></div><div class="notice" style="margin-top:14px"><strong>What to order next:</strong> Products at or below 5 units are flagged for reorder. The quantities shown are a suggested practice reorder.</div></div>
+
 <div class="panel"><h2>Shipping</h2><div id="shipping">Loading…</div></div>
-<div class="panel"><h2>Orders</h2><div class="notice">Practice orders are shown here for demonstration. Real customer names, addresses, payments, and tracking controls are not exposed on a public page.</div><div id="orders"></div></div>
+
+<div class="panel"><h2>Customer Database</h2>
+<input class="search" id="customerSearch" placeholder="Search customer name, email, phone, or city">
+<div id="customers" class="grid"></div></div>
+
+<div class="panel"><h2>Order History</h2>
+<div class="notice">Fictional practice orders only. Buttons demonstrate the admin workflow and do not send refunds, emails, or customer notifications from this public preview.</div>
+<div id="orders"></div></div>
 </div>
+
 <script>
 const fallback=[
-{name:"Noir Entree",price:195,inventory:15},
-{name:"Velvet Vice",price:195,inventory:15},
-{name:"Midnight Saint",price:195,inventory:15}
+{name:"Noir Entree",price:195,inventory:15,reorder:10},
+{name:"Velvet Vice",price:195,inventory:15,reorder:10},
+{name:"Midnight Saint",price:195,inventory:15,reorder:10}
 ];
+
+const customers=[
+{id:"C-1001",name:"Michael Carter",email:"michael.carter@example.com",phone:"(617) 555-0142",address:"125 Beacon Street",city:"Boston, MA 02116",orders:["Noir Entree × 1","Midnight Saint × 1"],spent:390},
+{id:"C-1002",name:"Sarah Mitchell",email:"sarah.mitchell@example.com",phone:"(617) 555-0187",address:"48 Charles Street",city:"Boston, MA 02114",orders:["Velvet Vice × 2"],spent:390},
+{id:"C-1003",name:"David Reynolds",email:"david.reynolds@example.com",phone:"(781) 555-0129",address:"77 Main Street",city:"Cambridge, MA 02139",orders:["Noir Entree × 2","Velvet Vice × 1"],spent:585},
+{id:"C-1004",name:"Jessica Brooks",email:"jessica.brooks@example.com",phone:"(857) 555-0166",address:"310 Harrison Avenue",city:"Boston, MA 02118",orders:["Midnight Saint × 2"],spent:390},
+{id:"C-1005",name:"Robert Thompson",email:"robert.thompson@example.com",phone:"(508) 555-0194",address:"22 Pleasant Street",city:"Worcester, MA 01609",orders:["Noir Entree × 1","Velvet Vice × 1","Midnight Saint × 1"],spent:585}
+];
+
+const orderHistory=[
+{id:"ORD-1001",customer:"Michael Carter",date:"Sep 28, 2026",items:"Noir Entree × 1, Midnight Saint × 1",total:390,status:"Delivered",tracking:"9400 1000 0000 1001"},
+{id:"ORD-1002",customer:"Sarah Mitchell",date:"Sep 30, 2026",items:"Velvet Vice × 2",total:390,status:"Shipped",tracking:"9400 1000 0000 1002"},
+{id:"ORD-1003",customer:"David Reynolds",date:"Oct 1, 2026",items:"Noir Entree × 2, Velvet Vice × 1",total:585,status:"Processing",tracking:""},
+{id:"ORD-1004",customer:"Jessica Brooks",date:"Oct 2, 2026",items:"Midnight Saint × 2",total:390,status:"Delivered",tracking:"9400 1000 0000 1004"},
+{id:"ORD-1005",customer:"Robert Thompson",date:"Oct 4, 2026",items:"Noir Entree × 1, Velvet Vice × 1, Midnight Saint × 1",total:585,status:"Processing",tracking:""}
+];
+
 function render(data){
  const products=data.products||fallback;
- document.getElementById("products").innerHTML=products.map(p=>"<div class='product'><strong>"+p.name+"</strong><p>$"+Number(p.price).toFixed(2)+"</p><div class='field'><label>Current inventory</label><input type='number' value='"+Number(p.inventory)+"' disabled></div></div>").join("");
+ document.getElementById("products").innerHTML=products.map(p=>{
+   const low=Number(p.inventory)<=5;
+   const suggested=low?Math.max(10,20-Number(p.inventory)):0;
+   return "<div class='product'><strong>"+p.name+"</strong><p>$"+Number(p.price).toFixed(2)+"</p><div class='field'><label>Current inventory</label><input type='number' value='"+Number(p.inventory)+"' disabled></div>"+(low?"<p class='low'>LOW STOCK — Suggested reorder: "+suggested+"</p>":"<p class='muted'>Stock level OK</p>")+"<div class='actions'><button class='btn' onclick='practiceAction("Order "+p.name+"")'>Order Stock</button><button class='btn' onclick='practiceAction("Edit "+p.name+"")'>Edit</button></div></div>";
+ }).join("");
  const s=data.shipping||{standard:9.95,priority:19.95,freeOver:250};
- document.getElementById("shipping").innerHTML="<div class='row'><div><strong>Standard</strong><p>$"+Number(s.standard).toFixed(2)+"</p></div><div><strong>Priority</strong><p>$"+Number(s.priority).toFixed(2)+"</p></div></div><p>Free shipping over <strong>$"+Number(s.freeOver).toFixed(2)+"</strong></p>";
+ document.getElementById("shipping").innerHTML="<div class='row'><div><strong>Standard</strong><p>$"+Number(s.standard).toFixed(2)+"</p></div><div><strong>Priority</strong><p>$"+Number(s.priority).toFixed(2)+"</p></div></div><p>Free shipping over <strong>$"+Number(s.freeOver).toFixed(2)+"</strong></p><div class='actions'><button class='btn' onclick='practiceAction("Edit Shipping")'>Edit Shipping</button></div>";
 }
 render({});
 fetch("/api/store?action=inventory").then(r=>{if(!r.ok)throw new Error();return r.json()}).then(data=>{
- render(data);
- document.getElementById("connection").textContent="LIVE STORE CONNECTED";
+ render(data); document.getElementById("connection").textContent="LIVE STORE CONNECTED";
 }).catch(()=>{document.getElementById("connection").textContent="PRACTICE FALLBACK";});
-const orders=[
-["TEST-A1001","Processing","$399.95","Noir Entree × 2"],
-["TEST-A1002","Shipped","$204.95","Velvet Vice × 1"],
-["TEST-A1003","Completed","$195.00","Midnight Saint × 1"]
-];
-document.getElementById("orders").innerHTML=orders.map(o=>"<div class='order'><strong>"+o[0]+"</strong> — "+o[1]+" — "+o[2]+"<p>"+o[3]+"</p></div>").join("");
+
+function renderCustomers(list){
+ document.getElementById("customers").innerHTML=list.map(c=>"<div class='customer'><strong>"+c.name+"</strong><p>"+c.id+"</p><p><a href='tel:"+c.phone.replace(/[^0-9+]/g,"")+"'>"+c.phone+"</a><br><a href='mailto:"+c.email+"'>"+c.email+"</a></p><p>"+c.address+"<br>"+c.city+"</p><p><strong>Lifetime spend:</strong> $"+c.spent.toFixed(2)+"</p><p><strong>Past orders:</strong><br>"+c.orders.join("<br>")+"</p><div class='actions'><button class='btn' onclick='practiceAction("View "+c.name+"")'>View Customer</button><button class='btn' onclick='practiceAction("Email "+c.name+"")'>Email</button><button class='btn' onclick='practiceAction("Resend order for "+c.name+"")'>Resend</button></div></div>").join("");
+}
+renderCustomers(customers);
+
+document.getElementById("customerSearch").addEventListener("input",function(){
+ const q=this.value.toLowerCase();
+ renderCustomers(customers.filter(c=>(c.name+" "+c.email+" "+c.phone+" "+c.city).toLowerCase().includes(q)));
+});
+
+document.getElementById("orders").innerHTML=orderHistory.map(o=>"<div class='order'><strong>"+o.id+"</strong> — "+o.date+" — <strong>$"+o.total.toFixed(2)+"</strong><p><strong>"+o.customer+"</strong><br>"+o.items+"<br>Status: "+o.status+(o.tracking?"<br>Tracking: "+o.tracking:"")+"</p><div class='actions'><button class='btn' onclick='practiceAction("View "+o.id+"")'>View Order</button><button class='btn' onclick='practiceAction("Resend "+o.id+"")'>Resend Receipt</button><button class='btn danger' onclick='practiceAction("Refund "+o.id+"")'>Refund</button><button class='btn' onclick='practiceAction("Update "+o.id+"")'>Update Status</button></div></div>").join("");
+
+function practiceAction(action){alert(action+" — practice preview only. No real action was taken.");}
 </script>
 </body></html>
