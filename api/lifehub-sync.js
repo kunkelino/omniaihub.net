@@ -49,19 +49,22 @@ export default async function handler(req, res) {
 }
 
 async function readBlob(token, pathname) {
-  const listed = await fetch("https://blob.vercel-storage.com?" + new URLSearchParams({ prefix: pathname, limit: "10" }), {
-    headers: { Authorization: "Bearer " + token, "x-api-version": "7" }
+  const listed = await fetch("https://vercel.com/api/blob?" + new URLSearchParams({ prefix: pathname, limit: "5" }), {
+    headers: {
+      Authorization: "Bearer " + token,
+      "x-api-version": "12"
+    }
   });
   if (!listed.ok) {
     if (listed.status === 404) return null;
-    throw new Error("list " + listed.status);
+    throw new Error("list " + listed.status + " " + (await listed.text()).slice(0, 160));
   }
   const info = await listed.json();
   const blobs = info.blobs || info.files || [];
-  const hit = blobs.find(function (b) { return (b.pathname || b.url || "").indexOf(pathname) !== -1; }) || blobs[0];
+  const hit = blobs.find(function (b) { return (b.pathname || "") === pathname; }) || blobs[0];
   if (!hit || !hit.url) return null;
   const got = await fetch(hit.url, {
-    headers: { Authorization: "Bearer " + token, "x-api-version": "7" },
+    headers: { Authorization: "Bearer " + token, "x-api-version": "12" },
     cache: "no-store"
   });
   if (got.status === 404) return null;
@@ -70,11 +73,11 @@ async function readBlob(token, pathname) {
 }
 
 async function writeBlob(token, pathname, payload) {
-  const r = await fetch("https://blob.vercel-storage.com/" + pathname + "?download=1", {
+  const r = await fetch("https://vercel.com/api/blob/?" + new URLSearchParams({ pathname: pathname }), {
     method: "PUT",
     headers: {
       Authorization: "Bearer " + token,
-      "x-api-version": "7",
+      "x-api-version": "12",
       "x-content-type": "application/json",
       "x-allow-overwrite": "true",
       "x-vercel-blob-access": "private"
@@ -83,7 +86,7 @@ async function writeBlob(token, pathname, payload) {
   });
   if (!r.ok) {
     const text = await r.text();
-    throw new Error("write " + r.status + " " + text.slice(0, 180));
+    throw new Error("write " + r.status + " " + text.slice(0, 220));
   }
   return r.json().catch(function () { return {}; });
 }
