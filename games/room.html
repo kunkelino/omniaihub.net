@@ -56,100 +56,67 @@ const clips = {
   down: document.getElementById("down"),
   up: document.getElementById("up")
 };
-const labels = {
-  loop: "They're talking.",
-  left: "Looking left.",
-  right: "Looking right.",
-  center: "Screen center.",
-  down: "Looking down.",
-  up: "Looking up."
-};
 let shown = "loop";
 let busy = false;
-let ctx, gain;
-function audio(){
-  if (ctx) return ctx;
-  const AC = window.AudioContext || window.webkitAudioContext;
-  if (!AC) return null;
-  ctx = new AC();
-  gain = ctx.createGain();
-  gain.gain.value = 2.6;
-  gain.connect(ctx.destination);
-  Object.values(clips).forEach(v => {
-    ctx.createMediaElementSource(v).connect(gain);
-  });
-  return ctx;
-}
-function louder(){
-  const c = audio();
-  if (c && c.state === "suspended") c.resume();
+function audible(){
   Object.values(clips).forEach(v => { v.muted = false; v.volume = 1; });
 }
-function prime(v){
-  v.preload = "auto";
-  v.playsInline = true;
-  v.muted = false;
-  v.volume = 1;
-  v.load();
-}
-Object.values(clips).forEach(prime);
 function show(which){
   if (shown === which) return;
   const next = clips[which];
   const prev = clips[shown];
-  louder();
+  audible();
   const reveal = () => {
     next.classList.add("on");
-    if (prev !== next) prev.classList.remove("on");
+    if (prev !== next) {
+      prev.classList.remove("on");
+      prev.pause();
+    }
     shown = which;
     busy = which !== "loop";
-    if (prev !== next) prev.pause();
   };
-  const start = () => {
-    const playing = next.play();
-    if (playing) playing.then(reveal).catch(reveal);
-    else reveal();
-  };
-  if (which !== "loop") {
-    const go = () => { next.removeEventListener("seeked", go); start(); };
-    next.addEventListener("seeked", go);
-    try { next.currentTime = 0; } catch (e) { start(); }
-  } else {
+  const start = () => next.play().then(reveal).catch(reveal);
+  if (which === "loop") {
     start();
+    return;
   }
+  let started = false;
+  const go = () => {
+    if (started) return;
+    started = true;
+    next.removeEventListener("seeked", go);
+    start();
+  };
+  next.addEventListener("seeked", go);
+  try { next.currentTime = 0; } catch (e) {}
+  setTimeout(go, 80);
 }
 Object.values(clips).forEach(v => v.addEventListener("ended", () => {
   if (shown !== "loop" && clips[shown] === v) show("loop");
 }));
 function zone(nx, ny){
-  if (nx > 0.36 && nx < 0.64 && ny > 0.32 && ny < 0.68) return "center";
-  if (ny < 0.30) return "up";
   if (ny > 0.62) return "down";
+  if (ny < 0.28) return "up";
+  if (nx > 0.36 && nx < 0.64) return "center";
   if (nx < 0.5) return "left";
   return "right";
 }
 stage.addEventListener("pointerdown", e => {
-  louder();
+  audible();
   if (busy) return;
   const r = stage.getBoundingClientRect();
-  const nx = (e.clientX - r.left) / r.width;
-  const ny = (e.clientY - r.top) / r.height;
-  show(zone(nx, ny));
+  show(zone((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height));
 }, {passive:true});
 function startTalking(){
-  louder();
   const v = clips.loop;
   v.muted = false;
-  const attempt = v.play();
-  if (!attempt) return;
-  attempt.catch(() => {
+  v.play().catch(() => {
     v.muted = true;
-    v.play().then(() => { v.muted = false; louder(); }).catch(()=>{});
+    v.play().then(() => { v.muted = false; }).catch(()=>{});
   });
 }
 startTalking();
-document.addEventListener("pointerdown", louder, {once:true});
-document.addEventListener("visibilitychange", () => { if (!document.hidden) startTalking(); });
+document.addEventListener("pointerdown", audible, {once:true});
 </script>
 </body>
 </html>
