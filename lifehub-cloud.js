@@ -11,10 +11,20 @@
       updatedAt: parseInt(localStorage.getItem("lifehub_updatedAt")||"0",10)||Date.now()
     };
   }
+  function saveLocalOnly(){
+    try{
+      if(window.KEY){
+        localStorage.setItem(KEY.tasks,JSON.stringify(window.tasks||[]));
+        localStorage.setItem(KEY.buy,JSON.stringify(window.buy||[]));
+        localStorage.setItem(KEY.events,JSON.stringify(window.events||[]));
+        localStorage.setItem(KEY.notes,JSON.stringify(window.notes||[]));
+      }
+    }catch(e){}
+  }
   function seedIfEmpty(){
     var tasksEmpty=!window.tasks || !window.tasks.length;
     var buyEmpty=!window.buy || !window.buy.length;
-    if(!tasksEmpty && !buyEmpty) return;
+    if(!tasksEmpty && !buyEmpty) return false;
     var today=new Date();
     var due=[today.getFullYear(),String(today.getMonth()+1).padStart(2,"0"),String(today.getDate()).padStart(2,"0")].join("-");
     function id(){ return (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())+Math.random()); }
@@ -31,15 +41,7 @@
     localStorage.setItem("lifehub_updatedAt", String(Date.now()));
     saveLocalOnly();
     if(typeof renderAll==="function") renderAll();
-  }
-    try{
-      if(window.KEY){
-        localStorage.setItem(KEY.tasks,JSON.stringify(window.tasks||[]));
-        localStorage.setItem(KEY.buy,JSON.stringify(window.buy||[]));
-        localStorage.setItem(KEY.events,JSON.stringify(window.events||[]));
-        localStorage.setItem(KEY.notes,JSON.stringify(window.notes||[]));
-      }
-    }catch(e){}
+    return true;
   }
   function apply(data){
     if(!data) return;
@@ -72,7 +74,7 @@
         headers:{"x-lifehub-pin":pin()},
         cache:"no-store"
       });
-      if(!r.ok){ cloudReady=true; return; }
+      if(!r.ok){ seedIfEmpty(); cloudReady=true; return; }
       var data=await r.json();
       if(data && data.empty){
         seedIfEmpty();
@@ -82,17 +84,19 @@
       }
       var localAt=parseInt(localStorage.getItem("lifehub_updatedAt")||"0",10)||0;
       var cloudAt=parseInt((data && data.updatedAt)||0,10)||0;
-      if(cloudAt>localAt){
+      if(cloudAt>=localAt){
         apply(data);
-        seedIfEmpty();
+        if(seedIfEmpty()) window.pushCloud();
         if(typeof toast==="function") toast("Loaded from your other device.");
-      } else if(localAt>cloudAt){
+      } else {
         cloudReady=true;
-        window.pushCloud();
+        if(seedIfEmpty()) window.pushCloud();
+        else window.pushCloud();
         return;
       }
       cloudReady=true;
     }catch(e){
+      seedIfEmpty();
       cloudReady=true;
     }
   };
