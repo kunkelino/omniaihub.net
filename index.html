@@ -23,10 +23,16 @@ a{color:#312e81;}
 #portfolio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;}
 .box{width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#111;display:block;position:relative;text-decoration:none;color:#fff;box-shadow:var(--shadow);cursor:pointer;}
 .box img,.box iframe,.box video{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;border:0;}
+.box .poster,.box .media{position:absolute;inset:0;width:100%;height:100%;}
+.box .media{opacity:0;z-index:1;background:transparent;}
+.box .poster{z-index:2;transition:opacity .22s ease;pointer-events:none;}
+.box.cross .poster{opacity:0;}
+.box.cross .media{opacity:1;transition:opacity .22s ease;}
+.box.playing .play-badge{display:none;}
 .box .cap{position:absolute;left:0;right:0;bottom:0;padding:10px 12px;background:linear-gradient(transparent,rgba(0,0,0,.75));font-size:13px;font-weight:700;pointer-events:none;}
 .box.playing .cap{display:none;}
-.play-badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:22px;}
-.expand{position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,.55);color:#fff;border:0;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;display:none;}
+.play-badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:22px;z-index:3;}
+.expand{position:absolute;top:8px;right:8px;z-index:4;background:rgba(0,0,0,.55);color:#fff;border:0;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;display:none;}
   .box.playing .expand{display:block;}
 .box.yt-full{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;border-radius:0!important;z-index:200000!important;aspect-ratio:auto!important;}
 .box.yt-full iframe{width:100%!important;height:100%!important;object-fit:contain;}
@@ -191,20 +197,48 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
   </section>
 </div>
 <script>
+function bindExpand(box){
+  var btn=box.querySelector(".expand");
+  if(!btn || btn.dataset.bound) return;
+  btn.dataset.bound="1";
+  btn.addEventListener("click", function(ev){
+    ev.preventDefault();
+    ev.stopPropagation();
+    var open=box.classList.contains("yt-full");
+    box.classList.toggle("yt-full", !open);
+    document.body.classList.toggle("yt-video-full", !open);
+    ev.currentTarget.textContent=open?"Expand":"Close";
+  });
+}
+function crossfade(box){
+  if(box.classList.contains("cross")) return;
+  box.classList.add("cross");
+  var poster=box.querySelector(".poster");
+  if(!poster) return;
+  poster.addEventListener("transitionend", function(){ poster.style.visibility="hidden"; }, {once:true});
+}
 document.querySelectorAll(".yt").forEach(function(box){
+  var img=box.querySelector("img");
+  if(img) img.classList.add("poster");
+  bindExpand(box);
   function play(){
     if(box.classList.contains("playing")) return;
     box.classList.add("playing");
     var id=box.dataset.id;
-    box.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0&playsinline=1&fs=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><button class="expand" type="button">Expand</button>';
-    box.querySelector(".expand").addEventListener("click", function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
-      var open=box.classList.contains("yt-full");
-      box.classList.toggle("yt-full", !open);
-      document.body.classList.toggle("yt-video-full", !open);
-      ev.currentTarget.textContent=open?"Expand":"Close";
-    });
+    var frame=document.createElement("iframe");
+    frame.className="media";
+    frame.src="https://www.youtube.com/embed/"+id+"?autoplay=1&rel=0&playsinline=1&fs=1&modestbranding=1";
+    frame.allow="autoplay; encrypted-media; picture-in-picture; fullscreen";
+    frame.allowFullscreen=true;
+    box.insertBefore(frame, box.firstChild);
+    var started=false;
+    function reveal(){
+      if(started) return;
+      started=true;
+      crossfade(box);
+    }
+    frame.addEventListener("load", function(){ setTimeout(reveal, 380); });
+    setTimeout(reveal, 900);
   }
   box.addEventListener("click", function(e){
     if(e.target.closest(".expand")) return;
@@ -212,19 +246,30 @@ document.querySelectorAll(".yt").forEach(function(box){
   });
 });
 document.querySelectorAll(".local-vid").forEach(function(box){
+  var img=box.querySelector("img");
+  if(img) img.classList.add("poster");
+  bindExpand(box);
   function play(){
     if(box.classList.contains("playing")) return;
     box.classList.add("playing");
-    var src=box.dataset.src;
-    box.innerHTML='<video src="'+src+'" autoplay controls playsinline></video><button class="expand" type="button">Expand</button>';
-    box.querySelector(".expand").addEventListener("click", function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
-      var open=box.classList.contains("yt-full");
-      box.classList.toggle("yt-full", !open);
-      document.body.classList.toggle("yt-video-full", !open);
-      ev.currentTarget.textContent=open?"Expand":"Close";
-    });
+    var vid=document.createElement("video");
+    vid.className="media";
+    vid.src=box.dataset.src;
+    vid.autoplay=true;
+    vid.controls=true;
+    vid.playsInline=true;
+    box.insertBefore(vid, box.firstChild);
+    var started=false;
+    function reveal(){
+      if(started) return;
+      started=true;
+      crossfade(box);
+    }
+    vid.addEventListener("playing", reveal);
+    vid.addEventListener("loadeddata", function(){ setTimeout(reveal, 80); });
+    setTimeout(reveal, 700);
+    var p=vid.play();
+    if(p&&p.catch) p.catch(function(){});
   }
   box.addEventListener("click", function(e){
     if(e.target.closest(".expand")) return;
