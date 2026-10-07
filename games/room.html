@@ -41,10 +41,12 @@ const line = document.getElementById("line");
 const finger = document.getElementById("finger");
 const player = document.getElementById("player");
 const clips = {
-  loop: "room/talk.mp4",
+  loop: "room/loop.mp4",
   left: "room/screenleft.mp4",
-  right: "room/screenright.mp4"
+  right: "room/screenright.mp4",
+  down: "room/screendown.mp4"
 };
+const labels = { loop: "They're talking.", left: "Looking screen left.", right: "Looking screen right.", down: "Looking down." };
 let shown = null;
 function play(which){
   if (shown === which && !player.paused && player.currentTime > 0.15) return;
@@ -54,7 +56,7 @@ function play(which){
   player.muted = which === "loop";
   player.currentTime = 0;
   player.play().catch(()=>{});
-  line.textContent = which === "left" ? "Looking screen left." : which === "right" ? "Looking screen right." : "They're talking.";
+  line.textContent = labels[which];
 }
 player.addEventListener("ended", () => { if (shown !== "loop") { finger.style.opacity = "0"; play("loop"); } });
 function aim(x,y){
@@ -64,7 +66,7 @@ function aim(x,y){
   finger.style.opacity = "1";
   finger.style.left = (nx * 100) + "%";
   finger.style.top = (ny * 100) + "%";
-  play(nx < 0.5 ? "left" : "right");
+  play(ny > 0.62 ? "down" : (nx < 0.5 ? "left" : "right"));
 }
 stage.addEventListener("pointerdown", e => { stage.setPointerCapture?.(e.pointerId); aim(e.clientX, e.clientY); }, {passive:false});
 stage.addEventListener("pointermove", e => { if (e.buttons || e.pointerType === "touch") aim(e.clientX, e.clientY); }, {passive:false});
