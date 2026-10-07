@@ -79,11 +79,9 @@ Object.values(clips).forEach(v => v.addEventListener("ended", () => {
   if (shown !== "loop" && clips[shown] === v) show("loop");
 }));
 function zone(nx, ny){
-  if (ny < 0.28) return "up";
-  if (ny > 0.72) return "down";
-  if (nx < 0.34) return "left";
-  if (nx > 0.66) return "right";
-  return "center";
+  if (nx > 0.40 && nx < 0.60 && ny > 0.30 && ny < 0.70) return "center";
+  if (nx < 0.5) return "left";
+  return "right";
 }
 stage.addEventListener("pointerdown", e => {
   Object.values(clips).forEach(audible);
