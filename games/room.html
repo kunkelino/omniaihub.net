@@ -14,7 +14,7 @@ body{min-height:100dvh;min-height:100svh;overflow:hidden;touch-action:none}
 h1{margin:4px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(18px,4.6vw,36px)}
 .sub{font-family:Arial,sans-serif;font-size:clamp(11px,2.6vw,13px);letter-spacing:.14em;text-transform:uppercase;opacity:.72;min-height:16px;margin-top:4px}
 .stage{position:relative;flex:1 1 auto;min-height:0;width:min(100%,calc((100dvh - 118px) * 9 / 16));margin:8px auto 12px;border-radius:18px;overflow:hidden;background:#111;touch-action:none;box-shadow:0 20px 60px #000}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center center;background:#111;opacity:0;pointer-events:none}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center center;background:#111;opacity:0;pointer-events:none;transition:opacity .2s linear}
 video.on{opacity:1}
 .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.12),transparent 10%,transparent 82%,rgba(0,0,0,.22))}
 @media (max-width:720px),(orientation:portrait){
@@ -39,7 +39,7 @@ video.on{opacity:1}
   <section class="stage" id="stage">
     <video id="loop" class="on" src="room/loop.mp4" playsinline autoplay loop preload="auto"></video>
     <video id="left" src="room/screenleft.mp4" playsinline preload="auto"></video>
-    <video id="right" src="room/screenright.mp4" playsinline preload="auto"></video>
+    <video id="right" src="room/screenleft.mp4" playsinline preload="auto"></video>
     <video id="center" src="room/screencenter.mp4" playsinline preload="auto"></video>
     <video id="down" src="room/screendown.mp4" playsinline preload="auto"></video>
     <video id="up" src="room/screenup.mp4" playsinline preload="auto"></video>
@@ -76,14 +76,17 @@ function show(which){
   const prev = clips[shown];
   audible(next);
   if (which !== "loop") next.currentTime = 0;
-  const start = next.play();
+  next.play().catch(()=>{});
   next.classList.add("on");
-  prev.classList.remove("on");
-  prev.pause();
-  if (start) start.catch(()=>{});
   shown = which;
   line.textContent = labels[which];
   busy = which !== "loop";
+  setTimeout(() => {
+    if (prev !== next) {
+      prev.classList.remove("on");
+      prev.pause();
+    }
+  }, 200);
 }
 Object.values(clips).forEach(v => v.addEventListener("ended", () => {
   if (shown !== "loop" && clips[shown] === v) show("loop");
