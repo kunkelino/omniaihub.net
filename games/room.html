@@ -29,10 +29,8 @@ video.on{opacity:1}
   <section class="stage" id="stage">
     <video id="loop" class="on" src="room/loop.mp4" playsinline autoplay loop preload="auto"></video>
     <video id="left" src="room/screenleft.mp4" playsinline preload="auto"></video>
-    <video id="right" src="room/screenright.mp4" playsinline preload="auto"></video>
     <video id="down" src="room/screendown.mp4" playsinline preload="auto"></video>
     <video id="up" src="room/screenup.mp4" playsinline preload="auto"></video>
-    <video id="curtain" src="room/curtain.mp4" playsinline preload="auto"></video>
     <div class="shade"></div>
   </section>
 </div>
@@ -43,18 +41,14 @@ const line = document.getElementById("line");
 const clips = {
   loop: document.getElementById("loop"),
   left: document.getElementById("left"),
-  right: document.getElementById("right"),
   down: document.getElementById("down"),
-  up: document.getElementById("up"),
-  curtain: document.getElementById("curtain")
+  up: document.getElementById("up")
 };
 const labels = {
   loop: "They're talking.",
   left: "Screen left.",
-  right: "Screen right.",
   down: "Looking down.",
-  up: "Looking up.",
-  curtain: "The curtain."
+  up: "Looking up."
 };
 let shown = "loop";
 let busy = false;
@@ -78,11 +72,9 @@ Object.values(clips).forEach(v => v.addEventListener("ended", () => {
   if (shown !== "loop" && clips[shown] === v) show("loop");
 }));
 function zone(nx, ny){
-  if (nx > 0.78 && ny < 0.22) return "curtain";
-  if (ny < 0.30 && nx > 0.28 && nx < 0.72) return "up";
-  if (ny > 0.70 && nx > 0.28 && nx < 0.72) return "down";
-  if (nx < 0.42 && ny > 0.28 && ny < 0.72) return "left";
-  if (nx > 0.58 && ny > 0.28 && ny < 0.72) return "right";
+  if (ny < 0.32) return "up";
+  if (ny > 0.68) return "down";
+  if (nx < 0.5) return "left";
   return null;
 }
 stage.addEventListener("pointerdown", e => {
