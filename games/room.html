@@ -29,6 +29,8 @@ video.on{opacity:1}
   <section class="stage" id="stage">
     <video id="loop" class="on" src="room/loop.mp4" playsinline autoplay loop preload="auto"></video>
     <video id="left" src="room/screenleft.mp4" playsinline preload="auto"></video>
+    <video id="right" src="room/screenright.mp4" playsinline preload="auto"></video>
+    <video id="center" src="room/screencenter.mp4" playsinline preload="auto"></video>
     <video id="down" src="room/screendown.mp4" playsinline preload="auto"></video>
     <video id="up" src="room/screenup.mp4" playsinline preload="auto"></video>
     <div class="shade"></div>
@@ -41,12 +43,16 @@ const line = document.getElementById("line");
 const clips = {
   loop: document.getElementById("loop"),
   left: document.getElementById("left"),
+  right: document.getElementById("right"),
+  center: document.getElementById("center"),
   down: document.getElementById("down"),
   up: document.getElementById("up")
 };
 const labels = {
   loop: "They're talking.",
   left: "Screen left.",
+  right: "Screen right.",
+  center: "Screen center.",
   down: "Looking down.",
   up: "Looking up."
 };
@@ -60,10 +66,11 @@ function show(which){
   const prev = clips[shown];
   audible(next);
   if (which !== "loop") next.currentTime = 0;
+  const start = next.play();
   next.classList.add("on");
   prev.classList.remove("on");
   prev.pause();
-  next.play().catch(()=>{});
+  if (start) start.catch(()=>{});
   shown = which;
   line.textContent = labels[which];
   busy = which !== "loop";
@@ -72,10 +79,11 @@ Object.values(clips).forEach(v => v.addEventListener("ended", () => {
   if (shown !== "loop" && clips[shown] === v) show("loop");
 }));
 function zone(nx, ny){
-  if (ny < 0.32) return "up";
-  if (ny > 0.68) return "down";
-  if (nx < 0.5) return "left";
-  return null;
+  if (ny < 0.28) return "up";
+  if (ny > 0.72) return "down";
+  if (nx < 0.34) return "right";
+  if (nx > 0.66) return "left";
+  return "center";
 }
 stage.addEventListener("pointerdown", e => {
   Object.values(clips).forEach(audible);
