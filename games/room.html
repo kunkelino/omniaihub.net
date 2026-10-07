@@ -14,7 +14,7 @@ body{min-height:100dvh;min-height:100svh;overflow:hidden;touch-action:none}
 h1{margin:4px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(18px,4.6vw,36px)}
 .sub{font-family:Arial,sans-serif;font-size:clamp(11px,2.6vw,13px);letter-spacing:.14em;text-transform:uppercase;opacity:.72;min-height:16px;margin-top:4px}
 .stage{position:relative;flex:1 1 auto;min-height:0;width:min(100%,calc((100dvh - 118px) * 9 / 16));margin:8px auto 12px;border-radius:18px;overflow:hidden;background:#111;touch-action:none;box-shadow:0 20px 60px #000}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center center;background:#111;opacity:0;pointer-events:none;transition:opacity .2s linear}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center center;background:#111;opacity:0;pointer-events:none}
 video.on{opacity:1}
 .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.12),transparent 10%,transparent 82%,rgba(0,0,0,.22))}
 @media (max-width:720px),(orientation:portrait){
@@ -38,7 +38,7 @@ video.on{opacity:1}
   </header>
   <section class="stage" id="stage">
     <video id="loop" class="on" src="room/loop.mp4" playsinline autoplay loop preload="auto"></video>
-    <video id="left" src="room/screenleft.mp4" playsinline preload="auto"></video>
+    <video id="left" src="room/screenright.mp4" playsinline preload="auto"></video>
     <video id="right" src="room/screenleft.mp4" playsinline preload="auto"></video>
     <video id="center" src="room/screencenter.mp4" playsinline preload="auto"></video>
     <video id="down" src="room/screendown.mp4" playsinline preload="auto"></video>
@@ -60,33 +60,66 @@ const clips = {
 };
 const labels = {
   loop: "They're talking.",
-  left: "Screen left.",
-  right: "Screen right.",
+  left: "Looking left.",
+  right: "Looking right.",
   center: "Screen center.",
   down: "Looking down.",
   up: "Looking up."
 };
 let shown = "loop";
 let busy = false;
-function audible(v){ v.muted = false; v.volume = 1; }
-Object.values(clips).forEach(audible);
+let ctx, gain;
+function audio(){
+  if (ctx) return ctx;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  ctx = new AC();
+  gain = ctx.createGain();
+  gain.gain.value = 2.6;
+  gain.connect(ctx.destination);
+  Object.values(clips).forEach(v => {
+    ctx.createMediaElementSource(v).connect(gain);
+  });
+  return ctx;
+}
+function louder(){
+  const c = audio();
+  if (c && c.state === "suspended") c.resume();
+  Object.values(clips).forEach(v => { v.muted = false; v.volume = 1; });
+}
+function prime(v){
+  v.preload = "auto";
+  v.playsInline = true;
+  v.muted = false;
+  v.volume = 1;
+  v.load();
+}
+Object.values(clips).forEach(prime);
 function show(which){
   if (shown === which) return;
   const next = clips[which];
   const prev = clips[shown];
-  audible(next);
-  if (which !== "loop") next.currentTime = 0;
-  next.play().catch(()=>{});
-  next.classList.add("on");
-  shown = which;
-  line.textContent = labels[which];
-  busy = which !== "loop";
-  setTimeout(() => {
-    if (prev !== next) {
-      prev.classList.remove("on");
-      prev.pause();
-    }
-  }, 200);
+  louder();
+  const reveal = () => {
+    next.classList.add("on");
+    if (prev !== next) prev.classList.remove("on");
+    shown = which;
+    line.textContent = labels[which];
+    busy = which !== "loop";
+    if (prev !== next) prev.pause();
+  };
+  const start = () => {
+    const playing = next.play();
+    if (playing) playing.then(reveal).catch(reveal);
+    else reveal();
+  };
+  if (which !== "loop") {
+    const go = () => { next.removeEventListener("seeked", go); start(); };
+    next.addEventListener("seeked", go);
+    try { next.currentTime = 0; } catch (e) { start(); }
+  } else {
+    start();
+  }
 }
 Object.values(clips).forEach(v => v.addEventListener("ended", () => {
   if (shown !== "loop" && clips[shown] === v) show("loop");
@@ -99,18 +132,27 @@ function zone(nx, ny){
   return "right";
 }
 stage.addEventListener("pointerdown", e => {
-  Object.values(clips).forEach(audible);
+  louder();
   if (busy) return;
   const r = stage.getBoundingClientRect();
   const nx = (e.clientX - r.left) / r.width;
   const ny = (e.clientY - r.top) / r.height;
-  const which = zone(nx, ny);
-  if (which) show(which);
+  show(zone(nx, ny));
 }, {passive:true});
-clips.loop.play().catch(() => {
-  clips.loop.muted = true;
-  clips.loop.play().then(() => { clips.loop.muted = false; }).catch(()=>{});
-});
+function startTalking(){
+  louder();
+  const v = clips.loop;
+  v.muted = false;
+  const attempt = v.play();
+  if (!attempt) return;
+  attempt.catch(() => {
+    v.muted = true;
+    v.play().then(() => { v.muted = false; louder(); }).catch(()=>{});
+  });
+}
+startTalking();
+document.addEventListener("pointerdown", louder, {once:true});
+document.addEventListener("visibilitychange", () => { if (!document.hidden) startTalking(); });
 </script>
 </body>
 </html>
