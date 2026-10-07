@@ -27,12 +27,12 @@ video.on{opacity:1}
     <div class="sub" id="line">They're talking. Point somewhere.</div>
   </header>
   <section class="stage" id="stage">
-    <video id="loop" class="on" src="room/loop.mp4" playsinline muted autoplay loop preload="auto"></video>
-    <video id="left" src="room/screenleft.mp4" playsinline muted preload="auto"></video>
-    <video id="right" src="room/screenright.mp4" playsinline muted preload="auto"></video>
-    <video id="down" src="room/screendown.mp4" playsinline muted preload="auto"></video>
-    <video id="up" src="room/screenup.mp4" playsinline muted preload="auto"></video>
-    <video id="curtain" src="room/curtain.mp4" playsinline muted preload="auto"></video>
+    <video id="loop" class="on" src="room/loop.mp4" playsinline autoplay loop preload="auto"></video>
+    <video id="left" src="room/screenleft.mp4" playsinline preload="auto"></video>
+    <video id="right" src="room/screenright.mp4" playsinline preload="auto"></video>
+    <video id="down" src="room/screendown.mp4" playsinline preload="auto"></video>
+    <video id="up" src="room/screenup.mp4" playsinline preload="auto"></video>
+    <video id="curtain" src="room/curtain.mp4" playsinline preload="auto"></video>
     <div class="shade"></div>
   </section>
 </div>
@@ -58,18 +58,18 @@ const labels = {
 };
 let shown = "loop";
 let busy = false;
-Object.values(clips).forEach(v => { v.muted = true; v.defaultMuted = true; v.volume = 0; });
+function audible(v){ v.muted = false; v.volume = 1; }
+Object.values(clips).forEach(audible);
 function show(which){
   if (shown === which) return;
   const next = clips[which];
   const prev = clips[shown];
-  next.muted = true;
+  audible(next);
   if (which !== "loop") next.currentTime = 0;
   next.classList.add("on");
   prev.classList.remove("on");
+  prev.pause();
   next.play().catch(()=>{});
-  if (prev !== clips.loop) prev.pause();
-  else clips.loop.play().catch(()=>{});
   shown = which;
   line.textContent = labels[which];
   busy = which !== "loop";
@@ -86,6 +86,7 @@ function zone(nx, ny){
   return null;
 }
 stage.addEventListener("pointerdown", e => {
+  Object.values(clips).forEach(audible);
   if (busy) return;
   const r = stage.getBoundingClientRect();
   const nx = (e.clientX - r.left) / r.width;
@@ -93,7 +94,10 @@ stage.addEventListener("pointerdown", e => {
   const which = zone(nx, ny);
   if (which) show(which);
 }, {passive:true});
-clips.loop.play().catch(()=>{});
+clips.loop.play().catch(() => {
+  clips.loop.muted = true;
+  clips.loop.play().then(() => { clips.loop.muted = false; }).catch(()=>{});
+});
 </script>
 </body>
 </html>
