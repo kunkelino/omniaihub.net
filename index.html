@@ -77,6 +77,15 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
   <h2 class="title">Portfolio</h2>
   <div id="portfolio">
     <a class="box" href="ofn.html"><img src="ofn-preview.jpg" alt="One From Now"><span class="cap">One From Now</span></a>
+    <form class="box passcode-tile" id="lifehub-gate" action="lifehub.html">
+      <div class="passcode-inner">
+        <div class="passcode-title">LifeHub</div>
+        <label for="lifehub-pin">Passcode</label>
+        <input id="lifehub-pin" name="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Passcode">
+        <button type="submit">Enter</button>
+        <div class="passcode-err" id="lifehub-err"></div>
+      </div>
+    </form>
     <form class="box passcode-tile" id="games-gate" action="games.html">
       <div class="passcode-inner">
         <div class="passcode-title">Games</div>
@@ -274,6 +283,22 @@ document.querySelectorAll(".local-vid").forEach(function(box){
     if(e.target.closest(".expand")) return;
     play();
   });
+});
+document.getElementById("lifehub-gate").addEventListener("submit", function(e){
+  e.preventDefault();
+  var pin=(document.getElementById("lifehub-pin").value||"").replace(/\D/g,"");
+  if(pin==="435777"){
+    sessionStorage.setItem("lifehub_ok","1");
+    location.href="lifehub.html";
+  } else {
+    document.getElementById("lifehub-err").textContent="Wrong passcode";
+  }
+});
+document.getElementById("lifehub-pin").addEventListener("keydown", function(e){
+  if(e.key==="Enter"){
+    e.preventDefault();
+    document.getElementById("lifehub-gate").requestSubmit();
+  }
 });
 document.getElementById("games-gate").addEventListener("submit", function(e){
   e.preventDefault();
