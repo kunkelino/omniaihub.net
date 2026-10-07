@@ -76,7 +76,8 @@ async function writeBlob(token, pathname, payload) {
       Authorization: "Bearer " + token,
       "x-api-version": "7",
       "x-content-type": "application/json",
-      "x-allow-overwrite": "true"
+      "x-allow-overwrite": "true",
+      "x-vercel-blob-access": "private"
     },
     body: JSON.stringify(payload)
   });
