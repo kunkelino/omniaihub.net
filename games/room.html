@@ -14,11 +14,9 @@ body{min-height:100dvh;overflow:hidden;touch-action:none}
 h1{margin:6px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(22px,6.2vw,40px)}
 .sub{font-family:Arial,sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;opacity:.72;min-height:18px;margin-top:6px}
 .stage{position:relative;flex:1;margin:10px 8px 42px;border-radius:18px;overflow:hidden;background:#111;touch-action:none;box-shadow:0 20px 60px #000}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 62%;background:#111;opacity:0}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#111;opacity:0;pointer-events:none}
 video.on{opacity:1}
 .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.12),transparent 10%,transparent 82%,rgba(0,0,0,.22))}
-.finger{position:absolute;z-index:6;width:30px;height:30px;border:1.5px solid rgba(255,255,255,.9);border-radius:50%;transform:translate(-50%,-50%);opacity:0;pointer-events:none;box-shadow:0 0 0 8px rgba(255,255,255,.08)}
-.back{position:absolute;z-index:7;left:12px;top:12px;color:#fff;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;letter-spacing:.08em;background:rgba(0,0,0,.45);padding:7px 10px;border-radius:999px}
 </style>
 </head>
 <body>
@@ -30,21 +28,18 @@ video.on{opacity:1}
   </header>
   <section class="stage" id="stage">
     <video id="loop" class="on" src="room/loop.mp4" playsinline muted autoplay loop preload="auto"></video>
-    <video id="left" src="room/screenleft.mp4" playsinline preload="auto"></video>
-    <video id="right" src="room/screenright.mp4" playsinline preload="auto"></video>
-    <video id="down" src="room/screendown.mp4" playsinline preload="auto"></video>
-    <video id="up" src="room/screenup.mp4" playsinline preload="auto"></video>
-    <video id="curtain" src="room/curtain.mp4" playsinline preload="auto"></video>
+    <video id="left" src="room/screenleft.mp4" playsinline muted preload="auto"></video>
+    <video id="right" src="room/screenright.mp4" playsinline muted preload="auto"></video>
+    <video id="down" src="room/screendown.mp4" playsinline muted preload="auto"></video>
+    <video id="up" src="room/screenup.mp4" playsinline muted preload="auto"></video>
+    <video id="curtain" src="room/curtain.mp4" playsinline muted preload="auto"></video>
     <div class="shade"></div>
-    <a class="back" href="../games.html">Games</a>
-    <div class="finger" id="finger"></div>
   </section>
 </div>
 <script src="/copyright.js"></script>
 <script>
 const stage = document.getElementById("stage");
 const line = document.getElementById("line");
-const finger = document.getElementById("finger");
 const clips = {
   loop: document.getElementById("loop"),
   left: document.getElementById("left"),
@@ -62,46 +57,42 @@ const labels = {
   curtain: "The curtain."
 };
 let shown = "loop";
+let busy = false;
+Object.values(clips).forEach(v => { v.muted = true; v.defaultMuted = true; v.volume = 0; });
 function show(which){
   if (shown === which) return;
   const next = clips[which];
   const prev = clips[shown];
-  if (which !== "loop"){
-    next.currentTime = 0;
-    next.muted = false;
-    next.play().catch(()=>{});
-  } else {
-    clips.loop.muted = true;
-    clips.loop.play().catch(()=>{});
-  }
+  next.muted = true;
+  if (which !== "loop") next.currentTime = 0;
   next.classList.add("on");
   prev.classList.remove("on");
+  next.play().catch(()=>{});
   if (prev !== clips.loop) prev.pause();
+  else clips.loop.play().catch(()=>{});
   shown = which;
   line.textContent = labels[which];
+  busy = which !== "loop";
 }
 Object.values(clips).forEach(v => v.addEventListener("ended", () => {
-  if (shown !== "loop") { finger.style.opacity = "0"; show("loop"); }
+  if (shown !== "loop" && clips[shown] === v) show("loop");
 }));
 function zone(nx, ny){
-  if (nx > 0.18 && nx < 0.46 && ny > 0.08 && ny < 0.62) return "curtain";
-  if (ny < 0.30) return "up";
-  if (ny > 0.68) return "down";
-  return nx < 0.5 ? "left" : "right";
+  if (nx > 0.78 && ny < 0.22) return "curtain";
+  if (ny < 0.30 && nx > 0.28 && nx < 0.72) return "up";
+  if (ny > 0.70 && nx > 0.28 && nx < 0.72) return "down";
+  if (nx < 0.42 && ny > 0.28 && ny < 0.72) return "left";
+  if (nx > 0.58 && ny > 0.28 && ny < 0.72) return "right";
+  return null;
 }
-function aim(x, y){
+stage.addEventListener("pointerdown", e => {
+  if (busy) return;
   const r = stage.getBoundingClientRect();
-  const nx = Math.max(0, Math.min(1, (x - r.left) / r.width));
-  const ny = Math.max(0, Math.min(1, (y - r.top) / r.height));
-  finger.style.opacity = "1";
-  finger.style.left = (nx * 100) + "%";
-  finger.style.top = (ny * 100) + "%";
-  show(zone(nx, ny));
-}
-stage.addEventListener("pointerdown", e => { stage.setPointerCapture?.(e.pointerId); aim(e.clientX, e.clientY); }, {passive:false});
-stage.addEventListener("pointermove", e => { if (e.buttons || e.pointerType === "touch") aim(e.clientX, e.clientY); }, {passive:false});
-stage.addEventListener("pointerup", () => setTimeout(() => { finger.style.opacity = "0"; show("loop"); }, 2600));
-stage.addEventListener("touchmove", e => e.preventDefault(), {passive:false});
+  const nx = (e.clientX - r.left) / r.width;
+  const ny = (e.clientY - r.top) / r.height;
+  const which = zone(nx, ny);
+  if (which) show(which);
+}, {passive:true});
 clips.loop.play().catch(()=>{});
 </script>
 </body>
