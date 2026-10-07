@@ -81,8 +81,8 @@ Object.values(clips).forEach(v => v.addEventListener("ended", () => {
 function zone(nx, ny){
   if (ny < 0.28) return "up";
   if (ny > 0.72) return "down";
-  if (nx < 0.34) return "right";
-  if (nx > 0.66) return "left";
+  if (nx < 0.34) return "left";
+  if (nx > 0.66) return "right";
   return "center";
 }
 stage.addEventListener("pointerdown", e => {
