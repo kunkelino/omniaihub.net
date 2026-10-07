@@ -79,7 +79,9 @@ Object.values(clips).forEach(v => v.addEventListener("ended", () => {
   if (shown !== "loop" && clips[shown] === v) show("loop");
 }));
 function zone(nx, ny){
-  if (nx > 0.40 && nx < 0.60 && ny > 0.30 && ny < 0.70) return "center";
+  if (nx > 0.36 && nx < 0.64 && ny > 0.32 && ny < 0.68) return "center";
+  if (ny < 0.30) return "up";
+  if (ny > 0.70) return "down";
   if (nx < 0.5) return "left";
   return "right";
 }
