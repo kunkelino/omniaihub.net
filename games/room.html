@@ -13,19 +13,19 @@ body{min-height:100dvh;min-height:100svh;overflow:hidden;touch-action:none}
 .kicker{letter-spacing:.42em;font-size:10px;font-family:Arial,sans-serif;opacity:.55}
 h1{margin:4px 0 0;font-weight:500;letter-spacing:.08em;font-size:clamp(18px,4.6vw,36px)}
 .sub{font-family:Arial,sans-serif;font-size:clamp(11px,2.6vw,13px);letter-spacing:.14em;text-transform:uppercase;opacity:.72;min-height:16px;margin-top:4px}
-.stage{position:relative;flex:1 1 auto;min-height:0;width:min(100%,calc((100dvh - 118px) * 9 / 16));margin:8px auto 12px;border-radius:18px;overflow:hidden;background:#111;touch-action:none;box-shadow:0 20px 60px #000}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center center;background:#111;opacity:0;pointer-events:none}
+.stage{position:relative;flex:0 0 auto;aspect-ratio:9/16;height:min(78dvh,860px);width:auto;max-width:calc(100% - 24px);margin:10px auto 16px;border-radius:18px;overflow:hidden;background:#111;touch-action:none;box-shadow:0 20px 60px #000}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center 64%;background:#111;opacity:0;pointer-events:none}
 video.on{opacity:1}
 .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.12),transparent 10%,transparent 82%,rgba(0,0,0,.22))}
 @media (max-width:720px),(orientation:portrait){
   .top{padding:8px 12px 0}
   .kicker{font-size:9px}
-  .stage{width:100%;margin:6px 0 8px;border-radius:0}
+  .stage{height:min(74dvh,760px);max-width:calc(100% - 16px);margin:8px auto 12px;border-radius:0}
 }
 @media (max-height:520px){
   .kicker,h1{display:none}
   .top{padding:4px 10px 0}
-  .stage{width:min(100%,calc((100dvh - 36px) * 9 / 16));margin:4px auto}
+  .stage{height:min(86dvh,520px);margin:4px auto}
 }
 </style>
 </head>
@@ -34,7 +34,6 @@ video.on{opacity:1}
   <header class="top">
     <div class="kicker">OMNIAIHUB</div>
     <h1>THEY'RE WATCHING YOU</h1>
-    <div class="sub" id="line">They're talking. Point somewhere.</div>
   </header>
   <section class="stage" id="stage">
     <video id="loop" class="on" src="room/loop.mp4" playsinline autoplay loop preload="auto"></video>
@@ -49,7 +48,6 @@ video.on{opacity:1}
 <script src="/copyright.js"></script>
 <script>
 const stage = document.getElementById("stage");
-const line = document.getElementById("line");
 const clips = {
   loop: document.getElementById("loop"),
   left: document.getElementById("left"),
@@ -104,7 +102,6 @@ function show(which){
     next.classList.add("on");
     if (prev !== next) prev.classList.remove("on");
     shown = which;
-    line.textContent = labels[which];
     busy = which !== "loop";
     if (prev !== next) prev.pause();
   };
@@ -127,7 +124,7 @@ Object.values(clips).forEach(v => v.addEventListener("ended", () => {
 function zone(nx, ny){
   if (nx > 0.36 && nx < 0.64 && ny > 0.32 && ny < 0.68) return "center";
   if (ny < 0.30) return "up";
-  if (ny > 0.70) return "down";
+  if (ny > 0.62) return "down";
   if (nx < 0.5) return "left";
   return "right";
 }
