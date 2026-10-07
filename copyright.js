@@ -1,4 +1,6 @@
 (function () {
+  var path = location.pathname.replace(/\/+$/, "") || "/";
+  if (path !== "/" && path !== "/index.html") return;
   if (window.__omniCopyright) return;
   window.__omniCopyright = true;
   var TEXT = "© 2026 Jonathan Kunkel & OmniAIHub.net — All Rights Reserved. All content, creative works, writings, designs, graphics, videos, applications, software, concepts, characters, stories, branding, and other intellectual property contained herein are the exclusive property of Jonathan Kunkel and/or OmniAIHub.net unless otherwise stated. Unauthorized reproduction, distribution, modification, publication, or use of any kind without prior written permission is strictly prohibited.";
