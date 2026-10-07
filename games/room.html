@@ -61,35 +61,36 @@ let busy = false;
 function audible(){
   Object.values(clips).forEach(v => { v.muted = false; v.volume = 1; });
 }
+function warm(v){
+  const arm = () => {
+    if (v.readyState >= 2 && v.currentTime === 0) {
+      try { v.currentTime = 0.04; } catch (e) {}
+    }
+  };
+  v.addEventListener("loadeddata", arm);
+  if (v.readyState >= 2) arm();
+}
+Object.values(clips).forEach(warm);
 function show(which){
   if (shown === which) return;
   const next = clips[which];
   const prev = clips[shown];
   audible();
-  const reveal = () => {
+  if (which !== "loop") {
+    try { next.currentTime = 0.04; } catch (e) {}
+  }
+  next.play().then(() => {
     next.classList.add("on");
-    if (prev !== next) {
-      prev.classList.remove("on");
-      prev.pause();
-    }
+    if (prev !== next) prev.classList.remove("on");
     shown = which;
     busy = which !== "loop";
-  };
-  const start = () => next.play().then(reveal).catch(reveal);
-  if (which === "loop") {
-    start();
-    return;
-  }
-  let started = false;
-  const go = () => {
-    if (started) return;
-    started = true;
-    next.removeEventListener("seeked", go);
-    start();
-  };
-  next.addEventListener("seeked", go);
-  try { next.currentTime = 0; } catch (e) {}
-  setTimeout(go, 80);
+    if (prev !== next) prev.pause();
+  }).catch(() => {
+    clips.loop.classList.add("on");
+    clips.loop.play().catch(()=>{});
+    shown = "loop";
+    busy = false;
+  });
 }
 Object.values(clips).forEach(v => v.addEventListener("ended", () => {
   if (shown !== "loop" && clips[shown] === v) show("loop");
@@ -116,7 +117,7 @@ function startTalking(){
   });
 }
 startTalking();
-document.addEventListener("pointerdown", audible, {once:true});
+document.addEventListener("pointerdown", () => { audible(); if (clips.loop.paused && shown === "loop") startTalking(); }, {once:true});
 </script>
 </body>
 </html>
