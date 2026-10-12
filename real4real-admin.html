@@ -66,7 +66,7 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04
   <div><h1>Real 4 Real Admin</h1><div class="muted">Store management dashboard</div></div>
   <button class="btn" id="storeLink">Open Store Preview ↗</button>
 </header>
-<div class="note"><strong>Preview mode:</strong> Inventory edits and order actions on this page are saved only in this browser for demonstration. The sample order is fictional. This page is not yet connected to a shared order database, payment processor, or shipping carrier; do not use it for real customer information or real refunds.</div>
+<div class="note"><strong>Preview mode:</strong> Saved prices, shipping rates, and inventory update the Store preview when both pages are opened in the same browser. These settings are stored only in that browser and do not sync to other customers/devices. The sample order is fictional; real orders, payments, refunds, and shipping are not connected.</div>
 
 <section class="layout">
   <div class="leftcol">
@@ -132,7 +132,7 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04
       </div>
       <button class="btn primary saveinventory" id="saveSettings">Save Settings Preview</button>
       <div class="statusline" id="settingsStatus" aria-live="polite"></div>
-      <p class="muted small">These are local preview settings; they do not update the live Store page yet.</p>
+      <p class="muted small">Saving these settings updates the Store preview in this same browser. This demo does not publish shared settings to other devices.</p>
     </section>
   </aside>
 </section>
