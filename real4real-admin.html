@@ -19,6 +19,7 @@ body{margin:0;background:#0a0612;color:#e4c56a;font-family:Arial,Helvetica,sans-
 .inv-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #222;font-size:14px}
 .inv-row input{width:70px;padding:6px;border-radius:6px;border:1px solid #6b5a2c;background:#07040f;color:#fff;text-align:center}
 .restock{background:#1a4d1a;color:#8f8;border:1px solid #3a8;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:11px}
+.delete-inv{background:#4a1515;color:#ffb8b8;border:1px solid #a44;padding:4px 9px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:700;line-height:1}
 .store-preview{background:#000;border:2px dashed #444;border-radius:12px;padding:16px;margin-top:20px;position:relative}
 .store-preview h3{margin:0 0 12px;color:#e4c56a}
 .preview-page{display:flex;min-height:480px;background:#000;color:#fff}
@@ -255,6 +256,7 @@ function renderInventory() {
         <input aria-label="Stock for ${item.name}" type="number" min="0" step="1" value="${Number(item.stock || 0)}" data-i="${i}" data-field="stock">
       </label>
       <button class="restock" data-i="${i}">Order More</button>
+      <button class="delete-inv" data-delete-i="${i}" aria-label="Delete ${item.name}" title="Delete item">&times;</button>
     `;
     list.appendChild(row);
   });
@@ -289,6 +291,18 @@ function renderInventory() {
         saveTestData();
         renderInventory();
       }
+    };
+  });
+  list.querySelectorAll("[data-delete-i]").forEach(btn => {
+    btn.onclick = () => {
+      const i = Number(btn.dataset.deleteI);
+      if (!inventory[i]) return;
+      if (!confirm('Delete "' + inventory[i].name + '" from inventory?')) return;
+      inventory.splice(i, 1);
+      saveTestData();
+      renderInventory();
+      updatePreviewPrices();
+      document.getElementById("submitStatus").textContent = "Inventory item deleted in this browser only.";
     };
   });
 }
