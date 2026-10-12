@@ -41,7 +41,7 @@
 <div class="cart-list" id="mainCartList"></div>
 <div class="subtotal-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
 <button id="pay" class="pay-btn" disabled>PAY / CHECKOUT</button>
-<p class="small">Development preview only. Orders and payments are not transmitted or processed.</p>
+<p class="small">Practice checkout only. No payment is processed; order details are saved for the store administrator.</p>
 </div>
 </section>
 <section class="video-side"><div class="main-video-wrap"><video id="siteVideo" autoplay loop playsinline><source src="/video5.mp4" type="video/mp4"></video></div>
@@ -52,7 +52,7 @@
 <div class="ship-row"><div class="ship active" data-cost="5.99"><strong>Standard — $5.99</strong><div>3–5 business days</div></div><div class="ship" data-cost="10.99"><strong>Priority — $10.99</strong><div>1–2 business days</div></div></div>
 <div class="row"><span>Shipping</span><span id="shippingCost">$5.99</span></div><div class="row"><strong>Total</strong><strong id="checkoutTotal">$0.00</strong></div></div>
 <div class="checkout-card"><h2>Customer Information</h2><form id="shippingForm"><label>Full name<input id="name" required></label><label>Email<input id="email" type="email" required></label><label>Phone<input id="phone" type="tel"></label><label>Street address<input id="address" required></label><label>City<input id="city" required></label><label>State<input id="state" required></label><label>ZIP<input id="zip" required></label></form></div>
-<div class="checkout-card"><h2>Payment Method</h2><div class="pay-opt">Credit Card — demo only</div><div class="pay-opt">PayPal — demo only</div><div class="pay-opt">Venmo or Zelle — demo only</div><p class="note">Practice mode. No payment will be taken and no order will be sent.</p><button type="button" id="placeOrder" class="place-btn">Place Practice Order</button></div></div></section>
+<div class="checkout-card"><h2>Payment Method</h2><div class="pay-opt">Credit Card — demo only</div><div class="pay-opt">PayPal — demo only</div><div class="pay-opt">Venmo or Zelle — demo only</div><p class="note">Practice mode. No payment is taken. Order details are saved and should appear in the store admin.</p><button type="button" id="placeOrder" class="place-btn">Place Practice Order</button></div></div></section>
 <script>
 (function(){
 if(sessionStorage.getItem("r4r-store_ok")!=="1"){location.replace("index.html");return;}
