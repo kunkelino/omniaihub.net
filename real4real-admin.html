@@ -1,12 +1,260 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Real 4 Real Admin</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#050505;color:#fff;font-family:Arial,Helvetica,sans-serif}.wrap{max-width:1000px;margin:auto;padding:28px 18px}.head{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #333;padding-bottom:18px}.head h1{margin:0;color:#e6c200;font-size:clamp(24px,4vw,36px)}a,.btn{color:#000;background:#e6c200;border:0;border-radius:8px;padding:10px 14px;font-weight:800;text-decoration:none;cursor:pointer}.notice{border:1px solid #665300;background:#171300;border-radius:12px;padding:16px;margin:22px 0;line-height:1.5}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{background:#111;border:1px solid #333;border-radius:12px;padding:18px}.card h2{margin:0 0 10px;color:#e6c200;font-size:19px}.muted{color:#bbb;line-height:1.5}.status{display:inline-block;border-radius:20px;background:#292929;padding:5px 9px;font-size:12px;font-weight:700}.row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #333;padding:10px 0}.row:last-child{border:0}@media(max-width:650px){.grid{grid-template-columns:1fr}.head{align-items:flex-start;flex-direction:column}}</style></head>
-<body><main class="wrap"><header class="head"><h1>Real 4 Real Admin</h1><a href="real4real-store.html">Open Store Preview</a></header>
-<div class="notice"><strong>Development admin preview</strong><br>This is a starter dashboard for building Mark's store administration tools. It does not connect to live orders, inventory, payments, or customer data yet.</div>
-<section class="grid">
-<div class="card"><h2>Store Overview</h2><div class="row"><span>Products configured</span><strong>2</strong></div><div class="row"><span>Product price</span><strong>$50.00 each</strong></div><div class="row"><span>Checkout</span><span class="status">Practice mode</span></div></div>
-<div class="card"><h2>Inventory Setup</h2><p class="muted">Bikini — 42 units (placeholder)<br>Tracksuit — 28 units (placeholder)</p><p class="muted">Inventory editing will be connected after the store's data storage and secure admin login are implemented.</p></div>
-<div class="card"><h2>Orders</h2><p class="muted">No live orders are connected. The store's practice checkout displays a demo confirmation only.</p></div>
-<div class="card"><h2>Next Build Steps</h2><p class="muted">1. Secure admin authentication<br>2. Persistent inventory and product editing<br>3. Order database and notifications<br>4. Payment provider integration<br>5. Privacy and shipping policies</p></div>
-</section><p class="muted">Temporary access gate only. The current portfolio passcode uses browser-side JavaScript and is not suitable for protecting confidential information.</p></main>
-<script>if(sessionStorage.getItem("r4r-admin_ok")!=="1"){location.replace("index.html");}</script></body></html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real 4 Real Admin</title>
+<style>
+*{box-sizing:border-box}
+:root{--gold:#e4c56a;--bg:#0a0612;--panel:#100b19;--panel2:#171020;--line:#4d4025;--muted:#cbb89a;--white:#f7f2e8}
+body{margin:0;background:var(--bg);color:var(--white);font-family:Arial,Helvetica,sans-serif}
+button,input,select{font:inherit}
+.wrap{max-width:1280px;margin:0 auto;padding:22px}
+.header{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 0 18px;border-bottom:1px solid var(--gold)}
+h1{margin:0;color:var(--gold);font-size:clamp(23px,3vw,34px)}
+h2{font-size:19px;margin:0 0 14px;color:var(--gold)}
+h3{font-size:16px;margin:0 0 8px;color:var(--gold)}
+.btn{border:1px solid var(--gold);background:#181126;color:var(--gold);padding:9px 13px;border-radius:8px;cursor:pointer;font-weight:700}
+.btn.primary{background:var(--gold);color:#100b19}
+.btn.danger{border-color:#bd6666;color:#ffb7b7}
+.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.note{margin:18px 0;padding:12px 14px;background:#171300;border:1px solid #6b5a2c;border-radius:10px;color:#e9d9b3;line-height:1.45;font-size:13px}
+.layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.85fr);gap:16px;align-items:start}
+.card{background:var(--panel);border:1px solid #493b27;border-radius:12px;padding:17px;min-width:0}
+.leftcol,.rightcol{display:grid;gap:16px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--panel2);border:1px solid #382d22;border-radius:9px;padding:12px}
+.stat .label{font-size:12px;color:var(--muted)}
+.stat .num{font-size:24px;font-weight:800;color:var(--gold);margin-top:5px}
+.muted{color:var(--muted);font-size:13px;line-height:1.5}
+.product{padding:12px 0;border-bottom:1px solid #382d22}
+.product:last-child{border-bottom:0;padding-bottom:0}
+.producttop{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.productname{font-weight:700}
+.stockline{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.search{width:100%;background:#07040f;color:#fff;border:1px solid #6b5a2c;border-radius:6px;padding:9px}
+.saveinventory{width:100%;margin-top:13px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:11px 8px;border-bottom:1px solid #382d22;vertical-align:middle}
+th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.customer{color:var(--gold);text-decoration:underline;text-underline-offset:3px;background:none;border:0;padding:0;cursor:pointer;font-weight:700;text-align:left}
+.pill{display:inline-block;padding:5px 8px;border-radius:20px;background:#2b2533;color:#e8d9ad;font-size:11px;font-weight:700;white-space:nowrap}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.filters select{background:#07040f;color:#fff;border:1px solid #6b5a2c;border-radius:6px;padding:9px}
+.orders-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.order-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.statusline{min-height:20px;color:var(--muted);font-size:13px;margin-top:10px}
+.empty{padding:18px 0;color:var(--muted);font-size:13px}
+.modalback{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modalback.open{display:flex}
+.modal{width:min(650px,100%);max-height:90vh;overflow:auto;background:#100b19;border:1px solid var(--gold);border-radius:14px;padding:20px;box-shadow:0 20px 70px #000}
+.modalhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.detailgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.detail{background:#171020;border:1px solid #382d22;border-radius:8px;padding:12px;overflow-wrap:anywhere}
+.detail .label{font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.modal .field{margin-top:14px}
+.small{font-size:12px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.rightcol{grid-row:auto}}
+@media(max-width:540px){.wrap{padding:14px}.header{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:1fr 1fr}.detailgrid{grid-template-columns:1fr}.card{padding:14px}th,td{padding:9px 6px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="header">
+  <div><h1>Real 4 Real Admin</h1><div class="muted">Store management dashboard</div></div>
+  <button class="btn" id="storeLink">Open Store Preview ↗</button>
+</header>
+<div class="note"><strong>Preview mode:</strong> Inventory edits and order actions on this page are saved only in this browser for demonstration. The sample order is fictional. This page is not yet connected to a shared order database, payment processor, or shipping carrier; do not use it for real customer information or real refunds.</div>
+
+<section class="layout">
+  <div class="leftcol">
+    <section class="card">
+      <h2>Store Overview</h2>
+      <div class="stats">
+        <div class="stat"><div class="label">Products</div><div class="num">2</div></div>
+        <div class="stat"><div class="label">Units in stock</div><div class="num" id="totalStock">70</div></div>
+        <div class="stat"><div class="label">Units sold*</div><div class="num" id="totalSold">0</div></div>
+      </div>
+      <div class="muted">*Sold totals are demo values until real orders are connected.</div>
+    </section>
+
+    <section class="card">
+      <div class="orders-head"><h2 style="margin-bottom:0">Customer Orders</h2><span class="pill" id="orderCount">1 demo order</span></div>
+      <div class="filters">
+        <input class="search" id="orderSearch" type="search" placeholder="Search customer or order #" aria-label="Search customer or order" style="flex:1;min-width:180px">
+        <select id="statusFilter" aria-label="Filter by status">
+          <option value="all">All statuses</option><option>Pending</option><option>Processing</option><option>Shipped</option><option>Refunded</option>
+        </select>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Order / Customer</th><th>Date</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+      </div>
+      <div class="muted" style="margin-top:12px">Select a customer name to view their order details and available actions.</div>
+    </section>
+  </div>
+
+  <aside class="rightcol">
+    <section class="card">
+      <h2>Inventory</h2>
+      <p class="muted">Current stock and units sold by product. Adjust the preview values and save them in this browser.</p>
+      <div class="product">
+        <div class="producttop"><span class="productname">Bikini</span><span class="pill" id="bikiniSummary">42 in stock</span></div>
+        <div class="stockline">
+          <div class="field"><label for="bikiniStock">In stock</label><input type="number" id="bikiniStock" min="0" step="1" value="42"></div>
+          <div class="field"><label for="bikiniSold">Units sold</label><input type="number" id="bikiniSold" min="0" step="1" value="0"></div>
+        </div>
+      </div>
+      <div class="product">
+        <div class="producttop"><span class="productname">Tracksuit</span><span class="pill" id="trackSummary">28 in stock</span></div>
+        <div class="stockline">
+          <div class="field"><label for="trackStock">In stock</label><input type="number" id="trackStock" min="0" step="1" value="28"></div>
+          <div class="field"><label for="trackSold">Units sold</label><input type="number" id="trackSold" min="0" step="1" value="0"></div>
+        </div>
+      </div>
+      <button class="btn primary saveinventory" id="saveInventory">Save Inventory Preview</button>
+      <div class="statusline" id="inventoryStatus" aria-live="polite"></div>
+    </section>
+
+    <section class="card">
+      <h2>Store Settings</h2>
+      <div class="product">
+        <div class="field"><label for="bikiniPrice">Bikini price ($)</label><input type="number" id="bikiniPrice" min="0" step=".01" value="50.00"></div>
+        <div class="field"><label for="trackPrice">Tracksuit price ($)</label><input type="number" id="trackPrice" min="0" step=".01" value="50.00"></div>
+      </div>
+      <div class="product">
+        <div class="field"><label for="standardShip">Standard shipping ($)</label><input type="number" id="standardShip" min="0" step=".01" value="5.99"></div>
+        <div class="field"><label for="priorityShip">Priority shipping ($)</label><input type="number" id="priorityShip" min="0" step=".01" value="10.99"></div>
+      </div>
+      <button class="btn primary saveinventory" id="saveSettings">Save Settings Preview</button>
+      <div class="statusline" id="settingsStatus" aria-live="polite"></div>
+      <p class="muted small">These are local preview settings; they do not update the live Store page yet.</p>
+    </section>
+  </aside>
+</section>
+<p class="muted small" style="margin-top:18px">Admin access is currently controlled by the portfolio's browser-side passcode gate. Before handling real orders, this needs server-side authentication and secure shared storage.</p>
+</main>
+
+<div class="modalback" id="orderModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <section class="modal">
+    <div class="modalhead"><div><h2 id="modalTitle">Order details</h2><div class="muted" id="modalSub"></div></div><button class="btn" id="closeModal" aria-label="Close order details">Close ✕</button></div>
+    <div id="modalContents"></div>
+    <div class="field"><label for="trackingInput">Tracking number (demo only)</label><input id="trackingInput" placeholder="Enter tracking number"></div>
+    <div class="order-actions">
+      <button class="btn primary" id="markShipped">Mark as Shipped</button>
+      <button class="btn" id="saveTracking">Save Tracking</button>
+      <button class="btn danger" id="markRefunded">Mark Refunded</button>
+    </div>
+    <div class="statusline" id="modalStatus" aria-live="polite"></div>
+    <p class="muted small">Buttons update this browser's demo order only. They do not ship a package, issue a refund, or notify a customer.</p>
+  </section>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  if(sessionStorage.getItem("r4r-admin_ok")!=="1"){location.replace("index.html");return;}
+  $("storeLink").addEventListener("click",()=>location.href="real4real-store.html");
+
+  const defaults={
+    inventory:{bikiniStock:42,bikiniSold:0,trackStock:28,trackSold:0},
+    settings:{bikiniPrice:"50.00",trackPrice:"50.00",standardShip:"5.99",priorityShip:"10.99"}
+  };
+  const readSaved=(key,fallback)=>{try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(_){return fallback}};
+  const inventory=readSaved("r4r_admin_inventory",defaults.inventory);
+  const settings=readSaved("r4r_admin_settings",defaults.settings);
+  Object.keys(inventory).forEach(k=>{if($(k))$(k).value=inventory[k]});
+  Object.keys(settings).forEach(k=>{if($(k))$(k).value=settings[k]});
+
+  // Fictional example order so the detail popup can be previewed before a real order system exists.
+  let orders=readSaved("r4r_admin_demo_orders",[
+    {id:"DEMO-1001",name:"Alex Morgan (DEMO)",date:"Example only",email:"alex@example.invalid",phone:"Not provided",address:"Example address — not a real customer",city:"Demo City",state:"MA",zip:"00000",items:"Bikini — Royal Blue / Size M × 1",subtotal:50,shipping:5.99,total:55.99,status:"Pending",tracking:""}
+  ]);
+  let activeOrderId=null;
+
+  function saveLocal(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){return false}}
+  function intValue(id){const n=Number($(id).value);return Number.isFinite(n)&&n>=0?Math.floor(n):0}
+  function money(n){return "$"+Number(n).toFixed(2)}
+  function renderInventory(){
+    $("bikiniSummary").textContent=intValue("bikiniStock")+" in stock";
+    $("trackSummary").textContent=intValue("trackStock")+" in stock";
+    $("totalStock").textContent=intValue("bikiniStock")+intValue("trackStock");
+    $("totalSold").textContent=intValue("bikiniSold")+intValue("trackSold");
+  }
+  ["bikiniStock","bikiniSold","trackStock","trackSold"].forEach(id=>$(id).addEventListener("input",renderInventory));
+  $("saveInventory").addEventListener("click",()=>{
+    const v={bikiniStock:intValue("bikiniStock"),bikiniSold:intValue("bikiniSold"),trackStock:intValue("trackStock"),trackSold:intValue("trackSold")};
+    const ok=saveLocal("r4r_admin_inventory",v);renderInventory();
+    $("inventoryStatus").textContent=ok?"Inventory preview saved in this browser.":"Could not save in this browser.";
+  });
+  $("saveSettings").addEventListener("click",()=>{
+    const v={};["bikiniPrice","trackPrice","standardShip","priorityShip"].forEach(id=>v[id]=Math.max(0,Number($(id).value)||0).toFixed(2));
+    const ok=saveLocal("r4r_admin_settings",v);
+    $("settingsStatus").textContent=ok?"Settings preview saved in this browser.":"Could not save in this browser.";
+  });
+
+  function renderOrders(){
+    const query=$("orderSearch").value.trim().toLowerCase(), status=$("statusFilter").value;
+    const shown=orders.filter(o=>(status==="all"||o.status===status)&&[o.id,o.name,o.email].some(v=>String(v||"").toLowerCase().includes(query)));
+    $("ordersBody").innerHTML="";
+    $("orderCount").textContent=orders.length+" demo "+(orders.length===1?"order":"orders");
+    if(!shown.length){$("ordersBody").innerHTML='<tr><td colspan="4" class="empty">No orders match your search.</td></tr>';return}
+    shown.forEach(o=>{
+      const tr=document.createElement("tr");
+      const customerCell=document.createElement("td");
+      const name=document.createElement("button");name.className="customer";name.textContent=o.name;name.addEventListener("click",()=>openOrder(o.id));
+      const id=document.createElement("div");id.className="muted small";id.textContent=o.id;
+      customerCell.append(name,id);
+      const date=document.createElement("td");date.textContent=o.date;
+      const total=document.createElement("td");total.textContent=money(o.total);
+      const statusCell=document.createElement("td");const pill=document.createElement("span");pill.className="pill";pill.textContent=o.status;statusCell.append(pill);
+      tr.append(customerCell,date,total,statusCell);$("ordersBody").append(tr);
+    });
+  }
+  $("orderSearch").addEventListener("input",renderOrders);
+  $("statusFilter").addEventListener("change",renderOrders);
+
+  function openOrder(id){
+    const o=orders.find(x=>x.id===id);if(!o)return;activeOrderId=id;
+    $("modalTitle").textContent="Order "+o.id;$("modalSub").textContent="Status: "+o.status;
+    $("modalContents").innerHTML="";
+    const details=[
+      ["Customer",o.name],["Email",o.email],["Phone",o.phone||"Not provided"],
+      ["Shipping address",[o.address,o.city,o.state,o.zip].filter(Boolean).join(", ")],
+      ["Items",o.items],["Subtotal",money(o.subtotal)],["Shipping",money(o.shipping)],["Order total",money(o.total)],["Tracking",o.tracking||"Not added"]
+    ];
+    const grid=document.createElement("div");grid.className="detailgrid";
+    details.forEach(([label,value])=>{const d=document.createElement("div");d.className="detail";const l=document.createElement("div");l.className="label";l.textContent=label;const val=document.createElement("div");val.textContent=value;d.append(l,val);grid.append(d)});
+    $("modalContents").append(grid);$("trackingInput").value=o.tracking||"";$("modalStatus").textContent="";
+    $("orderModal").classList.add("open");$("closeModal").focus();
+  }
+  function closeOrder(){$("orderModal").classList.remove("open");activeOrderId=null}
+  $("closeModal").addEventListener("click",closeOrder);
+  $("orderModal").addEventListener("click",e=>{if(e.target===$("orderModal"))closeOrder()});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeOrder()});
+  function updateOrder(status,message){
+    const o=orders.find(x=>x.id===activeOrderId);if(!o)return;
+    o.status=status;
+    if(!saveLocal("r4r_admin_demo_orders",orders)){$("modalStatus").textContent="Could not save the demo change in this browser.";return}
+    $("modalSub").textContent="Status: "+o.status;renderOrders();openOrder(o.id);$("modalStatus").textContent=message;
+  }
+  $("markShipped").addEventListener("click",()=>{if(activeOrderId)updateOrder("Shipped","Demo order marked shipped locally. No shipment was created.")});
+  $("saveTracking").addEventListener("click",()=>{
+    const o=orders.find(x=>x.id===activeOrderId);if(!o)return;
+    o.tracking=$("trackingInput").value.trim();
+    if(saveLocal("r4r_admin_demo_orders",orders)){renderOrders();openOrder(o.id);$("modalStatus").textContent=o.tracking?"Demo tracking saved locally.":"Tracking field cleared."}
+    else $("modalStatus").textContent="Could not save the demo change in this browser.";
+  });
+  $("markRefunded").addEventListener("click",()=>{
+    if(!activeOrderId)return;
+    if(confirm("Mark this DEMO order as refunded in this browser? This does not send a real refund."))updateOrder("Refunded","Demo order marked refunded locally. No money was refunded.");
+  });
+  renderInventory();renderOrders();
+})();
+</script>
+</body>
+</html>
