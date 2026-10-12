@@ -60,7 +60,7 @@ body{margin:0;background:#0a0612;color:#e4c56a;font-family:Arial,Helvetica,sans-
 .media-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .media-note{font-size:12px;color:#cbb89a;line-height:1.5}
 .submit-bar{position:sticky;bottom:0;background:#100b19;padding:12px;text-align:center;border-top:1px solid #e4c56a;margin-top:16px}
-@media(max-width:900px){.grid-2{grid-template-columns:1fr}.preview-page{flex-direction:column}.preview-right{min-height:220px}}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr}}
 @media(max-width:600px){.inv-row{flex-wrap:wrap}.media-list{grid-template-columns:1fr}}
 </style>
 </head>
@@ -339,14 +339,6 @@ document.querySelectorAll("[data-edit]").forEach(el => {
     }
   };
 });
-
-document.querySelector(".preview-brand").onclick = () => {
-  currentEdit = "logo";
-  openModal("Change Logo", `
-    <div class="field"><label>Logo filename</label><input id="editValue" value="eLzdZ.jpg"></div>
-    <div class="field"><label>Upload new logo</label><input type="file" id="editFile" accept="image/*"></div>
-  `);
-};
 
 document.getElementById("modalClose").onclick = () => document.getElementById("modalBg").classList.remove("show");
 document.getElementById("modalCancel").onclick = () => document.getElementById("modalBg").classList.remove("show");
