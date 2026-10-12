@@ -164,8 +164,8 @@ document.getElementById("statusFilter").addEventListener("change",renderOrders);
 document.getElementById("addTestOrder").onclick=()=>{const n=testOrders.length+1001;testOrders.unshift({id:"TEST-"+n,customer:"Sample Customer "+n,date:new Date().toLocaleDateString(),total:50,status:"Pending",tracking:""});saveTestData();renderOrders();};
 
 const defaultMediaItems = [
-  {id:"media-1",title:"Main Store Video",src:"/video5.mp4",thumbnail:"/r4r.png"},
-  {id:"media-2",title:"Additional Video",src:"/vid.mp4",thumbnail:"/mark.png"}
+  {id:"media-1",title:"Main Store Video",src:"/video5.mp4",thumbnail:""},
+  {id:"media-2",title:"Additional Video",src:"/vid.mp4",thumbnail:""}
 ];
 let mediaItems = JSON.parse(localStorage.getItem("r4r_test_media") || "null") || defaultMediaItems;
 function escapeMediaText(value) {
@@ -185,7 +185,7 @@ function renderMediaItems() {
       <div class="field"><label>Video title</label><input type="text" data-media-field="title" value="${escapeMediaText(item.title)}"></div>
       <div class="field"><label>Video file path or URL</label><input type="text" data-media-field="src" value="${escapeMediaText(item.src)}" placeholder="/video5.mp4"></div>
       <div class="field"><label>Thumbnail file path or URL</label><input type="text" data-media-field="thumbnail" value="${escapeMediaText(item.thumbnail)}" placeholder="/thumbnail.jpg"></div>
-      <img class="thumb-preview" src="${escapeMediaText(item.thumbnail)}" alt="Thumbnail preview" onerror="this.style.opacity='.25';this.alt='Thumbnail preview unavailable — check the file path';">
+      <img class="thumb-preview" src="${escapeMediaText(item.thumbnail)}" alt="Thumbnail preview" style="display:${item.thumbnail ? "block" : "none"}" onerror="this.style.opacity='.25';this.alt='Thumbnail preview unavailable — check the file path';">
       <div class="field"><label>Choose a thumbnail to preview locally</label><input type="file" accept="image/*" data-local-thumb></div>
       <div class="field"><label>Choose a video to preview locally</label><input type="file" accept="video/*" data-local-video></div>
       <div class="media-actions"><button type="button" class="btn small" data-save-one>Save Entry</button><button type="button" class="btn small" data-remove-media>Remove Entry</button></div>
@@ -198,7 +198,7 @@ function renderMediaItems() {
         const video = card.querySelector("video");
         const thumb = card.querySelector(".thumb-preview");
         if (input.dataset.mediaField === "src") video.src = input.value.trim();
-        if (input.dataset.mediaField === "thumbnail") thumb.src = input.value.trim();
+        if (input.dataset.mediaField === "thumbnail") { thumb.src = input.value.trim(); thumb.style.display = input.value.trim() ? "block" : "none"; }
         const heading = card.querySelector("h3");
         if (input.dataset.mediaField === "title") heading.textContent = input.value.trim() || "Video " + (index + 1);
       });
