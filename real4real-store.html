@@ -84,44 +84,6 @@
 if(sessionStorage.getItem("r4r-store_ok")!=="1"){location.replace("index.html");return;}
 const bikiniImage=document.getElementById("bikiniImage"),tracksuitImage=document.getElementById("tracksuitImage"),newTracksuitImage=document.getElementById("newTracksuitImage");
 const colors={bikini:"Black / Yellow",tracksuit:"Black",newtrack:"Black"};
-async function loadLiveStoreData(){
-  try{
-    const response=await fetch("/api/store?action=inventory",{cache:"no-store"});
-    if(!response.ok)return;
-    const data=await response.json();
-    const productMap={};
-    (data.products||[]).forEach(p=>productMap[p.id]=p);
-    const targets={bikini:{image:"bikiniImage"},tracksuit:{image:"tracksuitImage"},newtrack:{image:"newTracksuitImage"}};
-    Object.keys(targets).forEach(id=>{
-      const p=productMap[id];if(!p)return;
-      const size=document.querySelector('.size[data-product="'+id+'"]');
-      const card=size&&size.closest(".product-card");if(!card)return;
-      const heading=card.querySelector(".product-details h2");
-      const price=card.querySelector(".price");
-      const button=card.querySelector(".add-btn");
-      const qty=card.querySelector(".qty");
-      const stock=card.querySelector(".stock");
-      const img=document.getElementById(targets[id].image);
-      if(heading&&p.name)heading.textContent=p.name;
-      if(price)price.textContent="$"+Number(p.price||0).toFixed(2);
-      if(button)button.dataset.price=Number(p.price||0);
-      if(qty){qty.max=Math.max(0,Number(p.inventory)||0);qty.value=qty.max>0?1:0;qty.disabled=qty.max<=0;}
-      if(stock)stock.textContent="In stock: "+Math.max(0,Number(p.inventory)||0);
-      if(img&&p.image)img.src=p.image;
-    });
-    const media=Array.isArray(data.media)?data.media:[];
-    const video=document.getElementById("siteVideo");
-    const thumbWrap=document.querySelector(".video-thumbs");
-    if(video&&media.length){
-      video.src=media[0].src;video.load();
-      if(thumbWrap){
-        thumbWrap.innerHTML=media.map((m,i)=>'<div class="video-thumb '+(i===0?"active":"")+'" data-src="'+String(m.src||"").replace(/"/g,"&quot;")+'"><img src="'+String(m.thumbnail||"").replace(/"/g,"&quot;")+'" alt="'+String(m.title||"Store video").replace(/"/g,"&quot;")+'"></div>').join("");
-      }
-    }
-  }catch(e){console.warn("Live store settings could not be loaded.",e);}
-}
-
-loadLiveStoreData();
 document.querySelectorAll(".color-thumb").forEach(function(t){t.addEventListener("click",function(){const target=t.dataset.target;document.querySelectorAll('.color-thumb[data-target="'+target+'"]').forEach(x=>x.classList.remove("active"));t.classList.add("active");colors[target]=t.dataset.color; if(target==="bikini")bikiniImage.src=t.dataset.img;else if(target==="tracksuit")tracksuitImage.src=t.dataset.img;else newTracksuitImage.src=t.dataset.img;});});
 let cartTotal=0,shippingCost=5.99,cartItems=[];
 function renderMainCart(){
@@ -205,6 +167,6 @@ video.muted=false;
 const start=()=>{const p=video.play();if(p&&p.catch)p.catch(()=>{});};
 start();
 video.addEventListener("loadeddata",start);
-document.querySelector(".video-thumbs").addEventListener("click",function(event){const t=event.target.closest(".video-thumb");if(!t)return;document.querySelectorAll(".video-thumb").forEach(x=>x.classList.remove("active"));t.classList.add("active");video.pause();video.src=t.dataset.src;video.load();video.muted=false;const p=video.play();if(p&&p.catch)p.catch(function(){});});
+document.querySelectorAll(".video-thumb").forEach(function(t){t.addEventListener("click",function(){document.querySelectorAll(".video-thumb").forEach(x=>x.classList.remove("active"));t.classList.add("active");video.pause();video.src=t.dataset.src;video.load();video.muted=false;const p=video.play();if(p&&p.catch)p.catch(function(){});});});
 })();
 </script></body></html>
