@@ -74,6 +74,12 @@ body{margin:0;background:#0a0612;color:#e4c56a;font-family:Arial,Helvetica,sans-
 <div class="main">
   <div class="grid-2">
     <div class="card">
+      <h2>Inventory</h2>
+      <p class="status">Click Order More to restock any color.</p>
+      <div id="inventoryList"></div>
+      <button class="btn primary" style="width:100%;margin-top:12px" id="addItemBtn">+ Add New Item</button>
+      <button class="btn" style="width:100%;margin-top:8px" id="saveInv">Save Inventory</button>
+    </div>    <div class="card">
       <h2>Store Overview</h2>
       <div style="display:flex;gap:12px">
         <div style="flex:1;background:#0a0612;border:1px solid #333;border-radius:8px;padding:12px;text-align:center">Products<br><strong id="prodCount">2</strong></div>
@@ -81,13 +87,6 @@ body{margin:0;background:#0a0612;color:#e4c56a;font-family:Arial,Helvetica,sans-
         <div style="flex:1;background:#0a0612;border:1px solid #333;border-radius:8px;padding:12px;text-align:center">Units sold*<br><strong>0</strong></div>
       </div>
       <p class="status">*Sold totals are demo values until real orders are connected.</p>
-    </div>
-    <div class="card">
-      <h2>Inventory</h2>
-      <p class="status">Click Order More to restock any color.</p>
-      <div id="inventoryList"></div>
-      <button class="btn primary" style="width:100%;margin-top:12px" id="addItemBtn">+ Add New Item</button>
-      <button class="btn" style="width:100%;margin-top:8px" id="saveInv">Save Inventory</button>
     </div>
   </div>
 
