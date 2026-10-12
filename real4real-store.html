@@ -14,6 +14,8 @@
 <main id="shop" class="page">
 <section class="left">
 <div class="brand"><img src="eLzdZ.jpg" alt="Real 4 Real"></div>
+
+<!-- Existing Bikini -->
 <div class="product-card"><div class="product-top">
 <div class="product-image"><img id="bikiniImage" src="bikini-model-black-yellow.jpg" alt="Bikini"></div>
 <div class="product-details"><h2>Bikini</h2><div class="price">$50.00</div><div class="field-label">Choose Color</div>
@@ -28,6 +30,8 @@
 <div class="field-label">Size</div><select class="size" data-product="bikini"><option value="">Select size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
 <div class="field-label">Quantity</div><input type="number" class="qty" data-product="bikini" value="1" min="1" max="42"><div class="stock">In stock: 42</div>
 <button class="add-btn" data-product="bikini" data-price="50">ADD TO ORDER<div class="popup">Added to cart</div></button></div></div></div>
+
+<!-- Existing Tracksuit -->
 <div class="product-card"><div class="product-top">
 <div class="product-image"><img id="tracksuitImage" src="tracksuit-black-front (1).jpg" alt="Tracksuit"></div>
 <div class="product-details"><h2>Tracksuit</h2><div class="price">$50.00</div><div class="field-label">Choose Color</div>
@@ -38,6 +42,25 @@
 <div class="field-label">Size</div><select class="size" data-product="tracksuit"><option value="">Select size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
 <div class="field-label">Quantity</div><input type="number" class="qty" data-product="tracksuit" value="1" min="1" max="28"><div class="stock">In stock: 28</div>
 <button class="add-btn" data-product="tracksuit" data-price="50">ADD TO ORDER<div class="popup">Added to cart</div></button></div></div></div>
+
+<!-- NEW: Black Hoodie + Pants Tracksuit -->
+<div class="product-card"><div class="product-top">
+<div class="product-image"><img id="hoodieTracksuitImage" src="image2.jpeg" alt="Black Hoodie Tracksuit"></div>
+<div class="product-details">
+<h2>Black Hoodie Tracksuit</h2>
+<div class="price">$65.00</div>
+<div class="field-label">Color</div>
+<div class="color-grid two">
+<div class="color-thumb active" data-img="image2.jpeg" data-target="hoodie" data-color="Black"><img src="image2.jpeg" alt="Black"><span>Black</span></div>
+</div>
+<div class="field-label">Size</div>
+<select class="size" data-product="hoodie"><option value="">Select size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+<div class="field-label">Quantity</div>
+<input type="number" class="qty" data-product="hoodie" value="1" min="1" max="20">
+<div class="stock">In stock: 20</div>
+<button class="add-btn" data-product="hoodie" data-price="65">ADD TO ORDER<div class="popup">Added to cart</div></button>
+</div></div></div>
+
 <div class="cart">
 <div class="cart-list" id="mainCartList"></div>
 <div class="subtotal-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
@@ -58,9 +81,9 @@
 <script>
 (function(){
 if(sessionStorage.getItem("r4r-store_ok")!=="1"){location.replace("index.html");return;}
-const bikiniImage=document.getElementById("bikiniImage"),tracksuitImage=document.getElementById("tracksuitImage");
-const colors={bikini:"Black / Yellow",tracksuit:"Black"};
-document.querySelectorAll(".color-thumb").forEach(function(t){t.addEventListener("click",function(){const target=t.dataset.target;document.querySelectorAll('.color-thumb[data-target="'+target+'"]').forEach(x=>x.classList.remove("active"));t.classList.add("active");colors[target]=t.dataset.color; if(target==="bikini")bikiniImage.src=t.dataset.img;else tracksuitImage.src=t.dataset.img;});});
+const bikiniImage=document.getElementById("bikiniImage"),tracksuitImage=document.getElementById("tracksuitImage"),hoodieTracksuitImage=document.getElementById("hoodieTracksuitImage");
+const colors={bikini:"Black / Yellow",tracksuit:"Black",hoodie:"Black"};
+document.querySelectorAll(".color-thumb").forEach(function(t){t.addEventListener("click",function(){const target=t.dataset.target;document.querySelectorAll('.color-thumb[data-target="'+target+'"]').forEach(x=>x.classList.remove("active"));t.classList.add("active");colors[target]=t.dataset.color; if(target==="bikini")bikiniImage.src=t.dataset.img;else if(target==="tracksuit")tracksuitImage.src=t.dataset.img;else hoodieTracksuitImage.src=t.dataset.img;});});
 let cartTotal=0,shippingCost=5.99,cartItems=[];
 function renderMainCart(){
   const list=document.getElementById("mainCartList");
@@ -88,7 +111,7 @@ document.querySelectorAll(".add-btn").forEach(function(btn){btn.addEventListener
   const qtyEl=document.querySelector('.qty[data-product="'+product+'"]');
   const qty=Math.max(1,Math.min(Number(qtyEl.max)||99,parseInt(qtyEl.value,10)||1));
   if(!size){alert("Please select a size.");return;}
-  const name=product==="bikini"?"Bikini":"Tracksuit";
+  const name=product==="bikini"?"Bikini":product==="tracksuit"?"Tracksuit":"Black Hoodie Tracksuit";
   cartItems.push({name,color:colors[product],size,qty,price});
   cartTotal+=price*qty;
   document.getElementById("subtotal").textContent="$"+cartTotal.toFixed(2);
@@ -132,20 +155,9 @@ document.getElementById("pay").addEventListener("click",function(){
 document.getElementById("back").addEventListener("click",function(){document.getElementById("checkout").classList.remove("show");document.getElementById("shop").style.display="flex";renderMainCart();});
 document.getElementById("placeOrder").addEventListener("click",function(){const form=document.getElementById("shippingForm");if(!form.checkValidity()){form.reportValidity();return;}alert("Practice order placed. This demo did not send your information or process a payment.");});
 
-// Stripe Checkout for full cart
-const stripe = Stripe("pk_test_YOUR_KEY_HERE"); // Replace with Mark's publishable key
+const stripe = Stripe("pk_test_YOUR_KEY_HERE");
 document.getElementById("stripePay").addEventListener("click", async function(){
   if(!cartItems.length){alert("Add items to cart first.");return;}
-  const lineItems = cartItems.map(item => ({
-    price_data: {
-      currency: "usd",
-      product_data: { name: item.name + " — " + item.color + " / " + item.size },
-      unit_amount: Math.round(item.price * 100)
-    },
-    quantity: item.qty
-  }));
-  // Note: Full Stripe Checkout with dynamic cart requires a backend to create the session.
-  // This is a placeholder that shows the cart is ready. For live use, call your backend endpoint.
   alert("Stripe Checkout ready for " + cartItems.length + " item(s). Backend session creation needed for live payments.");
 });
 
