@@ -59,38 +59,33 @@ if(sessionStorage.getItem("r4r-store_ok")!=="1"){location.replace("index.html");
 const bikiniImage=document.getElementById("bikiniImage"),tracksuitImage=document.getElementById("tracksuitImage");
 const colors={bikini:"Black / Yellow",tracksuit:"Black"};
 const readStoreSetting=(key,fallback)=>{try{const value=localStorage.getItem(key);return value?JSON.parse(value):fallback}catch(_){return fallback}};
-const storeInventory=readStoreSetting("r4r_admin_inventory",{bikiniStock:42,bikiniSold:0,trackStock:28,trackSold:0});
-const storeSettings=readStoreSetting("r4r_admin_settings",{bikiniPrice:"50.00",trackPrice:"50.00",standardShip:"5.99",priorityShip:"10.99"});
-const productPrices={bikini:Math.max(0,Number(storeSettings.bikiniPrice)||0),tracksuit:Math.max(0,Number(storeSettings.trackPrice)||0)};
-const availableStock={bikini:Math.max(0,Math.floor(Number(storeInventory.bikiniStock)||0)),tracksuit:Math.max(0,Math.floor(Number(storeInventory.trackStock)||0))};
+const storeInventory=readStoreSetting("r4r_admin_inventory",{});
+const storeSettings=readStoreSetting("r4r_admin_settings",{standardShip:"5.99",priorityShip:"10.99"});
+const productPrices={bikini:50,tracksuit:50},availableStock={bikini:0,tracksuit:0};
+const colorKeys={"Black / Yellow":"bikini_black_yellow","White / Black":"bikini_white_black","Red / White":"bikini_red_white","Royal Blue":"bikini_royal_blue","Pink / Black":"bikini_pink_black","Purple / White":"bikini_purple_white","Black":"tracksuit_black","Grey":"tracksuit_grey"};
+const base={bikini_black_yellow:{price:50,stock:7},bikini_white_black:{price:50,stock:7},bikini_red_white:{price:50,stock:7},bikini_royal_blue:{price:50,stock:7},bikini_pink_black:{price:50,stock:7},bikini_purple_white:{price:50,stock:7},tracksuit_black:{price:50,stock:14},tracksuit_grey:{price:50,stock:14}};
+const products={};
+Object.keys(base).forEach(key=>{const item=storeInventory.products&&storeInventory.products[key];products[key]={price:item&&Number.isFinite(Number(item.price))?Math.max(0,Number(item.price)):base[key].price,stock:item&&Number.isFinite(Number(item.stock))?Math.max(0,Math.floor(Number(item.stock))):base[key].stock}});
 function applyStoreSettings(){
-  document.getElementById("bikiniPriceDisplay").textContent="$"+productPrices.bikini.toFixed(2);
-  document.getElementById("trackPriceDisplay").textContent="$"+productPrices.tracksuit.toFixed(2);
-  document.getElementById("bikiniStockDisplay").textContent="In stock: "+availableStock.bikini;
-  document.getElementById("trackStockDisplay").textContent="In stock: "+availableStock.tracksuit;
-  document.querySelector('.qty[data-product="bikini"]').max=availableStock.bikini;
-  document.querySelector('.qty[data-product="tracksuit"]').max=availableStock.tracksuit;
-  document.querySelector('.add-btn[data-product="bikini"]').dataset.price=String(productPrices.bikini);
-  document.querySelector('.add-btn[data-product="tracksuit"]').dataset.price=String(productPrices.tracksuit);
-  document.querySelectorAll(".add-btn").forEach(btn=>{
-    const product=btn.dataset.product;
-    btn.disabled=availableStock[product]===0;
-    btn.style.opacity=btn.disabled?".45":"1";
-    btn.style.cursor=btn.disabled?"not-allowed":"pointer";
-    btn.innerHTML=(btn.disabled?"OUT OF STOCK":"ADD TO ORDER")+'<div class="popup">Added to cart</div>';
+  ["bikini","tracksuit"].forEach(product=>{
+    const item=products[colorKeys[colors[product]]];
+    productPrices[product]=item.price;availableStock[product]=item.stock;
+    document.getElementById(product==="bikini"?"bikiniPriceDisplay":"trackPriceDisplay").textContent="$"+item.price.toFixed(2);
+    document.getElementById(product==="bikini"?"bikiniStockDisplay":"trackStockDisplay").textContent="In stock: "+item.stock;
+    document.querySelector('.qty[data-product="'+product+'"]').max=item.stock;
+    const btn=document.querySelector('.add-btn[data-product="'+product+'"]');btn.dataset.price=String(item.price);btn.disabled=item.stock===0;btn.style.opacity=btn.disabled?".45":"1";btn.style.cursor=btn.disabled?"not-allowed":"pointer";btn.innerHTML=(btn.disabled?"OUT OF STOCK":"ADD TO ORDER")+'<div class="popup">Added to cart</div>';
   });
-  const standard=Math.max(0,Number(storeSettings.standardShip)||0);
-  const priority=Math.max(0,Number(storeSettings.priorityShip)||0);
+  const standard=Math.max(0,Number(storeSettings.standardShip)||0),priority=Math.max(0,Number(storeSettings.priorityShip)||0);
   document.querySelector('.ship[data-kind="standard"]').dataset.cost=String(standard);
   document.querySelector('.ship[data-kind="priority"]').dataset.cost=String(priority);
   document.getElementById("standardShipLabel").textContent="Standard — $"+standard.toFixed(2);
   document.getElementById("priorityShipLabel").textContent="Priority — $"+priority.toFixed(2);
-  shippingCost=document.querySelector(".ship.active") ? Number(document.querySelector(".ship.active").dataset.cost) : standard;
+  shippingCost=document.querySelector(".ship.active")?Number(document.querySelector(".ship.active").dataset.cost):standard;
   document.getElementById("shippingCost").textContent="$"+shippingCost.toFixed(2);
 }
-
-document.querySelectorAll(".color-thumb").forEach(function(t){t.addEventListener("click",function(){const target=t.dataset.target;document.querySelectorAll('.color-thumb[data-target="'+target+'"]').forEach(x=>x.classList.remove("active"));t.classList.add("active");colors[target]=t.dataset.color; if(target==="bikini")bikiniImage.src=t.dataset.img;else tracksuitImage.src=t.dataset.img;});});
+document.querySelectorAll(".color-thumb").forEach(function(t){t.addEventListener("click",function(){const target=t.dataset.target;document.querySelectorAll('.color-thumb[data-target="'+target+'"]').forEach(x=>x.classList.remove("active"));t.classList.add("active");colors[target]=t.dataset.color; if(target==="bikini")bikiniImage.src=t.dataset.img;else tracksuitImage.src=t.dataset.img;applyStoreSettings();});});
 let cartTotal=0,shippingCost=5.99,cartItems=[];
+applyStoreSettings();
 applyStoreSettings();
 function renderMainCart(){
   const list=document.getElementById("mainCartList");
