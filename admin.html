@@ -1,5 +1,20 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Real 4 Real Admin</title><style>
 *{box-sizing:border-box}body{margin:0;background:#07040f;color:#e4c56a;font:15px Arial,sans-serif}.wrap{max-width:1150px;margin:auto;padding:25px 16px 50px}.panel,.product,.order,.stat{border:1px solid #65532c;border-radius:12px;background:#100b19;padding:15px;margin-top:15px}.grid,.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.stat strong{display:block;font-size:23px;margin-top:7px}.muted{color:#cbb89a}.field{display:grid;gap:5px;margin:10px 0}input,select{width:100%;padding:9px;border-radius:7px;border:1px solid #6b5a2c;background:#07040f;color:white}button{padding:10px 14px;border-radius:7px;border:1px solid #e4c56a;background:#e4c56a;color:#07040f;font-weight:bold;cursor:pointer}.row,.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:10px}.toolbar{grid-template-columns:2fr 1fr}.variant{display:grid;grid-template-columns:1fr repeat(6,55px);gap:5px;align-items:center;margin:6px 0;font-size:12px}.variant input{padding:6px;min-width:0}.order{margin-top:12px}.head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.statusline{margin:8px 0;min-height:18px}.ok{color:#b7f7c0}.err{color:#ffaaa6}.hide{display:none}.login{max-width:420px;margin:12vh auto;padding:25px;background:#100b19;border:1px solid #65532c;border-radius:12px}.tiny{font-size:12px;line-height:1.5;color:#cbb89a}@media(max-width:760px){.grid,.stats,.row,.toolbar{grid-template-columns:1fr}.wrap{padding:14px}.variant{grid-template-columns:90px repeat(6,minmax(36px,1fr));gap:3px}}
+
+.store-preview{background:#000;border:2px dashed #444;border-radius:12px;padding:16px;margin-top:20px;position:relative;color:#e4c56a}
+.store-preview h2{margin:0 0 12px;font-size:18px}.preview-page{display:flex;min-height:480px;background:#000;color:#fff;border:1px solid #333;border-radius:10px;overflow:hidden}
+.preview-left{flex:2;padding:12px;min-width:0}.preview-right{flex:1;background:#111;border-left:1px solid #333;position:relative;min-height:480px;min-width:0}
+.preview-brand{text-align:center;margin-bottom:12px;cursor:pointer;padding:6px;border-radius:6px}.preview-brand:hover,.preview-card:hover,.preview-img:hover,.preview-color:hover,.video-placeholder:hover{outline:2px dashed #e4c56a}
+.preview-brand img{max-width:220px;max-height:100px;object-fit:contain}.preview-card{background:#111;border:1px solid #333;border-radius:10px;padding:12px;margin-bottom:12px;cursor:pointer}
+.preview-top{display:flex;gap:10px}.preview-img{flex:0 0 180px;background:#fff;border-radius:6px;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.preview-img img{max-width:100%;max-height:200px;object-fit:contain}.preview-details{min-width:0}.preview-details h3{margin:0;font-size:16px;color:#fff}
+.preview-price{color:#ffd700;font-weight:700;cursor:pointer;margin-top:8px}.preview-colors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:8px}
+.preview-color{border:1px solid #444;border-radius:4px;overflow:hidden;cursor:pointer;background:#fff;color:#111;font-size:9px;text-align:center;min-width:0}
+.preview-color img{width:100%;height:40px;object-fit:contain}.video-placeholder{position:absolute;inset:0;background:#000;display:flex;align-items:center;justify-content:center;color:#888;cursor:pointer;text-align:center;padding:10px}
+.preview-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;align-items:center;justify-content:center;padding:12px}.preview-modal-bg.show{display:flex}
+.preview-modal{background:#100b19;border:1px solid #e4c56a;border-radius:12px;padding:18px;width:440px;max-width:95vw}
+.preview-modal h3{margin:0 0 12px}.preview-modal .field input{width:100%}.preview-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+@media(max-width:760px){.preview-page{flex-direction:column}.preview-right{min-height:220px;border-left:0;border-top:1px solid #333}.preview-top{flex-direction:column}.preview-img{flex-basis:auto;min-height:180px}.preview-colors{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style></head><body>
 <section id="login" class="login"><h1>Store Admin Login</h1><p class="muted">Sign in to manage inventory and orders.</p><form id="loginForm"><div class="field"><label>Admin password</label><input id="password" type="password" autocomplete="current-password" required></div><button id="loginBtn">Sign in</button><p id="loginMsg" class="statusline err"></p></form></section>
 <main id="app" class="wrap hide"><header class="head"><div><h1>Real 4 Real Dashboard</h1><p class="muted">Inventory · orders · shipping · sales</p></div><button id="logout">Log out</button></header>
@@ -7,7 +22,46 @@
 <section class="panel"><h2>Inventory</h2><p class="tiny">Set overall stock and optional color/size stock. A blank variant field uses the overall stock limit.</p><div id="products" class="grid"></div><button id="saveInv">Save inventory</button><p id="invMsg" class="statusline"></p></section>
 <section class="panel"><h2>Shipping</h2><div class="row"><div class="field"><label>Standard shipping</label><input value="5.99" readonly></div><div class="field"><label>Priority shipping</label><input value="10.99" readonly></div></div><div class="field"><label>Free shipping threshold (saved setting; checkout rule not yet enabled)</label><input id="freeOver" type="number" min="0" step=".01"></div><button id="saveShip">Save shipping</button><p id="shipMsg" class="statusline"></p></section>
 <section class="panel"><h2>Customer orders</h2><div class="toolbar"><input id="search" placeholder="Search order, customer, email or phone"><select id="filter"><option value="">All statuses</option><option>Test order</option><option>Paid</option><option>Processing</option><option>Shipped</option><option>Completed</option><option>Cancelled</option></select></div><div id="orders"></div></section>
-<section class="panel"><h2>New-order notifications</h2><p class="tiny">Orders are saved first. To send alerts, configure an email/automation webhook URL as encrypted Vercel environment variable <b>STORE_ORDER_WEBHOOK_URL</b>. The backend will POST each new order to that URL. Email alerts are not active until that URL is configured.</p></section></main>
+<section class="panel"><h2>New-order notifications</h2><p class="tiny">Orders are saved first. To send alerts, configure an email/automation webhook URL as encrypted Vercel environment variable <b>STORE_ORDER_WEBHOOK_URL</b>. The backend will POST each new order to that URL. Email alerts are not active until that URL is configured.</p></section>
+<section class="panel store-preview">
+<h2>Clickable Store Preview — edit the preview before publishing</h2>
+<p class="tiny">Click the logo, product images, prices, color swatches, or video area to preview a change. Uploads and edits in this preview are local to this browser; they do not publish files to the live store.</p>
+<div class="preview-page">
+ <div class="preview-left">
+  <div class="preview-brand" data-preview-edit="logo"><img id="prevLogo" src="eLzdZ.jpg" alt="Store logo"></div>
+  <div class="preview-card">
+   <div class="preview-top">
+    <div class="preview-img" data-preview-edit="bikini-main"><img id="prevBikini" src="bikini-model-black-yellow.jpg" alt="Bikini"></div>
+    <div class="preview-details"><h3>Bikini</h3><div class="preview-price" data-preview-edit="bikini-price">$50.00</div><div style="font-size:11px;margin-top:6px">CHOOSE COLOR</div>
+     <div class="preview-colors">
+      <div class="preview-color" data-preview-edit="color-black-yellow"><img src="bikini-black-yellow.jpg" alt=""><div>Black / Yellow</div></div>
+      <div class="preview-color" data-preview-edit="color-white-black"><img src="bikini-white-black.jpg" alt=""><div>White / Black</div></div>
+      <div class="preview-color" data-preview-edit="color-red-white"><img src="bikini-red-white.jpg" alt=""><div>Red / White</div></div>
+      <div class="preview-color" data-preview-edit="color-royal-blue"><img src="bikini-royal-blue.jpg" alt=""><div>Royal Blue</div></div>
+      <div class="preview-color" data-preview-edit="color-pink-black"><img src="bikini-pink-black.jpg" alt=""><div>Pink / Black</div></div>
+      <div class="preview-color" data-preview-edit="color-purple-white"><img src="bikini-purple-white.jpg" alt=""><div>Purple / White</div></div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="preview-card">
+   <div class="preview-top">
+    <div class="preview-img" data-preview-edit="tracksuit-main"><img id="prevTrack" src="tracksuit-black-front (1).jpg" alt="Tracksuit"></div>
+    <div class="preview-details"><h3>Tracksuit</h3><div class="preview-price" data-preview-edit="tracksuit-price">$50.00</div><div style="font-size:11px;margin-top:6px">CHOOSE COLOR</div>
+     <div class="preview-colors" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+      <div class="preview-color" data-preview-edit="color-track-black"><img src="tracksuit-black-front (1).jpg" alt=""><div>Black</div></div>
+      <div class="preview-color" data-preview-edit="color-track-grey"><img src="tracksuit-grey-front (1).jpg" alt=""><div>Grey</div></div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="preview-right"><div class="video-placeholder" data-preview-edit="video"><div><div style="font-size:18px;margin-bottom:8px">VIDEO AREA</div><div style="font-size:12px">Click to preview a video filename or upload a local video</div></div></div></div>
+</div>
+<div class="head" style="margin-top:12px;align-items:center"><span id="previewStatus" class="tiny">Preview changes are not published to the live store.</span><button id="resetPreview" type="button">Reset preview</button></div>
+</section>
+<div class="preview-modal-bg" id="previewModalBg"><div class="preview-modal"><h3 id="previewModalTitle">Edit preview</h3><div id="previewModalBody"></div><div class="preview-modal-actions"><button id="previewCancel" type="button">Cancel</button><button id="previewApply" type="button">Apply preview</button></div></div></div>
+</main>
 <script>
 const $=id=>document.getElementById(id),SIZES=["XS","S","M","L","XL","XXL"],COLORS={bikini:["Black / Yellow","White / Black","Red / White","Royal Blue","Pink / Black","Purple / White"],tracksuit:["Black","Grey"]};let invData=null,ordersData=[];
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -24,4 +78,64 @@ $("search").oninput=drawOrders;$("filter").onchange=drawOrders;
 function stats(){$("count").textContent=ordersData.length;$("revenue").textContent="$"+ordersData.filter(o=>["Paid","Completed"].includes(o.status)).reduce((a,o)=>a+Number(o.total||0),0).toFixed(2);$("open").textContent=ordersData.filter(o=>!["Completed","Cancelled"].includes(o.status)).length;$("low").textContent=invData.products.filter(p=>Number(p.inventory)<=5).length}
 function drawOrders(){const q=$("search").value.toLowerCase(),f=$("filter").value,shown=ordersData.filter(o=>(!f||o.status===f)&&JSON.stringify([o.id,o.customer?.name,o.customer?.email,o.customer?.phone]).toLowerCase().includes(q));$("orders").innerHTML=shown.length?"":"<p class='muted'>No matching orders.</p>";shown.forEach(o=>{const d=document.createElement("div");d.className="order";d.innerHTML='<div class="head"><div><b>'+esc(o.id)+'</b><br><span class="muted">'+new Date(o.createdAt).toLocaleString()+'</span></div><b>$'+Number(o.total).toFixed(2)+' · '+esc(o.status)+'</b></div><p>'+o.items.map(i=>esc(i.name)+' — '+esc(i.color)+' / '+esc(i.size)+' × '+i.quantity).join("<br>")+'</p><p><b>'+esc(o.customer.name)+'</b><br>'+esc(o.customer.phone)+'<br>'+esc(o.customer.email)+'<br>'+esc(o.customer.address)+'<br>'+esc(o.customer.city)+', '+esc(o.customer.state)+' '+esc(o.customer.zip)+'</p><p>Payment: '+esc(o.paymentMethod)+' · '+esc(o.paymentStatus)+'<br>Shipping: '+esc(o.shippingMethod)+' ($'+Number(o.shipping||0).toFixed(2)+')</p><div class="row"><div class="field"><label>Status</label><select class="st">'+["Test order","Paid","Processing","Shipped","Completed","Cancelled"].map(s=>'<option>'+s+'</option>').join("")+'</select></div><div class="field"><label>Tracking number</label><input class="track" value="'+esc(o.tracking||"")+'" placeholder="Tracking number"></div></div><button class="save">Save order</button><span class="statusline"></span>';d.querySelector(".st").value=o.status;d.querySelector(".save").onclick=async()=>{try{await api("/api/store?action=orders",{method:"PATCH",body:JSON.stringify({id:o.id,status:d.querySelector(".st").value,tracking:d.querySelector(".track").value})});await refresh()}catch(e){d.querySelector(".statusline").textContent=e.message}};$("orders").appendChild(d)})}
 if(sessionStorage.getItem("r4r-admin")){$("login").classList.add("hide");$("app").classList.remove("hide");refresh()}
+
+const previewOriginals = new Map();
+document.querySelectorAll("[data-preview-edit]").forEach(el=>{
+  el.querySelectorAll("img").forEach(img=>{previewOriginals.set(img,img.getAttribute("src")||"")});
+});
+let previewCurrentEdit="";
+const previewLabels={
+ logo:"Change logo preview","bikini-main":"Change bikini image preview","tracksuit-main":"Change tracksuit image preview",
+ "bikini-price":"Change bikini price preview","tracksuit-price":"Change tracksuit price preview",
+ "color-black-yellow":"Change Black / Yellow image preview","color-white-black":"Change White / Black image preview",
+ "color-red-white":"Change Red / White image preview","color-royal-blue":"Change Royal Blue image preview",
+ "color-pink-black":"Change Pink / Black image preview","color-purple-white":"Change Purple / White image preview",
+ "color-track-black":"Change black tracksuit image preview","color-track-grey":"Change grey tracksuit image preview",video:"Change video preview"
+};
+function openPreviewModal(type){
+ previewCurrentEdit=type;
+ const isPrice=type.endsWith("-price"),isVideo=type==="video";
+ const target=document.querySelector('[data-preview-edit="'+type+'"]');
+ const currentImg=target?.querySelector("img");
+ let body="";
+ if(isPrice){
+   body='<div class="field"><label>Price (preview only)</label><input id="previewEditValue" type="number" min="0" step=".01" value="'+(target.textContent.replace(/[^0-9.]/g,"")||"50")+'"></div>';
+ }else{
+   const existing=isVideo?(document.querySelector(".video-placeholder").dataset.videoSrc||"/video5.mp4"):(currentImg?.getAttribute("src")||"");
+   body='<div class="field"><label>Image/video filename or path (preview only)</label><input id="previewEditValue" value="'+esc(existing)+'" placeholder="image.jpg or /video5.mp4"></div><div class="field"><label>Or choose a local file to preview</label><input id="previewEditFile" type="file" accept="'+(isVideo?"video/*":"image/*")+'"></div><p class="tiny">A local upload only previews in this browser. It is not uploaded to GitHub or the live website.</p>';
+ }
+ $("previewModalTitle").textContent=previewLabels[type]||"Edit preview";
+ $("previewModalBody").innerHTML=body;
+ $("previewModalBg").classList.add("show");
+}
+document.querySelectorAll("[data-preview-edit]").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();openPreviewModal(el.dataset.previewEdit)}));
+$("previewCancel").onclick=()=>$("previewModalBg").classList.remove("show");
+$("previewModalBg").addEventListener("click",e=>{if(e.target.id==="previewModalBg")$("previewModalBg").classList.remove("show")});
+$("previewApply").onclick=()=>{
+ const val=$("previewEditValue")?.value?.trim()||"";
+ const file=$("previewEditFile")?.files?.[0];
+ const type=previewCurrentEdit,target=document.querySelector('[data-preview-edit="'+type+'"]');
+ if(type.endsWith("-price")){
+   const price=Number(val);if(!val||!Number.isFinite(price)||price<0){alert("Enter a valid price.");return}
+   target.textContent="$"+price.toFixed(2);
+ }else if(type==="video"){
+   const box=document.querySelector(".video-placeholder");
+   const useVideo=src=>{box.dataset.videoSrc=src;box.innerHTML='<video controls muted playsinline style="width:100%;max-height:460px;object-fit:contain" src="'+esc(src)+'"></video>';};
+   if(file){const url=URL.createObjectURL(file);useVideo(url)}else if(val){useVideo(val)}else{alert("Enter a video path or choose a file.");return}
+ }else{
+   const img=target?.querySelector("img");
+   if(!img){alert("Could not find that preview image.");return}
+   if(file){const reader=new FileReader();reader.onload=()=>{img.src=reader.result;$("previewStatus").textContent="Local image preview changed. Not published to the live store."};reader.readAsDataURL(file)}
+   else if(val){img.src=val}
+   else{alert("Enter an image path or choose a file.");return}
+ }
+ $("previewStatus").textContent="Preview changed locally only. To publish it, upload the asset and update the site files.";
+ $("previewModalBg").classList.remove("show");
+};
+$("resetPreview").onclick=()=>{
+ previewOriginals.forEach((src,img)=>img.setAttribute("src",src));
+ document.querySelectorAll('[data-preview-edit$="-price"]').forEach(el=>el.textContent="$50.00");
+ const box=document.querySelector(".video-placeholder");box.dataset.videoSrc="";box.innerHTML='<div><div style="font-size:18px;margin-bottom:8px">VIDEO AREA</div><div style="font-size:12px">Click to preview a video filename or upload a local video</div></div>';
+ $("previewStatus").textContent="Preview reset. No changes were published.";
+};
 </script></body></html>
