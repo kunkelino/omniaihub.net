@@ -3,9 +3,8 @@ const { get, put } = require("@vercel/blob");
 const DATA_PATH = "sample-store/store-data.json";
 const DEFAULT_DATA = {
   products: [
-    { id:"noir-entree", name:"Noir Entree", price:195, inventory:15, image:"bottle-noir.jpg", notes:"Woody · Smoky · Magnetic" },
-    { id:"velvet-vice", name:"Velvet Vice", price:195, inventory:15, image:"bottle-velvet.jpg", notes:"Spicy · Amber · Bold · Warm" },
-    { id:"midnight-saint", name:"Midnight Saint", price:195, inventory:15, image:"bottle-saint.jpg", notes:"Aromatic · Leather · Smooth" }
+    { id:"bikini", name:"Bikini", price:50, inventory:42, image:"bikini-model-black-yellow.jpg", notes:"Available in six colors" },
+    { id:"tracksuit", name:"Tracksuit", price:50, inventory:28, image:"tracksuit-black-front (1).jpg", notes:"Available in black and grey" }
   ],
   orders: [],
   shipping:{standard:5.99,priority:10.99,freeOver:250}
@@ -91,7 +90,7 @@ module.exports=async function handler(req,res){
         const p=data.products.find(x=>x.id===item.id),qty=Math.max(1,Math.floor(Number(item.quantity)));
         if(!p)return res.status(400).json({error:"Product not found."});
         if(p.inventory<qty)return res.status(409).json({error:p.name+" does not have enough inventory."});
-        normalized.push({id:p.id,name:p.name,price:p.price,quantity:qty});subtotal+=p.price*qty;
+        normalized.push({id:p.id,name:p.name,color:String(item.color||""),size:String(item.size||""),price:p.price,quantity:qty});subtotal+=p.price*qty;
       }
       const shippingMethod=body.shippingMethod==="priority"?"priority":"standard";
       const shipping=data.shipping[shippingMethod];
