@@ -49,6 +49,18 @@ body{margin:0;background:#0a0612;color:#e4c56a;font-family:Arial,Helvetica,sans-
 .field input{width:100%;padding:8px;border-radius:6px;border:1px solid #6b5a2c;background:#07040f;color:#fff}
 .close{float:right;cursor:pointer;font-size:20px}
 .status{font-size:12px;color:#cbb89a;margin-top:8px}
+.media-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:14px}
+.media-item{background:#09070e;border:1px solid #3a3047;border-radius:10px;padding:12px;min-width:0}
+.media-item h3{font-size:15px;margin:0 0 10px;color:#e4c56a}
+.media-item video{width:100%;max-height:220px;background:#000;border-radius:7px;display:block;margin-bottom:10px}
+.media-item .field{margin:9px 0}
+.media-item .field label{display:block;font-size:12px;margin-bottom:4px;font-weight:700}
+.media-item .field input[type=text],.media-item .field input:not([type]){width:100%;padding:8px;border-radius:6px;border:1px solid #6b5a2c;background:#07040f;color:#fff}
+.media-item .thumb-preview{width:100%;height:100px;object-fit:contain;background:#15121b;border-radius:6px;margin:6px 0}
+.media-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.media-note{font-size:12px;color:#cbb89a;line-height:1.5}
+@media(max-width:600px){.inv-row{flex-wrap:wrap}.media-list{grid-template-columns:1fr}}
+
 .submit-bar{position:sticky;bottom:0;background:#100b19;padding:12px;text-align:center;border-top:1px solid #e4c56a;margin-top:16px}
 @media(max-width:900px){.grid-2{grid-template-columns:1fr}.preview-page{flex-direction:column}.preview-right{min-height:220px}}
 </style>
@@ -93,6 +105,14 @@ body{margin:0;background:#0a0612;color:#e4c56a;font-family:Arial,Helvetica,sans-
     <p class="status">TEST MODE — orders and edits are saved only in this browser. No payments, emails, or real customer records are connected.</p>
   </div>
 
+    <div class="card" id="mediaManager">
+      <h2>Videos &amp; Thumbnails</h2>
+      <p class="media-note">Current video files from the site are listed below. Edit file paths, attach a thumbnail, or add another video entry. Save stores these settings in this browser for testing; uploading files here does not publish them to the website.</p>
+      <div id="mediaList" class="media-list"></div>
+      <button class="btn primary" type="button" id="addMediaBtn" style="margin-top:14px">+ Add Video</button>
+      <button class="btn" type="button" id="saveMediaBtn" style="margin-top:14px">Save Videos &amp; Thumbnails</button>
+      <p class="status" id="mediaStatus">Current site video: /video5.mp4. Additional repository video: /vid.mp4.</p>
+    </div>
     <div class="submit-bar">
       <button class="btn primary" id="submitAll" style="font-size:16px;padding:12px 32px">Submit Changes</button>
       <div class="status" id="submitStatus">Changes stay local until you commit to GitHub.</div>
@@ -142,6 +162,82 @@ function renderOrders(){
 document.getElementById("orderSearch").addEventListener("input",renderOrders);
 document.getElementById("statusFilter").addEventListener("change",renderOrders);
 document.getElementById("addTestOrder").onclick=()=>{const n=testOrders.length+1001;testOrders.unshift({id:"TEST-"+n,customer:"Sample Customer "+n,date:new Date().toLocaleDateString(),total:50,status:"Pending",tracking:""});saveTestData();renderOrders();};
+
+const defaultMediaItems = [
+  {id:"media-1",title:"Main Store Video",src:"/video5.mp4",thumbnail:"/r4r.png"},
+  {id:"media-2",title:"Additional Video",src:"/vid.mp4",thumbnail:"/mark.png"}
+];
+let mediaItems = JSON.parse(localStorage.getItem("r4r_test_media") || "null") || defaultMediaItems;
+function escapeMediaText(value) {
+  return String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+}
+function saveMediaItems(showMessage = true) {
+  localStorage.setItem("r4r_test_media", JSON.stringify(mediaItems));
+  if (showMessage) document.getElementById("mediaStatus").textContent = "Video and thumbnail settings saved in this browser only. To publish them, the actual files and store code must be updated in GitHub.";
+}
+function renderMediaItems() {
+  const list = document.getElementById("mediaList");
+  if (!list) return;
+  list.innerHTML = mediaItems.map((item, index) => `
+    <div class="media-item" data-media-index="${index}">
+      <h3>${escapeMediaText(item.title || "Video " + (index + 1))}</h3>
+      <video controls playsinline preload="metadata" src="${escapeMediaText(item.src)}"></video>
+      <div class="field"><label>Video title</label><input type="text" data-media-field="title" value="${escapeMediaText(item.title)}"></div>
+      <div class="field"><label>Video file path or URL</label><input type="text" data-media-field="src" value="${escapeMediaText(item.src)}" placeholder="/video5.mp4"></div>
+      <div class="field"><label>Thumbnail file path or URL</label><input type="text" data-media-field="thumbnail" value="${escapeMediaText(item.thumbnail)}" placeholder="/thumbnail.jpg"></div>
+      <img class="thumb-preview" src="${escapeMediaText(item.thumbnail)}" alt="Thumbnail preview" onerror="this.style.opacity='.25';this.alt='Thumbnail preview unavailable — check the file path';">
+      <div class="field"><label>Choose a thumbnail to preview locally</label><input type="file" accept="image/*" data-local-thumb></div>
+      <div class="field"><label>Choose a video to preview locally</label><input type="file" accept="video/*" data-local-video></div>
+      <div class="media-actions"><button type="button" class="btn small" data-save-one>Save Entry</button><button type="button" class="btn small" data-remove-media>Remove Entry</button></div>
+    </div>`).join("");
+  list.querySelectorAll(".media-item").forEach(card => {
+    const index = Number(card.dataset.mediaIndex);
+    card.querySelectorAll("[data-media-field]").forEach(input => {
+      input.addEventListener("change", () => {
+        mediaItems[index][input.dataset.mediaField] = input.value.trim();
+        const video = card.querySelector("video");
+        const thumb = card.querySelector(".thumb-preview");
+        if (input.dataset.mediaField === "src") video.src = input.value.trim();
+        if (input.dataset.mediaField === "thumbnail") thumb.src = input.value.trim();
+        const heading = card.querySelector("h3");
+        if (input.dataset.mediaField === "title") heading.textContent = input.value.trim() || "Video " + (index + 1);
+      });
+    });
+    card.querySelector("[data-local-thumb]").addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        card.querySelector(".thumb-preview").src = url;
+        document.getElementById("mediaStatus").textContent = "Local thumbnail preview only. To publish it, upload the image file to GitHub and enter its site path.";
+      }
+    });
+    card.querySelector("[data-local-video]").addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) {
+        card.querySelector("video").src = URL.createObjectURL(file);
+        document.getElementById("mediaStatus").textContent = "Local video preview only. To publish it, upload the video file to GitHub and enter its site path.";
+      }
+    });
+    card.querySelector("[data-save-one]").addEventListener("click", () => {
+      card.querySelectorAll("[data-media-field]").forEach(input => mediaItems[index][input.dataset.mediaField] = input.value.trim());
+      saveMediaItems();
+    });
+    card.querySelector("[data-remove-media]").addEventListener("click", () => {
+      if (confirm("Remove this video entry from the test list?")) {
+        mediaItems.splice(index, 1);
+        saveMediaItems(false);
+        renderMediaItems();
+        document.getElementById("mediaStatus").textContent = "Video entry removed from this browser's test list.";
+      }
+    });
+  });
+}
+document.getElementById("addMediaBtn").addEventListener("click", () => {
+  mediaItems.push({id:"media-" + Date.now(),title:"New Video",src:"/new-video.mp4",thumbnail:"/new-thumbnail.jpg"});
+  renderMediaItems();
+  document.getElementById("mediaStatus").textContent = "New video entry added. Enter the file paths and click Save Videos & Thumbnails.";
+});
+document.getElementById("saveMediaBtn").addEventListener("click", () => saveMediaItems());
 
 function renderInventory() {
   const list = document.getElementById("inventoryList");
@@ -290,6 +386,7 @@ document.getElementById("saveInv").onclick = () => {saveTestData();alert("Invent
 renderInventory();
 updatePreviewPrices();
 renderOrders();
+renderMediaItems();
 </script>
 </body>
 </html>
