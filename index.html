@@ -102,6 +102,24 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
         <div class="passcode-err" id="speak4-err"></div>
       </div>
     </form>
+    <form class="box passcode-tile" id="r4r-store-gate" action="real4real-store.html">
+      <div class="passcode-inner">
+        <div class="passcode-title">Real 4 Real Store</div>
+        <label for="r4r-store-pin">Passcode</label>
+        <input id="r4r-store-pin" name="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Passcode" aria-label="Real 4 Real Store passcode">
+        <button type="submit">Enter</button>
+        <div class="passcode-err" id="r4r-store-err"></div>
+      </div>
+    </form>
+    <form class="box passcode-tile" id="r4r-admin-gate" action="real4real-admin.html">
+      <div class="passcode-inner">
+        <div class="passcode-title">Real 4 Real Admin</div>
+        <label for="r4r-admin-pin">Passcode</label>
+        <input id="r4r-admin-pin" name="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Passcode" aria-label="Real 4 Real Admin passcode">
+        <button type="submit">Enter</button>
+        <div class="passcode-err" id="r4r-admin-err"></div>
+      </div>
+    </form>
     <div class="box yt" data-id="iSAq5QqCaFI">
       <img src="https://img.youtube.com/vi/iSAq5QqCaFI/sddefault.jpg" alt="Video commercial sample">
       <span class="play-badge">▶</span>
@@ -329,6 +347,25 @@ document.getElementById("speak4-gate").addEventListener("submit", function(e){
   } else {
     document.getElementById("speak4-err").textContent="Wrong passcode";
   }
+});
+
+["r4r-store","r4r-admin"].forEach(function(id){
+  var gate=document.getElementById(id+"-gate");
+  var input=document.getElementById(id+"-pin");
+  if(!gate||!input) return;
+  input.addEventListener("keydown",function(e){
+    if(e.key==="Enter"){e.preventDefault();gate.requestSubmit();}
+  });
+  gate.addEventListener("submit",function(e){
+    e.preventDefault();
+    var pin=(input.value||"").replace(/\D/g,"");
+    if(pin==="1234"){
+      sessionStorage.setItem(id+"_ok","1");
+      location.href=gate.action;
+    }else{
+      document.getElementById(id+"-err").textContent="Wrong passcode";
+    }
+  });
 });
 document.addEventListener("keydown", function(e){
   if(e.key!=="Escape") return;
