@@ -61,10 +61,29 @@ module.exports=async function handler(req,res){
       if(body.shipping){
         data.shipping.freeOver=Math.max(0,Number(body.shipping.freeOver??data.shipping.freeOver??250));
       }
-      if(Array.isArray(body.products)){
+      if(Array.isArray(body.products)&&body.replaceProducts===true){
+        const seen=new Set(),next=[];
+        for(const incoming of body.products){
+          const id=String(incoming.id||'').trim();
+          if(!id||/\\s/.test(id)||seen.has(id)||!String(incoming.name||'').trim())return res.status(400).json({error:'Products need names and unique IDs without spaces.'});
+          seen.add(id);
+          const old=data.products.find(p=>p.id===id)||{};
+          const p={...old,...incoming,id,name:String(incoming.name).trim(),price:money(incoming.price),cost:money(incoming.cost||0),inventory:Math.max(0,Math.floor(Number(incoming.inventory)||0)),image:String(incoming.image||''),description:String(incoming.description||''),notes:String(incoming.notes||''),colors:Array.isArray(incoming.colors)?incoming.colors:[],sizes:Array.isArray(incoming.sizes)?incoming.sizes:[],variantInventory:incoming.variantInventory&&typeof incoming.variantInventory==='object'?incoming.variantInventory:{}};
+          if(p.price<0||p.cost<0)return res.status(400).json({error:'Prices and costs cannot be negative.'});
+          next.push(p);
+        }
+        data.products=next;
+      }
+      if(Array.isArray(body.restoreOrders))data.orders=body.restoreOrders;
+      if(Array.isArray(body.products)&&body.replaceProducts!==true){
         for(const incoming of body.products){
           const p=data.products.find(x=>x.id===incoming.id);if(!p)continue;
           if(incoming.name!==undefined)p.name=String(incoming.name);
+          if(incoming.cost!==undefined&&Number.isFinite(Number(incoming.cost))&&Number(incoming.cost)>=0)p.cost=money(incoming.cost);
+          if(incoming.image!==undefined)p.image=String(incoming.image).slice(0,2000);
+          if(incoming.description!==undefined)p.description=String(incoming.description).slice(0,5000);
+          if(incoming.colors!==undefined)p.colors=Array.isArray(incoming.colors)?incoming.colors.map(String):[];
+          if(incoming.sizes!==undefined)p.sizes=Array.isArray(incoming.sizes)?incoming.sizes.map(String):[];
           if(incoming.price!==undefined&&Number.isFinite(Number(incoming.price))&&Number(incoming.price)>=0)p.price=money(incoming.price);
           if(incoming.inventory!==undefined&&Number.isFinite(Number(incoming.inventory)))p.inventory=Math.max(0,Math.floor(Number(incoming.inventory)));
           if(incoming.notes!==undefined)p.notes=String(incoming.notes);
