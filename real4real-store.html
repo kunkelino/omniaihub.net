@@ -15,7 +15,7 @@
 <div class="brand"><img src="eLzdZ.jpg" alt="Real 4 Real"></div>
 <div class="product-card"><div class="product-top">
 <div class="product-image"><img id="bikiniImage" src="bikini-model-black-yellow.jpg" alt="Bikini"></div>
-<div class="product-details"><h2>Bikini</h2><div class="price">$50.00</div><div class="field-label">Choose Color</div>
+<div class="product-details"><h2>Bikini</h2><div class="price" id="bikiniPriceDisplay">$50.00</div><div class="field-label">Choose Color</div>
 <div class="color-grid">
 <div class="color-thumb active" data-img="bikini-model-black-yellow.jpg" data-target="bikini" data-color="Black / Yellow"><img src="bikini-black-yellow.jpg" alt=""><span>Black / Yellow</span></div>
 <div class="color-thumb" data-img="bikini-model-white-black.jpg" data-target="bikini" data-color="White / Black"><img src="bikini-white-black.jpg" alt=""><span>White / Black</span></div>
@@ -25,17 +25,17 @@
 <div class="color-thumb" data-img="bikini-model-purple-white.jpg" data-target="bikini" data-color="Purple / White"><img src="bikini-purple-white.jpg" alt=""><span>Purple / White</span></div>
 </div>
 <div class="field-label">Size</div><select class="size" data-product="bikini"><option value="">Select size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
-<div class="field-label">Quantity</div><input type="number" class="qty" data-product="bikini" value="1" min="1" max="42"><div class="stock">In stock: 42</div>
+<div class="field-label">Quantity</div><input type="number" class="qty" data-product="bikini" value="1" min="1" max="42"><div class="stock" id="bikiniStockDisplay">In stock: 42</div>
 <button class="add-btn" data-product="bikini" data-price="50">ADD TO ORDER<div class="popup">Added to cart</div></button></div></div></div>
 <div class="product-card"><div class="product-top">
 <div class="product-image"><img id="tracksuitImage" src="tracksuit-black-front (1).jpg" alt="Tracksuit"></div>
-<div class="product-details"><h2>Tracksuit</h2><div class="price">$50.00</div><div class="field-label">Choose Color</div>
+<div class="product-details"><h2>Tracksuit</h2><div class="price" id="trackPriceDisplay">$50.00</div><div class="field-label">Choose Color</div>
 <div class="color-grid two">
 <div class="color-thumb active" data-img="tracksuit-black-front (1).jpg" data-target="tracksuit" data-color="Black"><img src="tracksuit-black-front (1).jpg" alt="Black"><span>Black</span></div>
 <div class="color-thumb" data-img="tracksuit-grey-front (1).jpg" data-target="tracksuit" data-color="Grey"><img src="tracksuit-grey-front (1).jpg" alt="Grey"><span>Grey</span></div>
 </div>
 <div class="field-label">Size</div><select class="size" data-product="tracksuit"><option value="">Select size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
-<div class="field-label">Quantity</div><input type="number" class="qty" data-product="tracksuit" value="1" min="1" max="28"><div class="stock">In stock: 28</div>
+<div class="field-label">Quantity</div><input type="number" class="qty" data-product="tracksuit" value="1" min="1" max="28"><div class="stock" id="trackStockDisplay">In stock: 28</div>
 <button class="add-btn" data-product="tracksuit" data-price="50">ADD TO ORDER<div class="popup">Added to cart</div></button></div></div></div>
 <div class="cart">
 <div class="cart-list" id="mainCartList"></div>
@@ -49,7 +49,7 @@
 </main>
 <section id="checkout" class="checkout"><div class="checkout-inner"><button type="button" id="back" class="back-btn">← BACK</button>
 <div class="checkout-card"><h2>Order</h2><div id="orderItems"></div><div class="row"><strong>Subtotal</strong><strong id="checkoutSubtotal">$0.00</strong></div>
-<div class="ship-row"><div class="ship active" data-cost="5.99"><strong>Standard — $5.99</strong><div>3–5 business days</div></div><div class="ship" data-cost="10.99"><strong>Priority — $10.99</strong><div>1–2 business days</div></div></div>
+<div class="ship-row"><div class="ship active" data-kind="standard" data-cost="5.99"><strong id="standardShipLabel">Standard — $5.99</strong><div>3–5 business days</div></div><div class="ship" data-kind="priority" data-cost="10.99"><strong id="priorityShipLabel">Priority — $10.99</strong><div>1–2 business days</div></div></div>
 <div class="row"><span>Shipping</span><span id="shippingCost">$5.99</span></div><div class="row"><strong>Total</strong><strong id="checkoutTotal">$0.00</strong></div></div>
 <div class="checkout-card"><h2>Customer Information</h2><form id="shippingForm"><label>Full name<input id="name" required></label><label>Email<input id="email" type="email" required></label><label>Phone<input id="phone" type="tel"></label><label>Street address<input id="address" required></label><label>City<input id="city" required></label><label>State<input id="state" required></label><label>ZIP<input id="zip" required></label></form></div>
 <div class="checkout-card"><h2>Payment Method</h2><div class="pay-opt">Credit Card — demo only</div><div class="pay-opt">PayPal — demo only</div><div class="pay-opt">Venmo or Zelle — demo only</div><p class="note">Practice mode. No payment will be taken and no order will be sent.</p><button type="button" id="placeOrder" class="place-btn">Place Practice Order</button></div></div></section>
@@ -58,8 +58,40 @@
 if(sessionStorage.getItem("r4r-store_ok")!=="1"){location.replace("index.html");return;}
 const bikiniImage=document.getElementById("bikiniImage"),tracksuitImage=document.getElementById("tracksuitImage");
 const colors={bikini:"Black / Yellow",tracksuit:"Black"};
+const readStoreSetting=(key,fallback)=>{try{const value=localStorage.getItem(key);return value?JSON.parse(value):fallback}catch(_){return fallback}};
+const storeInventory=readStoreSetting("r4r_admin_inventory",{bikiniStock:42,bikiniSold:0,trackStock:28,trackSold:0});
+const storeSettings=readStoreSetting("r4r_admin_settings",{bikiniPrice:"50.00",trackPrice:"50.00",standardShip:"5.99",priorityShip:"10.99"});
+const productPrices={bikini:Math.max(0,Number(storeSettings.bikiniPrice)||0),tracksuit:Math.max(0,Number(storeSettings.trackPrice)||0)};
+const availableStock={bikini:Math.max(0,Math.floor(Number(storeInventory.bikiniStock)||0)),tracksuit:Math.max(0,Math.floor(Number(storeInventory.trackStock)||0))};
+function applyStoreSettings(){
+  document.getElementById("bikiniPriceDisplay").textContent="$"+productPrices.bikini.toFixed(2);
+  document.getElementById("trackPriceDisplay").textContent="$"+productPrices.tracksuit.toFixed(2);
+  document.getElementById("bikiniStockDisplay").textContent="In stock: "+availableStock.bikini;
+  document.getElementById("trackStockDisplay").textContent="In stock: "+availableStock.tracksuit;
+  document.querySelector('.qty[data-product="bikini"]').max=availableStock.bikini;
+  document.querySelector('.qty[data-product="tracksuit"]').max=availableStock.tracksuit;
+  document.querySelector('.add-btn[data-product="bikini"]').dataset.price=String(productPrices.bikini);
+  document.querySelector('.add-btn[data-product="tracksuit"]').dataset.price=String(productPrices.tracksuit);
+  document.querySelectorAll(".add-btn").forEach(btn=>{
+    const product=btn.dataset.product;
+    btn.disabled=availableStock[product]===0;
+    btn.style.opacity=btn.disabled?".45":"1";
+    btn.style.cursor=btn.disabled?"not-allowed":"pointer";
+    btn.innerHTML=(btn.disabled?"OUT OF STOCK":"ADD TO ORDER")+'<div class="popup">Added to cart</div>';
+  });
+  const standard=Math.max(0,Number(storeSettings.standardShip)||0);
+  const priority=Math.max(0,Number(storeSettings.priorityShip)||0);
+  document.querySelector('.ship[data-kind="standard"]').dataset.cost=String(standard);
+  document.querySelector('.ship[data-kind="priority"]').dataset.cost=String(priority);
+  document.getElementById("standardShipLabel").textContent="Standard — $"+standard.toFixed(2);
+  document.getElementById("priorityShipLabel").textContent="Priority — $"+priority.toFixed(2);
+  shippingCost=document.querySelector(".ship.active") ? Number(document.querySelector(".ship.active").dataset.cost) : standard;
+  document.getElementById("shippingCost").textContent="$"+shippingCost.toFixed(2);
+}
+
 document.querySelectorAll(".color-thumb").forEach(function(t){t.addEventListener("click",function(){const target=t.dataset.target;document.querySelectorAll('.color-thumb[data-target="'+target+'"]').forEach(x=>x.classList.remove("active"));t.classList.add("active");colors[target]=t.dataset.color; if(target==="bikini")bikiniImage.src=t.dataset.img;else tracksuitImage.src=t.dataset.img;});});
 let cartTotal=0,shippingCost=5.99,cartItems=[];
+applyStoreSettings();
 function renderMainCart(){
   const list=document.getElementById("mainCartList");
   list.innerHTML="";
@@ -81,10 +113,11 @@ function renderMainCart(){
   });
 }
 document.querySelectorAll(".add-btn").forEach(function(btn){btn.addEventListener("click",function(){
-  const product=btn.dataset.product,price=Number(btn.dataset.price);
+  const product=btn.dataset.product,price=productPrices[product];
   const size=document.querySelector('.size[data-product="'+product+'"]').value;
   const qtyEl=document.querySelector('.qty[data-product="'+product+'"]');
-  const qty=Math.max(1,Math.min(Number(qtyEl.max)||99,parseInt(qtyEl.value,10)||1));
+  const qty=Math.max(1,Math.min(availableStock[product],parseInt(qtyEl.value,10)||1));
+  if(availableStock[product]===0){alert("This item is currently out of stock.");return;}
   if(!size){alert("Please select a size.");return;}
   const name=product==="bikini"?"Bikini":"Tracksuit";
   cartItems.push({name,color:colors[product],size,qty,price});
