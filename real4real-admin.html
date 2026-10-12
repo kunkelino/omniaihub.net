@@ -102,21 +102,21 @@ body{margin:0;background:#0a0612;color:#e4c56a;font-family:Arial,Helvetica,sans-
       <thead><tr style="border-bottom:1px solid #333"><th style="text-align:left;padding:6px">ORDER / CUSTOMER</th><th>DATE</th><th>TOTAL</th><th>STATUS</th><th>TRACKING</th><th>ACTIONS</th></tr></thead>
       <tbody id="ordersBody"></tbody>
     </table>
-    <p class="status">Product and media settings are shared with the live store. Customer order management is not connected on this admin page.</p>
+    <p class="status">TEST MODE — orders and edits are saved only in this browser. No payments, emails, or real customer records are connected.</p>
   </div>
 
   <div class="card" id="mediaManager">
     <h2>Videos &amp; Thumbnails</h2>
-    <p class="media-note">Edit the video paths and thumbnail paths used by the live store. Changes publish when you click Submit Changes. Files selected from your computer still need to be uploaded to GitHub first.</p>
+    <p class="media-note">Current video files from the site are listed below. Edit file paths, attach a thumbnail, or add another video entry. Save stores these settings in this browser for testing; uploading files here does not publish them to the website.</p>
     <div id="mediaList" class="media-list"></div>
     <button class="btn primary" type="button" id="addMediaBtn" style="margin-top:14px">+ Add Video</button>
     <button class="btn" type="button" id="saveMediaBtn" style="margin-top:14px">Save Videos &amp; Thumbnails</button>
-    <p class="status" id="mediaStatus">Video settings are loaded from the shared store data.</p>
+    <p class="status" id="mediaStatus">Current site video: /video5.mp4. Additional repository video: /vid.mp4.</p>
   </div>
 
   <div class="submit-bar">
     <button class="btn primary" id="submitAll" style="font-size:16px;padding:12px 32px">Submit Changes</button>
-    <div class="status" id="submitStatus">Connects to the shared store data. Click Submit Changes to publish.</div>
+    <div class="status" id="submitStatus">Changes stay local until you commit to GitHub.</div>
   </div>
 </div>
 
@@ -133,87 +133,265 @@ body{margin:0;background:#0a0612;color:#e4c56a;font-family:Arial,Helvetica,sans-
 </div>
 
 <script>
-const API_URL="/api/store?action=inventory";
-let products=[], mediaItems=[];
-const money=n=>"$"+Number(n||0).toFixed(2);
-const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function status(message){document.getElementById("submitStatus").textContent=message;}
-async function loadLiveData(){
-  status("Connecting to the live store data…");
-  try{
-    const r=await fetch(API_URL,{cache:"no-store"});
-    if(!r.ok)throw new Error("Store API returned "+r.status);
-    const data=await r.json();
-    products=Array.isArray(data.products)?data.products:[];
-    mediaItems=Array.isArray(data.media)?data.media:[];
-    renderInventory();renderMediaItems();
-    document.getElementById("prodCount").textContent=products.length;
-    document.getElementById("stockCount").textContent=products.reduce((n,p)=>n+(Number(p.inventory)||0),0);
-    status("Connected. Changes become live after you click Submit Changes.");
-  }catch(e){status("Could not load live store data: "+e.message+". Check the Vercel deployment and Blob connection.");}
+let inventory = JSON.parse(localStorage.getItem("r4r_test_inventory") || "null") || [
+  {name:"Bikini — Black / Yellow", price:50, stock:7},
+  {name:"Bikini — White / Black", price:50, stock:7},
+  {name:"Bikini — Red / White", price:50, stock:7},
+  {name:"Bikini — Royal Blue", price:50, stock:7},
+  {name:"Bikini — Pink / Black", price:50, stock:7},
+  {name:"Bikini — Purple / White", price:50, stock:7},
+  {name:"Tracksuit — Black", price:50, stock:14},
+  {name:"Tracksuit — Grey", price:50, stock:14}
+];
+let currentEdit = null;
+let testOrders = JSON.parse(localStorage.getItem("r4r_test_orders") || "null") || [];
+function saveTestData(){localStorage.setItem("r4r_test_inventory",JSON.stringify(inventory));localStorage.setItem("r4r_test_orders",JSON.stringify(testOrders));}
+function renderOrders(){
+  const q=(document.getElementById("orderSearch").value||"").toLowerCase();
+  const status=document.getElementById("statusFilter").value;
+  const body=document.getElementById("ordersBody");
+  const rows=testOrders.filter(o=>(status==="All statuses"||o.status===status)&&[o.id,o.customer,o.tracking,o.status].join(" ").toLowerCase().includes(q));
+  body.innerHTML=rows.map((o,i)=>`<tr style="border-bottom:1px solid #222">
+    <td style="padding:6px"><strong>${o.customer} (TEST)</strong><br>${o.id}</td><td>${o.date}</td><td>${Number(o.total).toFixed(2)}</td>
+    <td><select data-order="${o.id}" data-field="status" style="padding:5px;background:#07040f;color:#fff;border:1px solid #6b5a2c;border-radius:5px">${["Pending","Processing","Shipped","Completed","Cancelled"].map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select></td>
+    <td><input data-order="${o.id}" data-field="tracking" placeholder="Tracking #" value="${o.tracking||""}" style="width:110px;padding:5px;background:#07040f;color:#fff;border:1px solid #6b5a2c;border-radius:5px"></td>
+    <td><button class="btn small danger" data-delete-order="${o.id}">Delete</button></td></tr>`).join("") || '<tr><td colspan="6" style="padding:14px;color:#cbb89a">No test orders match. Use + Test Order to create one.</td></tr>';
+  body.querySelectorAll("[data-order]").forEach(el=>el.onchange=()=>{const o=testOrders.find(x=>x.id===el.dataset.order);if(o){o[el.dataset.field]=el.value;saveTestData();renderOrders();}});
+  body.querySelectorAll("[data-delete-order]").forEach(el=>el.onclick=()=>{testOrders=testOrders.filter(o=>o.id!==el.dataset.deleteOrder);saveTestData();renderOrders();});
 }
-function renderInventory(){
-  const list=document.getElementById("inventoryList");
-  list.innerHTML=products.map((p,i)=>'<div class="inv-row" style="align-items:flex-start;flex-wrap:wrap">'+
-    '<div style="flex:1;min-width:150px"><strong>'+esc(p.name)+'</strong><div style="font-size:11px;color:#cbb89a">Store item: '+esc(p.id)+'</div>'+
-    '<label style="display:block;font-size:11px;margin-top:7px">Name<input style="display:block;width:100%;max-width:240px" data-product="'+esc(p.id)+'" data-field="name" value="'+esc(p.name)+'"></label>'+
-    '<label style="display:block;font-size:11px;margin-top:7px">Main image path<input style="display:block;width:100%;max-width:240px" data-product="'+esc(p.id)+'" data-field="image" value="'+esc(p.image||"")+'"></label></div>'+
-    '<label style="font-size:11px">Price $<input aria-label="Price for '+esc(p.name)+'" type="number" min="0" step="0.01" value="'+Number(p.price||0).toFixed(2)+'" data-product="'+esc(p.id)+'" data-field="price"></label>'+
-    '<label style="font-size:11px">Stock<input aria-label="Stock for '+esc(p.name)+'" type="number" min="0" step="1" value="'+Number(p.inventory||0)+'" data-product="'+esc(p.id)+'" data-field="inventory"></label></div>'
-  ).join("");
-  list.querySelectorAll("input[data-product]").forEach(input=>input.addEventListener("change",()=>{
-    const p=products.find(x=>x.id===input.dataset.product);if(!p)return;
-    const f=input.dataset.field;
-    if(f==="price"||f==="inventory"){
-      const n=Number(input.value);if(!Number.isFinite(n)||n<0){alert("Enter a valid number of zero or more.");input.value=p[f]||0;return;}
-      p[f]=f==="price"?Math.round(n*100)/100:Math.floor(n);
-    }else p[f]=input.value.trim();
-    document.getElementById("stockCount").textContent=products.reduce((n,x)=>n+(Number(x.inventory)||0),0);
-    status("Edited locally in this admin page. Click Submit Changes to publish to the store.");
-  }));
+document.getElementById("orderSearch").addEventListener("input",renderOrders);
+document.getElementById("statusFilter").addEventListener("change",renderOrders);
+document.getElementById("addTestOrder").onclick=()=>{const n=testOrders.length+1001;testOrders.unshift({id:"TEST-"+n,customer:"Sample Customer "+n,date:new Date().toLocaleDateString(),total:50,status:"Pending",tracking:""});saveTestData();renderOrders();};
+
+const defaultMediaItems = [
+  {id:"media-1",title:"Main Store Video",src:"/video5.mp4",thumbnail:""},
+  {id:"media-2",title:"Additional Video",src:"/vid.mp4",thumbnail:""}
+];
+let mediaItems = JSON.parse(localStorage.getItem("r4r_test_media") || "null") || defaultMediaItems;
+function escapeMediaText(value) {
+  return String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 }
-function renderMediaItems(){
-  const list=document.getElementById("mediaList");
-  list.innerHTML=mediaItems.map((m,i)=>'<div class="media-item" data-media-index="'+i+'"><h3>'+esc(m.title||("Video "+(i+1)))+'</h3>'+
-    '<video controls playsinline preload="metadata" src="'+esc(m.src||"")+'"></video>'+
-    '<div class="field"><label>Video title</label><input type="text" data-media-field="title" value="'+esc(m.title||"")+'"></div>'+
-    '<div class="field"><label>Video file path or URL</label><input type="text" data-media-field="src" value="'+esc(m.src||"")+'" placeholder="/video5.mp4"></div>'+
-    '<div class="field"><label>Thumbnail path or URL</label><input type="text" data-media-field="thumbnail" value="'+esc(m.thumbnail||"")+'" placeholder="/thumbnail.jpg"></div>'+
-    '<div class="media-actions"><button type="button" class="btn small" data-save-one>Save Entry</button><button type="button" class="btn small" data-remove-media>Remove Entry</button></div></div>'
-  ).join("");
-  list.querySelectorAll(".media-item").forEach(card=>{
-    const i=Number(card.dataset.mediaIndex);
-    card.querySelectorAll("[data-media-field]").forEach(input=>input.addEventListener("change",()=>{mediaItems[i][input.dataset.mediaField]=input.value.trim();}));
-    card.querySelector("[data-save-one]").onclick=()=>saveLiveChanges();
-    card.querySelector("[data-remove-media]").onclick=()=>{mediaItems.splice(i,1);renderMediaItems();status("Video removed locally. Click Submit Changes to publish.");};
+function saveMediaItems(showMessage = true) {
+  localStorage.setItem("r4r_test_media", JSON.stringify(mediaItems));
+  if (showMessage) document.getElementById("mediaStatus").textContent = "Video and thumbnail settings saved in this browser only. To publish them, the actual files and store code must be updated in GitHub.";
+}
+function renderMediaItems() {
+  const list = document.getElementById("mediaList");
+  if (!list) return;
+  list.innerHTML = mediaItems.map((item, index) => `
+    <div class="media-item" data-media-index="${index}">
+      <h3>${escapeMediaText(item.title || "Video " + (index + 1))}</h3>
+      <video controls playsinline preload="metadata" src="${escapeMediaText(item.src)}"></video>
+      <div class="field"><label>Video title</label><input type="text" data-media-field="title" value="${escapeMediaText(item.title)}"></div>
+      <div class="field"><label>Video file path or URL</label><input type="text" data-media-field="src" value="${escapeMediaText(item.src)}" placeholder="/video5.mp4"></div>
+      <div class="field"><label>Thumbnail file path or URL</label><input type="text" data-media-field="thumbnail" value="${escapeMediaText(item.thumbnail)}" placeholder="/thumbnail.jpg"></div>
+      <img class="thumb-preview" src="${escapeMediaText(item.thumbnail)}" alt="Thumbnail preview" style="display:${item.thumbnail ? "block" : "none"}" onerror="this.style.opacity='.25';this.alt='Thumbnail preview unavailable — check the file path';">
+      <div class="field"><label>Choose a thumbnail to preview locally</label><input type="file" accept="image/*" data-local-thumb></div>
+      <div class="field"><label>Choose a video to preview locally</label><input type="file" accept="video/*" data-local-video></div>
+      <div class="media-actions"><button type="button" class="btn small" data-save-one>Save Entry</button><button type="button" class="btn small" data-remove-media>Remove Entry</button></div>
+    </div>`).join("");
+  list.querySelectorAll(".media-item").forEach(card => {
+    const index = Number(card.dataset.mediaIndex);
+    card.querySelectorAll("[data-media-field]").forEach(input => {
+      input.addEventListener("change", () => {
+        mediaItems[index][input.dataset.mediaField] = input.value.trim();
+        const video = card.querySelector("video");
+        const thumb = card.querySelector(".thumb-preview");
+        if (input.dataset.mediaField === "src") video.src = input.value.trim();
+        if (input.dataset.mediaField === "thumbnail") { thumb.src = input.value.trim(); thumb.style.display = input.value.trim() ? "block" : "none"; }
+        const heading = card.querySelector("h3");
+        if (input.dataset.mediaField === "title") heading.textContent = input.value.trim() || "Video " + (index + 1);
+      });
+    });
+    card.querySelector("[data-local-thumb]").addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        card.querySelector(".thumb-preview").src = url;
+        document.getElementById("mediaStatus").textContent = "Local thumbnail preview only. To publish it, upload the image file to GitHub and enter its site path.";
+      }
+    });
+    card.querySelector("[data-local-video]").addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) {
+        card.querySelector("video").src = URL.createObjectURL(file);
+        document.getElementById("mediaStatus").textContent = "Local video preview only. To publish it, upload the video file to GitHub and enter its site path.";
+      }
+    });
+    card.querySelector("[data-save-one]").addEventListener("click", () => {
+      card.querySelectorAll("[data-media-field]").forEach(input => mediaItems[index][input.dataset.mediaField] = input.value.trim());
+      saveMediaItems();
+    });
+    card.querySelector("[data-remove-media]").addEventListener("click", () => {
+      if (confirm("Remove this video entry from the test list?")) {
+        mediaItems.splice(index, 1);
+        saveMediaItems(false);
+        renderMediaItems();
+        document.getElementById("mediaStatus").textContent = "Video entry removed from this browser's test list.";
+      }
+    });
   });
 }
-async function saveLiveChanges(){
-  status("Publishing changes to the shared store data…");
-  try{
-    const r=await fetch(API_URL,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({products:products,replaceProducts:true,media:mediaItems})});
-    const data=await r.json().catch(()=>({}));
-    if(!r.ok)throw new Error(data.error||("Save failed ("+r.status+")"));
-    products=Array.isArray(data.products)?data.products:products;
-    mediaItems=Array.isArray(data.media)?data.media:mediaItems;
-    renderInventory();renderMediaItems();
-    document.getElementById("prodCount").textContent=products.length;
-    document.getElementById("stockCount").textContent=products.reduce((n,p)=>n+(Number(p.inventory)||0),0);
-    status("Published! The live store now uses these prices, stock levels, main images, and video settings.");
-  }catch(e){status("Could not publish changes: "+e.message);}
+document.getElementById("addMediaBtn").addEventListener("click", () => {
+  mediaItems.push({id:"media-" + Date.now(),title:"New Video",src:"/new-video.mp4",thumbnail:"/new-thumbnail.jpg"});
+  renderMediaItems();
+  document.getElementById("mediaStatus").textContent = "New video entry added. Enter the file paths and click Save Videos & Thumbnails.";
+});
+document.getElementById("saveMediaBtn").addEventListener("click", () => saveMediaItems());
+
+function renderInventory() {
+  const list = document.getElementById("inventoryList");
+  list.innerHTML = "";
+  let totalStock = 0;
+  inventory.forEach((item, i) => {
+    totalStock += Number(item.stock) || 0;
+    const row = document.createElement("div");
+    row.className = "inv-row";
+    row.innerHTML = `
+      <span style="flex:1;min-width:120px">${item.name}</span>
+      <label style="font-size:11px;display:flex;align-items:center;gap:4px">Price $
+        <input aria-label="Price for ${item.name}" type="number" min="0" step="0.01" value="${Number(item.price || 0).toFixed(2)}" data-i="${i}" data-field="price">
+      </label>
+      <label style="font-size:11px;display:flex;align-items:center;gap:4px">Stock
+        <input aria-label="Stock for ${item.name}" type="number" min="0" step="1" value="${Number(item.stock || 0)}" data-i="${i}" data-field="stock">
+      </label>
+      <button class="restock" data-i="${i}">Order More</button>
+      <button class="delete-inv" data-delete-i="${i}" aria-label="Delete ${item.name}" title="Delete item">&times;</button>
+    `;
+    list.appendChild(row);
+  });
+  document.getElementById("stockCount").textContent = totalStock;
+  document.getElementById("prodCount").textContent = inventory.length;
+  list.querySelectorAll("input").forEach(inp => {
+    inp.onchange = () => {
+      const i = Number(inp.dataset.i);
+      const field = inp.dataset.field;
+      const value = Number(inp.value);
+      if (!Number.isFinite(value) || value < 0) {
+        alert("Enter a valid non-negative " + (field === "price" ? "price" : "stock quantity") + ".");
+        inp.value = Number(inventory[i][field] || 0);
+        return;
+      }
+      inventory[i][field] = field === "price" ? Math.round(value * 100) / 100 : Math.floor(value);
+      inp.value = field === "price" ? Number(inventory[i][field]).toFixed(2) : inventory[i][field];
+      saveTestData();
+      updatePreviewPrices();
+      document.getElementById("submitStatus").textContent = "Inventory change saved in this browser only. Click Submit Changes when ready.";
+      if (field === "stock") {
+        document.getElementById("stockCount").textContent = inventory.reduce((sum, item) => sum + (Number(item.stock) || 0), 0);
+      }
+    };
+  });
+  list.querySelectorAll(".restock").forEach(btn => {
+    btn.onclick = () => {
+      const i = Number(btn.dataset.i);
+      const add = prompt("How many to add?", "10");
+      if (add !== null && add.trim() !== "" && Number.isFinite(Number(add)) && Number(add) > 0) {
+        inventory[i].stock = (Number(inventory[i].stock) || 0) + Math.floor(Number(add));
+        saveTestData();
+        renderInventory();
+      }
+    };
+  });
+  list.querySelectorAll("[data-delete-i]").forEach(btn => {
+    btn.onclick = () => {
+      const i = Number(btn.dataset.deleteI);
+      if (!inventory[i]) return;
+      if (!confirm('Delete "' + inventory[i].name + '" from inventory?')) return;
+      inventory.splice(i, 1);
+      saveTestData();
+      renderInventory();
+      updatePreviewPrices();
+      document.getElementById("submitStatus").textContent = "Inventory item deleted in this browser only.";
+    };
+  });
 }
-document.getElementById("submitAll").onclick=saveLiveChanges;
-document.getElementById("saveInv").onclick=saveLiveChanges;
-document.getElementById("addMediaBtn").onclick=()=>{
-  mediaItems.push({id:"media-"+Date.now(),title:"New Video",src:"/new-video.mp4",thumbnail:""});
-  renderMediaItems();status("New video entry added. Enter paths, then click Submit Changes.");
+function updatePreviewPrices() {
+  const bikini = inventory.find(item => /^Bikini\s*[—-]/i.test(item.name));
+  const tracksuit = inventory.find(item => /^Tracksuit\s*[—-]/i.test(item.name));
+  const bikiniPrice = document.querySelector('[data-edit="bikini-price"]');
+  const tracksuitPrice = document.querySelector('[data-edit="tracksuit-price"]');
+  if (bikiniPrice && bikini) bikiniPrice.textContent = "$" + Number(bikini.price || 0).toFixed(2);
+  if (tracksuitPrice && tracksuit) tracksuitPrice.textContent = "$" + Number(tracksuit.price || 0).toFixed(2);
+}
+
+function openModal(title, bodyHtml) {
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalBody").innerHTML = bodyHtml;
+  document.getElementById("modalBg").classList.add("show");
+}
+
+document.getElementById("addItemBtn").onclick = () => {
+  currentEdit = "new-item";
+  openModal("Add New Item", `
+    <div class="field"><label>Item name</label><input id="newName" placeholder="e.g. Hoodie — Black"></div>
+    <div class="field"><label>Price</label><input id="newPrice" type="number" step="0.01" value="50"></div>
+    <div class="field"><label>Starting stock</label><input id="newStock" type="number" value="10"></div>
+    <div class="field"><label>Image</label><input type="file" id="newImg" accept="image/*"></div>
+  `);
 };
-document.getElementById("addItemBtn").style.display="none";
-document.getElementById("addTestOrder").onclick=()=>alert("Test orders are not connected to the live store order system.");
-document.getElementById("orderSearch").disabled=true;
-document.getElementById("statusFilter").disabled=true;
-document.getElementById("ordersBody").innerHTML='<tr><td colspan="6" style="padding:14px;color:#cbb89a">Order management is not connected in this test admin.</td></tr>';
-loadLiveData();
+
+document.querySelectorAll("[data-edit]").forEach(el => {
+  el.onclick = (e) => {
+    e.stopPropagation();
+    const type = el.dataset.edit;
+    currentEdit = type;
+    if (type.includes("price")) {
+      const productKey = type.startsWith("bikini") ? "Bikini" : "Tracksuit";
+      const currentProduct = inventory.find(item => item.name.toLowerCase().startsWith(productKey.toLowerCase()));
+      openModal("Change " + productKey + " Price", `<div class="field"><label>New price ($)</label><input id="editValue" type="number" min="0" step="0.01" value="${currentProduct ? Number(currentProduct.price || 0).toFixed(2) : "50.00"}"></div>`);
+    } else if (type === "video") {
+      openModal("Change Video", `
+        <div class="field"><label>Main video file</label><input id="editValue" value="/video5.mp4"></div>
+        <div class="field"><label>Or upload new video</label><input type="file" id="editFile" accept="video/*"></div>
+      `);
+    } else {
+      openModal("Upload / Change Image", `
+        <div class="field"><label>Current filename or new name</label><input id="editValue" placeholder="image.jpg"></div>
+        <div class="field"><label>Upload new picture</label><input type="file" id="editFile" accept="image/*"></div>
+      `);
+    }
+  };
+});
+
+document.getElementById("modalClose").onclick = () => document.getElementById("modalBg").classList.remove("show");
+document.getElementById("modalCancel").onclick = () => document.getElementById("modalBg").classList.remove("show");
+document.getElementById("modalBg").onclick = e => { if (e.target.id === "modalBg") document.getElementById("modalBg").classList.remove("show"); };
+
+document.getElementById("modalSave").onclick = () => {
+  const val = document.getElementById("editValue")?.value;
+  if (currentEdit === "new-item") {
+    const name = document.getElementById("newName").value.trim();
+    if (!name) return alert("Enter a name");
+    inventory.push({name, price: Number(document.getElementById("newPrice").value || 50), stock: Number(document.getElementById("newStock").value || 10)});
+    renderInventory();
+  } else if (currentEdit && currentEdit.includes("price")) {
+    const price = Number(val);
+    if (val === "" || !Number.isFinite(price) || price < 0) return alert("Enter a valid price of $0 or more.");
+    const productKey = currentEdit.startsWith("bikini") ? "Bikini" : "Tracksuit";
+    inventory.forEach(item => {
+      if (item.name.toLowerCase().startsWith(productKey.toLowerCase())) item.price = Math.round(price * 100) / 100;
+    });
+    updatePreviewPrices();
+    renderInventory();
+    saveTestData();
+  }
+  document.getElementById("modalBg").classList.remove("show");
+  document.getElementById("submitStatus").textContent = "Change applied locally. Click Submit Changes when ready.";
+};
+
+document.getElementById("submitAll").onclick = () => {
+  saveTestData();
+  updatePreviewPrices();
+  document.getElementById("submitStatus").textContent = "Test changes saved in this browser only. Nothing was sent to a server.";
+  alert("Saved for testing in this browser only.");
+};
+
+document.getElementById("saveInv").onclick = () => {saveTestData();alert("Inventory saved in this browser only.");};
+renderInventory();
+updatePreviewPrices();
+renderOrders();
+renderMediaItems();
 </script>
 </body>
 </html>
