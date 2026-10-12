@@ -59,10 +59,9 @@ body{margin:0;background:#0a0612;color:#e4c56a;font-family:Arial,Helvetica,sans-
 .media-item .thumb-preview{width:100%;height:100px;object-fit:contain;background:#15121b;border-radius:6px;margin:6px 0}
 .media-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .media-note{font-size:12px;color:#cbb89a;line-height:1.5}
-@media(max-width:600px){.inv-row{flex-wrap:wrap}.media-list{grid-template-columns:1fr}}
-
 .submit-bar{position:sticky;bottom:0;background:#100b19;padding:12px;text-align:center;border-top:1px solid #e4c56a;margin-top:16px}
 @media(max-width:900px){.grid-2{grid-template-columns:1fr}.preview-page{flex-direction:column}.preview-right{min-height:220px}}
+@media(max-width:600px){.inv-row{flex-wrap:wrap}.media-list{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -79,7 +78,8 @@ body{margin:0;background:#0a0612;color:#e4c56a;font-family:Arial,Helvetica,sans-
       <div id="inventoryList"></div>
       <button class="btn primary" style="width:100%;margin-top:12px" id="addItemBtn">+ Add New Item</button>
       <button class="btn" style="width:100%;margin-top:8px" id="saveInv">Save Inventory</button>
-    </div>    <div class="card">
+    </div>
+    <div class="card">
       <h2>Store Overview</h2>
       <div style="display:flex;gap:12px">
         <div style="flex:1;background:#0a0612;border:1px solid #333;border-radius:8px;padding:12px;text-align:center">Products<br><strong id="prodCount">2</strong></div>
@@ -104,18 +104,18 @@ body{margin:0;background:#0a0612;color:#e4c56a;font-family:Arial,Helvetica,sans-
     <p class="status">TEST MODE — orders and edits are saved only in this browser. No payments, emails, or real customer records are connected.</p>
   </div>
 
-    <div class="card" id="mediaManager">
-      <h2>Videos &amp; Thumbnails</h2>
-      <p class="media-note">Current video files from the site are listed below. Edit file paths, attach a thumbnail, or add another video entry. Save stores these settings in this browser for testing; uploading files here does not publish them to the website.</p>
-      <div id="mediaList" class="media-list"></div>
-      <button class="btn primary" type="button" id="addMediaBtn" style="margin-top:14px">+ Add Video</button>
-      <button class="btn" type="button" id="saveMediaBtn" style="margin-top:14px">Save Videos &amp; Thumbnails</button>
-      <p class="status" id="mediaStatus">Current site video: /video5.mp4. Additional repository video: /vid.mp4.</p>
-    </div>
-    <div class="submit-bar">
-      <button class="btn primary" id="submitAll" style="font-size:16px;padding:12px 32px">Submit Changes</button>
-      <div class="status" id="submitStatus">Changes stay local until you commit to GitHub.</div>
-    </div>
+  <div class="card" id="mediaManager">
+    <h2>Videos &amp; Thumbnails</h2>
+    <p class="media-note">Current video files from the site are listed below. Edit file paths, attach a thumbnail, or add another video entry. Save stores these settings in this browser for testing; uploading files here does not publish them to the website.</p>
+    <div id="mediaList" class="media-list"></div>
+    <button class="btn primary" type="button" id="addMediaBtn" style="margin-top:14px">+ Add Video</button>
+    <button class="btn" type="button" id="saveMediaBtn" style="margin-top:14px">Save Videos &amp; Thumbnails</button>
+    <p class="status" id="mediaStatus">Current site video: /video5.mp4. Additional repository video: /vid.mp4.</p>
+  </div>
+
+  <div class="submit-bar">
+    <button class="btn primary" id="submitAll" style="font-size:16px;padding:12px 32px">Submit Changes</button>
+    <div class="status" id="submitStatus">Changes stay local until you commit to GitHub.</div>
   </div>
 </div>
 
@@ -146,17 +146,17 @@ let currentEdit = null;
 let testOrders = JSON.parse(localStorage.getItem("r4r_test_orders") || "null") || [];
 function saveTestData(){localStorage.setItem("r4r_test_inventory",JSON.stringify(inventory));localStorage.setItem("r4r_test_orders",JSON.stringify(testOrders));}
 function renderOrders(){
- const q=(document.getElementById("orderSearch").value||"").toLowerCase();
- const status=document.getElementById("statusFilter").value;
- const body=document.getElementById("ordersBody");
- const rows=testOrders.filter(o=>(status==="All statuses"||o.status===status)&&[o.id,o.customer,o.tracking,o.status].join(" ").toLowerCase().includes(q));
- body.innerHTML=rows.map((o,i)=>`<tr style="border-bottom:1px solid #222">
- <td style="padding:6px"><strong>${o.customer} (TEST)</strong><br>${o.id}</td><td>${o.date}</td><td>${Number(o.total).toFixed(2)}</td>
- <td><select data-order="${o.id}" data-field="status" style="padding:5px;background:#07040f;color:#fff;border:1px solid #6b5a2c;border-radius:5px">${["Pending","Processing","Shipped","Completed","Cancelled"].map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select></td>
- <td><input data-order="${o.id}" data-field="tracking" placeholder="Tracking #" value="${o.tracking||""}" style="width:110px;padding:5px;background:#07040f;color:#fff;border:1px solid #6b5a2c;border-radius:5px"></td>
- <td><button class="btn small danger" data-delete-order="${o.id}">Delete</button></td></tr>`).join("") || '<tr><td colspan="6" style="padding:14px;color:#cbb89a">No test orders match. Use + Test Order to create one.</td></tr>';
- body.querySelectorAll("[data-order]").forEach(el=>el.onchange=()=>{const o=testOrders.find(x=>x.id===el.dataset.order);if(o){o[el.dataset.field]=el.value;saveTestData();renderOrders();}});
- body.querySelectorAll("[data-delete-order]").forEach(el=>el.onclick=()=>{testOrders=testOrders.filter(o=>o.id!==el.dataset.deleteOrder);saveTestData();renderOrders();});
+  const q=(document.getElementById("orderSearch").value||"").toLowerCase();
+  const status=document.getElementById("statusFilter").value;
+  const body=document.getElementById("ordersBody");
+  const rows=testOrders.filter(o=>(status==="All statuses"||o.status===status)&&[o.id,o.customer,o.tracking,o.status].join(" ").toLowerCase().includes(q));
+  body.innerHTML=rows.map((o,i)=>`<tr style="border-bottom:1px solid #222">
+    <td style="padding:6px"><strong>${o.customer} (TEST)</strong><br>${o.id}</td><td>${o.date}</td><td>${Number(o.total).toFixed(2)}</td>
+    <td><select data-order="${o.id}" data-field="status" style="padding:5px;background:#07040f;color:#fff;border:1px solid #6b5a2c;border-radius:5px">${["Pending","Processing","Shipped","Completed","Cancelled"].map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select></td>
+    <td><input data-order="${o.id}" data-field="tracking" placeholder="Tracking #" value="${o.tracking||""}" style="width:110px;padding:5px;background:#07040f;color:#fff;border:1px solid #6b5a2c;border-radius:5px"></td>
+    <td><button class="btn small danger" data-delete-order="${o.id}">Delete</button></td></tr>`).join("") || '<tr><td colspan="6" style="padding:14px;color:#cbb89a">No test orders match. Use + Test Order to create one.</td></tr>';
+  body.querySelectorAll("[data-order]").forEach(el=>el.onchange=()=>{const o=testOrders.find(x=>x.id===el.dataset.order);if(o){o[el.dataset.field]=el.value;saveTestData();renderOrders();}});
+  body.querySelectorAll("[data-delete-order]").forEach(el=>el.onclick=()=>{testOrders=testOrders.filter(o=>o.id!==el.dataset.deleteOrder);saveTestData();renderOrders();});
 }
 document.getElementById("orderSearch").addEventListener("input",renderOrders);
 document.getElementById("statusFilter").addEventListener("change",renderOrders);
@@ -293,8 +293,8 @@ function renderInventory() {
   });
 }
 function updatePreviewPrices() {
-  const bikini = inventory.find(item => /^Bikini\\s*[—-]/i.test(item.name));
-  const tracksuit = inventory.find(item => /^Tracksuit\\s*[—-]/i.test(item.name));
+  const bikini = inventory.find(item => /^Bikini\s*[—-]/i.test(item.name));
+  const tracksuit = inventory.find(item => /^Tracksuit\s*[—-]/i.test(item.name));
   const bikiniPrice = document.querySelector('[data-edit="bikini-price"]');
   const tracksuitPrice = document.querySelector('[data-edit="tracksuit-price"]');
   if (bikiniPrice && bikini) bikiniPrice.textContent = "$" + Number(bikini.price || 0).toFixed(2);
