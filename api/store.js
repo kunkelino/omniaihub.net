@@ -3,8 +3,8 @@ const { get, put } = require("@vercel/blob");
 const DATA_PATH = "sample-store/store-data.json";
 const DEFAULT_DATA = {
   products: [
-    { id:"bikini", name:"Bikini", price:50, inventory:42, image:"bikini-model-black-yellow.jpg", notes:"Available in six colors", variantInventory:{} },
-    { id:"tracksuit", name:"Tracksuit", price:50, inventory:28, image:"tracksuit-black-front (1).jpg", notes:"Available in black and grey", variantInventory:{} }
+    { id:"bikini", name:"Bikini", price:50, cost:0, inventory:42, image:"bikini-model-black-yellow.jpg", description:"", colors:["Black / Yellow","White / Black","Red / White","Royal Blue","Pink / Black","Purple / White"], sizes:["XS","S","M","L","XL","XXL"], notes:"Available in six colors", variantInventory:{} },
+    { id:"tracksuit", name:"Tracksuit", price:50, cost:0, inventory:28, image:"tracksuit-black-front (1).jpg", description:"", colors:["Black","Grey"], sizes:["XS","S","M","L","XL","XXL"], notes:"Available in black and grey", variantInventory:{} }
   ],
   orders: [],
   shipping:{standard:5.99,priority:10.99,freeOver:250}
@@ -16,10 +16,7 @@ async function readData(){
     if(!result)return structuredClone(DEFAULT_DATA);
     const data=JSON.parse(await new Response(result.stream).text());
     const currentProducts=Array.isArray(data.products)?data.products:[];
-    data.products=DEFAULT_DATA.products.map(def=>{
-      const old=currentProducts.find(p=>p.id===def.id)||{};
-      return {...def,...old,variantInventory:old.variantInventory&&typeof old.variantInventory==="object"?old.variantInventory:{}};
-    });
+    data.products=currentProducts.map(p=>({...{cost:0,description:"",colors:[],sizes:[],variantInventory:{}},...p,colors:Array.isArray(p.colors)?p.colors:[],sizes:Array.isArray(p.sizes)?p.sizes:[],variantInventory:p.variantInventory&&typeof p.variantInventory==="object"?p.variantInventory:{}}));
     data.orders=Array.isArray(data.orders)?data.orders:[];
     data.shipping={...DEFAULT_DATA.shipping,...(data.shipping||{}),standard:5.99,priority:10.99};
     return data;
