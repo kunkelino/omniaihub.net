@@ -15,6 +15,10 @@ async function readData(){
     const result=await get(DATA_PATH,{access:"private",useCache:false});
     if(!result)return DEFAULT_DATA;
     const data=JSON.parse(await new Response(result.stream).text());
+    // Keep existing orders, but ensure this backend has the actual Real 4 Real products.
+    const currentProducts=Array.isArray(data.products)?data.products:[];
+    data.products=DEFAULT_DATA.products.map(defaultProduct=>currentProducts.find(p=>p.id===defaultProduct.id)||defaultProduct);
+    data.orders=Array.isArray(data.orders)?data.orders:[];
     data.shipping=data.shipping||{};
     data.shipping.standard=5.99;
     data.shipping.priority=10.99;
