@@ -36,7 +36,7 @@ h3{font-size:16px;margin:0 0 8px;color:var(--gold)}
 .field input,.field select,.search{width:100%;background:#07040f;color:#fff;border:1px solid #6b5a2c;border-radius:6px;padding:9px}
 .saveinventory{width:100%;margin-top:13px}
 .tablewrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13px}.inventory-table{min-width:430px}.inventory-table th,.inventory-table td{padding:9px 7px}.inventory-table input{width:88px;max-width:100%;background:#07040f;color:#fff;border:1px solid #6b5a2c;border-radius:6px;padding:8px}.inventory-table .inv-stock{width:72px}
 th,td{text-align:left;padding:11px 8px;border-bottom:1px solid #382d22;vertical-align:middle}
 th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
 .customer{color:var(--gold);text-decoration:underline;text-underline-offset:3px;background:none;border:0;padding:0;cursor:pointer;font-weight:700;text-align:left}
@@ -101,38 +101,35 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04
   <aside class="rightcol">
     <section class="card">
       <h2>Inventory</h2>
-      <p class="muted">Current stock and units sold by product. Adjust the preview values and save them in this browser.</p>
-      <div class="product">
-        <div class="producttop"><span class="productname">Bikini</span><span class="pill" id="bikiniSummary">42 in stock</span></div>
-        <div class="stockline">
-          <div class="field"><label for="bikiniStock">In stock</label><input type="number" id="bikiniStock" min="0" step="1" value="42"></div>
-          <div class="field"><label for="bikiniSold">Units sold</label><input type="number" id="bikiniSold" min="0" step="1" value="0"></div>
-        </div>
+      <p class="muted">Set the price and available quantity for each color. Save your changes to update the Store preview in this browser.</p>
+      <div class="tablewrap">
+        <table class="inventory-table">
+          <thead><tr><th>Product / Color</th><th>Price ($)</th><th>In stock</th></tr></thead>
+          <tbody>
+            <tr><td>Bikini — Black / Yellow</td><td><input class="inv-price" id="price_bikini_black_yellow" type="number" min="0" step=".01" value="50.00" aria-label="Black yellow bikini price"></td><td><input class="inv-stock" id="stock_bikini_black_yellow" type="number" min="0" step="1" value="7" aria-label="Black yellow bikini stock"></td></tr>
+            <tr><td>Bikini — White / Black</td><td><input class="inv-price" id="price_bikini_white_black" type="number" min="0" step=".01" value="50.00" aria-label="White black bikini price"></td><td><input class="inv-stock" id="stock_bikini_white_black" type="number" min="0" step="1" value="7" aria-label="White black bikini stock"></td></tr>
+            <tr><td>Bikini — Red / White</td><td><input class="inv-price" id="price_bikini_red_white" type="number" min="0" step=".01" value="50.00" aria-label="Red white bikini price"></td><td><input class="inv-stock" id="stock_bikini_red_white" type="number" min="0" step="1" value="7" aria-label="Red white bikini stock"></td></tr>
+            <tr><td>Bikini — Royal Blue</td><td><input class="inv-price" id="price_bikini_royal_blue" type="number" min="0" step=".01" value="50.00" aria-label="Royal blue bikini price"></td><td><input class="inv-stock" id="stock_bikini_royal_blue" type="number" min="0" step="1" value="7" aria-label="Royal blue bikini stock"></td></tr>
+            <tr><td>Bikini — Pink / Black</td><td><input class="inv-price" id="price_bikini_pink_black" type="number" min="0" step=".01" value="50.00" aria-label="Pink black bikini price"></td><td><input class="inv-stock" id="stock_bikini_pink_black" type="number" min="0" step="1" value="7" aria-label="Pink black bikini stock"></td></tr>
+            <tr><td>Bikini — Purple / White</td><td><input class="inv-price" id="price_bikini_purple_white" type="number" min="0" step=".01" value="50.00" aria-label="Purple white bikini price"></td><td><input class="inv-stock" id="stock_bikini_purple_white" type="number" min="0" step="1" value="7" aria-label="Purple white bikini stock"></td></tr>
+            <tr><td>Tracksuit — Black</td><td><input class="inv-price" id="price_tracksuit_black" type="number" min="0" step=".01" value="50.00" aria-label="Black tracksuit price"></td><td><input class="inv-stock" id="stock_tracksuit_black" type="number" min="0" step="1" value="14" aria-label="Black tracksuit stock"></td></tr>
+            <tr><td>Tracksuit — Grey</td><td><input class="inv-price" id="price_tracksuit_grey" type="number" min="0" step=".01" value="50.00" aria-label="Grey tracksuit price"></td><td><input class="inv-stock" id="stock_tracksuit_grey" type="number" min="0" step="1" value="14" aria-label="Grey tracksuit stock"></td></tr>
+          </tbody>
+        </table>
       </div>
-      <div class="product">
-        <div class="producttop"><span class="productname">Tracksuit</span><span class="pill" id="trackSummary">28 in stock</span></div>
-        <div class="stockline">
-          <div class="field"><label for="trackStock">In stock</label><input type="number" id="trackStock" min="0" step="1" value="28"></div>
-          <div class="field"><label for="trackSold">Units sold</label><input type="number" id="trackSold" min="0" step="1" value="0"></div>
-        </div>
-      </div>
-      <button class="btn primary saveinventory" id="saveInventory">Save Inventory Preview</button>
+      <button class="btn primary saveinventory" id="saveInventory">Save Inventory Changes</button>
       <div class="statusline" id="inventoryStatus" aria-live="polite"></div>
     </section>
 
     <section class="card">
       <h2>Store Settings</h2>
       <div class="product">
-        <div class="field"><label for="bikiniPrice">Bikini price ($)</label><input type="number" id="bikiniPrice" min="0" step=".01" value="50.00"></div>
-        <div class="field"><label for="trackPrice">Tracksuit price ($)</label><input type="number" id="trackPrice" min="0" step=".01" value="50.00"></div>
-      </div>
-      <div class="product">
         <div class="field"><label for="standardShip">Standard shipping ($)</label><input type="number" id="standardShip" min="0" step=".01" value="5.99"></div>
         <div class="field"><label for="priorityShip">Priority shipping ($)</label><input type="number" id="priorityShip" min="0" step=".01" value="10.99"></div>
       </div>
-      <button class="btn primary saveinventory" id="saveSettings">Save Settings Preview</button>
+      <button class="btn primary saveinventory" id="saveSettings">Save Shipping Settings</button>
       <div class="statusline" id="settingsStatus" aria-live="polite"></div>
-      <p class="muted small">Saving these settings updates the Store preview in this same browser. This demo does not publish shared settings to other devices.</p>
+      <p class="muted small">Shipping changes update the Store preview in this browser. They are not yet shared with customers on other devices.</p>
     </section>
   </aside>
 </section>
@@ -160,41 +157,62 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04
   if(sessionStorage.getItem("r4r-admin_ok")!=="1"){location.replace("index.html");return;}
   $("storeLink").addEventListener("click",()=>location.href="real4real-store.html");
 
-  const defaults={
-    inventory:{bikiniStock:42,bikiniSold:0,trackStock:28,trackSold:0},
-    settings:{bikiniPrice:"50.00",trackPrice:"50.00",standardShip:"5.99",priorityShip:"10.99"}
+  const defaultProducts={
+    bikini_black_yellow:{price:50,stock:7},bikini_white_black:{price:50,stock:7},
+    bikini_red_white:{price:50,stock:7},bikini_royal_blue:{price:50,stock:7},
+    bikini_pink_black:{price:50,stock:7},bikini_purple_white:{price:50,stock:7},
+    tracksuit_black:{price:50,stock:14},tracksuit_grey:{price:50,stock:14}
   };
   const readSaved=(key,fallback)=>{try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(_){return fallback}};
-  const inventory=readSaved("r4r_admin_inventory",defaults.inventory);
-  const settings=readSaved("r4r_admin_settings",defaults.settings);
-  Object.keys(inventory).forEach(k=>{if($(k))$(k).value=inventory[k]});
-  Object.keys(settings).forEach(k=>{if($(k))$(k).value=settings[k]});
+  const savedInventory=readSaved("r4r_admin_inventory",null);
+  const products={};
+  Object.keys(defaultProducts).forEach(key=>{
+    const item=savedInventory&&savedInventory.products&&savedInventory.products[key];
+    const isBikini=key.startsWith("bikini_");
+    const oldStock=isBikini?Math.floor(42/6):Math.floor(28/2);
+    products[key]={
+      price:item&&Number.isFinite(Number(item.price))?Math.max(0,Number(item.price)):50,
+      stock:item&&Number.isFinite(Number(item.stock))?Math.max(0,Math.floor(Number(item.stock))):oldStock
+    };
+  });
+  const oldSettings=readSaved("r4r_admin_settings",{standardShip:"5.99",priorityShip:"10.99"});
+  $("standardShip").value=oldSettings.standardShip??"5.99";
+  $("priorityShip").value=oldSettings.priorityShip??"10.99";
+  Object.keys(products).forEach(key=>{$("price_"+key).value=products[key].price.toFixed(2);$("stock_"+key).value=products[key].stock});
 
-  // Fictional example order so the detail popup can be previewed before a real order system exists.
   let orders=readSaved("r4r_admin_demo_orders",[
-    {id:"DEMO-1001",name:"Alex Morgan (DEMO)",date:"Example only",email:"alex@example.invalid",phone:"Not provided",address:"Example address — not a real customer",city:"Demo City",state:"MA",zip:"00000",items:"Bikini — Royal Blue / Size M × 1",subtotal:50,shipping:5.99,total:55.99,status:"Pending",tracking:""}
+    {id:"DEMO-1001",name:"Alex Morgan (DEMO)",date:"Example only",email:"alex@example.invalid",phone:"Not provided",address:"Fictional address",city:"Demo City",state:"MA",zip:"00000",items:"Bikini — Royal Blue / Size M × 1",subtotal:50,shipping:5.99,total:55.99,status:"Pending",tracking:""}
   ]);
+  const extraSamples=[
+    {id:"DEMO-1002",name:"Jordan Taylor (DEMO)",date:"Example only",email:"jordan@example.invalid",phone:"Not provided",address:"Fictional address",city:"Demo City",state:"MA",zip:"00000",items:"Tracksuit — Black / Size L × 1",subtotal:50,shipping:10.99,total:60.99,status:"Processing",tracking:""},
+    {id:"DEMO-1003",name:"Casey Reed (DEMO)",date:"Example only",email:"casey@example.invalid",phone:"Not provided",address:"Fictional address",city:"Demo City",state:"MA",zip:"00000",items:"Bikini — Red / White / Size S × 1",subtotal:50,shipping:5.99,total:55.99,status:"Pending",tracking:""},
+    {id:"DEMO-1004",name:"Morgan Lee (DEMO)",date:"Example only",email:"morgan@example.invalid",phone:"Not provided",address:"Fictional address",city:"Demo City",state:"MA",zip:"00000",items:"Tracksuit — Grey / Size M × 1",subtotal:50,shipping:5.99,total:55.99,status:"Shipped",tracking:"DEMO-TRACK-004"}
+  ];
+  extraSamples.forEach(sample=>{if(!orders.some(o=>o.id===sample.id))orders.push(sample)});
   let activeOrderId=null;
 
   function saveLocal(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){return false}}
-  function intValue(id){const n=Number($(id).value);return Number.isFinite(n)&&n>=0?Math.floor(n):0}
+  function numberValue(id){const n=Number($(id).value);return Number.isFinite(n)&&n>=0?n:0}
   function money(n){return "$"+Number(n).toFixed(2)}
   function renderInventory(){
-    $("bikiniSummary").textContent=intValue("bikiniStock")+" in stock";
-    $("trackSummary").textContent=intValue("trackStock")+" in stock";
-    $("totalStock").textContent=intValue("bikiniStock")+intValue("trackStock");
-    $("totalSold").textContent=intValue("bikiniSold")+intValue("trackSold");
+    $("totalStock").textContent=Object.keys(products).reduce((sum,key)=>sum+Math.floor(numberValue("stock_"+key)),0);
+    $("totalSold").textContent=Object.values(products).reduce((sum,p)=>sum+(Number(p.sold)||0),0);
   }
-  ["bikiniStock","bikiniSold","trackStock","trackSold"].forEach(id=>$(id).addEventListener("input",renderInventory));
+  Object.keys(products).forEach(key=>["price_"+key,"stock_"+key].forEach(id=>$(id).addEventListener("input",renderInventory)));
   $("saveInventory").addEventListener("click",()=>{
-    const v={bikiniStock:intValue("bikiniStock"),bikiniSold:intValue("bikiniSold"),trackStock:intValue("trackStock"),trackSold:intValue("trackSold")};
-    const ok=saveLocal("r4r_admin_inventory",v);renderInventory();
-    $("inventoryStatus").textContent=ok?"Inventory preview saved in this browser.":"Could not save in this browser.";
+    const updated={products:{}};
+    Object.keys(products).forEach(key=>{
+      updated.products[key]={price:Number(numberValue("price_"+key).toFixed(2)),stock:Math.floor(numberValue("stock_"+key))};
+      products[key]=updated.products[key];
+    });
+    const ok=saveLocal("r4r_admin_inventory",updated);
+    renderInventory();
+    $("inventoryStatus").textContent=ok?"Inventory saved. Refresh or reopen Store Preview in this same browser to see changes.":"Could not save inventory in this browser.";
   });
   $("saveSettings").addEventListener("click",()=>{
-    const v={};["bikiniPrice","trackPrice","standardShip","priorityShip"].forEach(id=>v[id]=Math.max(0,Number($(id).value)||0).toFixed(2));
-    const ok=saveLocal("r4r_admin_settings",v);
-    $("settingsStatus").textContent=ok?"Settings preview saved in this browser.":"Could not save in this browser.";
+    const value={standardShip:numberValue("standardShip").toFixed(2),priorityShip:numberValue("priorityShip").toFixed(2)};
+    const ok=saveLocal("r4r_admin_settings",value);
+    $("settingsStatus").textContent=ok?"Shipping settings saved for the Store preview in this browser.":"Could not save settings in this browser.";
   });
 
   function renderOrders(){
