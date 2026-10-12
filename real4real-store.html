@@ -87,7 +87,7 @@ document.querySelectorAll(".add-btn").forEach(function(btn){btn.addEventListener
   const qty=Math.max(1,Math.min(Number(qtyEl.max)||99,parseInt(qtyEl.value,10)||1));
   if(!size){alert("Please select a size.");return;}
   const name=product==="bikini"?"Bikini":"Tracksuit";
-  cartItems.push({name,color:colors[product],size,qty,price});
+  cartItems.push({id:product,name,color:colors[product],size,qty,price});
   cartTotal+=price*qty;
   document.getElementById("subtotal").textContent="$"+cartTotal.toFixed(2);
   document.getElementById("pay").disabled=false;
@@ -128,7 +128,50 @@ document.getElementById("pay").addEventListener("click",function(){
   window.scrollTo(0,0);
 });
 document.getElementById("back").addEventListener("click",function(){document.getElementById("checkout").classList.remove("show");document.getElementById("shop").style.display="flex";renderMainCart();});
-document.getElementById("placeOrder").addEventListener("click",function(){const form=document.getElementById("shippingForm");if(!form.checkValidity()){form.reportValidity();return;}alert("Practice order placed. This demo did not send your information or process a payment.");});
+document.getElementById("placeOrder").addEventListener("click",async function(){
+  const form=document.getElementById("shippingForm");
+  if(!form.checkValidity()){form.reportValidity();return;}
+  const button=this;
+  button.disabled=true;
+  button.textContent="Submitting order…";
+  const customer={
+    name:document.getElementById("name").value.trim(),
+    email:document.getElementById("email").value.trim(),
+    phone:document.getElementById("phone").value.trim(),
+    address:document.getElementById("address").value.trim(),
+    city:document.getElementById("city").value.trim(),
+    state:document.getElementById("state").value.trim(),
+    zip:document.getElementById("zip").value.trim()
+  };
+  try{
+    const response=await fetch("/api/store?action=order",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        items:cartItems.map(item=>({id:item.id,quantity:item.qty,color:item.color,size:item.size})),
+        customer,
+        shippingMethod:shippingCost===10.99?"priority":"standard",
+        paymentMethod:"practice"
+      })
+    });
+    const result=await response.json();
+    if(!response.ok)throw new Error(result.error||"Could not save the order.");
+    alert("Practice order saved! Order number: "+result.order.id+"\nIt should now appear in the Admin page. No payment was processed.");
+    cartItems=[];
+    cartTotal=0;
+    document.getElementById("subtotal").textContent="$0.00";
+    document.getElementById("pay").disabled=true;
+    form.reset();
+    document.getElementById("checkout").classList.remove("show");
+    document.getElementById("shop").style.display="flex";
+    renderMainCart();
+  }catch(error){
+    alert("Order was NOT saved: "+error.message+"\nPlease try again. Do not assume the order went through.");
+  }finally{
+    button.disabled=false;
+    button.textContent="Place Practice Order";
+  }
+});
 const video=document.getElementById("siteVideo");
 video.muted=false;
 const start=()=>{const p=video.play();if(p&&p.catch)p.catch(()=>{});};
