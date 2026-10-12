@@ -4,9 +4,11 @@ const DATA_PATH = "sample-store/store-data.json";
 const DEFAULT_DATA = {
   products: [
     { id:"bikini", name:"Bikini", price:50, cost:0, inventory:42, image:"bikini-model-black-yellow.jpg", description:"", colors:["Black / Yellow","White / Black","Red / White","Royal Blue","Pink / Black","Purple / White"], sizes:["XS","S","M","L","XL","XXL"], notes:"Available in six colors", variantInventory:{} },
-    { id:"tracksuit", name:"Tracksuit", price:50, cost:0, inventory:28, image:"tracksuit-black-front (1).jpg", description:"", colors:["Black","Grey"], sizes:["XS","S","M","L","XL","XXL"], notes:"Available in black and grey", variantInventory:{} }
+    { id:"tracksuit", name:"Tracksuit", price:50, cost:0, inventory:28, image:"tracksuit-black-front (1).jpg", description:"", colors:["Black","Grey"], sizes:["XS","S","M","L","XL","XXL"], notes:"Available in black and grey", variantInventory:{} },
+    { id:"newtrack", name:"Tracksuit (New Style)", price:65, cost:0, inventory:20, image:"blacknew.jpeg", description:"", colors:["Black","Grey"], sizes:["XS","S","M","L","XL","XXL"], notes:"Available in black and grey", variantInventory:{} }
   ],
   orders: [],
+  media:[{id:"media-1",title:"Main Store Video",src:"/video5.mp4",thumbnail:"r4r.png"},{id:"media-2",title:"Additional Video",src:"/vid.mp4",thumbnail:"mark.png"}],
   shipping:{standard:5.99,priority:10.99,freeOver:250}
 };
 
@@ -17,7 +19,9 @@ async function readData(){
     const data=JSON.parse(await new Response(result.stream).text());
     const currentProducts=Array.isArray(data.products)?data.products:[];
     data.products=currentProducts.map(p=>({...{cost:0,description:"",colors:[],sizes:[],variantInventory:{}},...p,colors:Array.isArray(p.colors)?p.colors:[],sizes:Array.isArray(p.sizes)?p.sizes:[],variantInventory:p.variantInventory&&typeof p.variantInventory==="object"?p.variantInventory:{}}));
+    if(!data.products.some(p=>p.id==="newtrack"))data.products.push(structuredClone(DEFAULT_DATA.products.find(p=>p.id==="newtrack")));
     data.orders=Array.isArray(data.orders)?data.orders:[];
+    data.media=Array.isArray(data.media)?data.media:structuredClone(DEFAULT_DATA.media);
     data.shipping={...DEFAULT_DATA.shipping,...(data.shipping||{}),standard:5.99,priority:10.99};
     return data;
   }catch(error){
@@ -49,17 +53,25 @@ module.exports=async function handler(req,res){
       if(String(req.body?.password||"")!==process.env.STORE_ADMIN_PASSWORD)return res.status(401).json({error:"Incorrect password."});
       return res.status(200).json({ok:true});
     }
-    const adminOnly=(action==="inventory"&&req.method==="PATCH")||(action==="orders"&&(req.method==="GET"||req.method==="PATCH"));
+    const adminOnly=(action==="orders"&&(req.method==="GET"||req.method==="PATCH"));
     if(adminOnly&&!isAdmin(req))return res.status(401).json({error:"Admin login required."});
 
     if(action==="inventory"&&req.method==="GET"){
       const data=await readData();
-      return res.status(200).json({products:data.products,shipping:data.shipping});
+      return res.status(200).json({products:data.products,shipping:data.shipping,media:data.media||[]});
     }
     if(action==="inventory"&&req.method==="PATCH"){
       const data=await readData(),body=req.body||{};
       if(body.shipping){
         data.shipping.freeOver=Math.max(0,Number(body.shipping.freeOver??data.shipping.freeOver??250));
+      }
+      if(Array.isArray(body.media)){
+        data.media=body.media.slice(0,12).map((item,index)=>({
+          id:String(item.id||("media-"+(index+1))).slice(0,80),
+          title:String(item.title||("Video "+(index+1))).slice(0,160),
+          src:String(item.src||"").slice(0,2000),
+          thumbnail:String(item.thumbnail||"").slice(0,2000)
+        })).filter(item=>item.src);
       }
       if(Array.isArray(body.products)&&body.replaceProducts===true){
         const seen=new Set(),next=[];
