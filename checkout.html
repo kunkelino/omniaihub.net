@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Checkout</title>
+<script src="https://js.stripe.com/v3/"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#07040f;color:#e4c56a;font-family:Arial,sans-serif}.wrap{max-width:720px;margin:auto;padding:28px 18px 60px}h1{letter-spacing:.12em;text-align:center}.panel{border:1px solid rgba(228,197,106,.4);border-radius:14px;padding:20px;margin-top:18px;background:#100b19}.field{display:grid;gap:6px;margin:10px 0}input{padding:12px;border-radius:8px;border:1px solid #6b5a2c;background:#07040f;color:#fff;font-size:16px}.line{display:flex;justify-content:space-between;gap:12px;margin:9px 0}.muted{color:#cbb89a}.error{color:#ffb4b4}.success{color:#b7f7c0}.shipping{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ship-option{border:1px solid rgba(228,197,106,.45);border-radius:10px;padding:13px;background:#07040f;color:#e4c56a;text-align:left;cursor:pointer}.ship-option.active{background:#e4c56a;color:#07040f}.ship-option strong{display:block;font-size:16px}.ship-option span{font-size:13px}.payment-grid{display:grid;gap:12px}.pay-option{width:100%;padding:15px;border:1px solid rgba(228,197,106,.55);border-radius:10px;background:#07040f;color:#fff;font-weight:700;font-size:16px;cursor:pointer;text-align:left}.pay-option.active{border-color:#e4c56a;background:#181126}.logos{float:right;display:flex;gap:5px}.logo{background:#fff;color:#111;padding:3px 5px;border-radius:4px;font-size:10px;font-weight:900}.place{width:100%;margin-top:16px;padding:14px;border:1px solid #e4c56a;background:#e4c56a;color:#07040f;border-radius:9px;font-weight:800;font-size:16px;cursor:pointer}.place:disabled{opacity:.5;cursor:not-allowed}.qr-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}.qr-row img{width:130px;height:130px;object-fit:contain;background:#fff;border-radius:8px;padding:6px}@media(max-width:520px){.shipping{grid-template-columns:1fr}}
+*{box-sizing:border-box}body{margin:0;background:#07040f;color:#e4c56a;font-family:Arial,sans-serif}.wrap{max-width:720px;margin:auto;padding:28px 18px 60px}h1{letter-spacing:.12em;text-align:center}.panel{border:1px solid rgba(228,197,106,.4);border-radius:14px;padding:20px;margin-top:18px;background:#100b19}.field{display:grid;gap:6px;margin:10px 0}input{padding:12px;border-radius:8px;border:1px solid #6b5a2c;background:#07040f;color:#fff;font-size:16px}.line{display:flex;justify-content:space-between;gap:12px;margin:9px 0}.muted{color:#cbb89a}.error{color:#ffb4b4}.success{color:#b7f7c0}.shipping{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ship-option{border:1px solid rgba(228,197,106,.45);border-radius:10px;padding:13px;background:#07040f;color:#e4c56a;text-align:left;cursor:pointer}.ship-option.active{background:#e4c56a;color:#07040f}.ship-option strong{display:block;font-size:16px}.ship-option span{font-size:13px}.payment-grid{display:grid;gap:12px}.pay-option{width:100%;padding:15px;border:1px solid rgba(228,197,106,.55);border-radius:10px;background:#07040f;color:#fff;font-weight:700;font-size:16px;cursor:pointer;text-align:left}.pay-option.active{border-color:#e4c56a;background:#181126}.logos{float:right;display:flex;gap:5px}.logo{background:#fff;color:#111;padding:3px 5px;border-radius:4px;font-size:10px;font-weight:900}.place{width:100%;margin-top:16px;padding:14px;border:1px solid #e4c56a;background:#e4c56a;color:#07040f;border-radius:9px;font-weight:800;font-size:16px;cursor:pointer}.place:disabled{opacity:.5;cursor:not-allowed}#embedded-checkout{margin-top:18px}#embedded-checkout:empty{display:none}.qr-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}.qr-row img{width:130px;height:130px;object-fit:contain;background:#fff;border-radius:8px;padding:6px}@media(max-width:520px){.shipping{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -25,8 +26,9 @@
 </div>
 
 <div class="panel"><h2>Secure Payment</h2>
-<p class="muted">Pay securely by credit or debit card through Stripe. Your card details are entered on Stripe's secure checkout page.</p>
-<button class="place" id="place">Continue to Secure Payment</button><p id="msg"></p>
+<p class="muted">Pay securely with Stripe without leaving this website. Your payment details are encrypted and handled by Stripe.</p>
+<button class="place" id="place">Continue to Secure Payment</button>
+<div id="embedded-checkout"></div><p id="msg"></p>
 </div>
 </div>
 <script>
@@ -47,7 +49,7 @@ async function init(){
       localStorage.removeItem("sampleCart");cart=[];
       $("cart").innerHTML="<p class='success'>Payment confirmed. Thank you for your order <strong>"+j.orderId+"</strong>.</p>";
       $("subtotal").textContent="—";$("shippingCost").textContent="—";$("total").textContent="—";
-      $("place").hidden=true;showMessage("Your payment was successful. Your order has been recorded.","success");
+      $("place").hidden=true;$("embedded-checkout").hidden=true;showMessage("Your payment was successful. Your order has been recorded.","success");
       history.replaceState({},document.title,location.pathname);
       return;
     }catch(e){$("place").disabled=false;showMessage(e.message||"Payment verification failed. Contact the store before trying to pay again.","error");}
@@ -81,8 +83,15 @@ $("place").onclick=async()=>{
     const r=await fetch("/api/store?store=cologne&action=create-checkout-session",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
     const j=await r.json();
     if(!r.ok)throw new Error(j.error||"Could not start secure checkout.");
-    if(!j.url)throw new Error("Stripe did not return a checkout link.");
-    window.location.assign(j.url);
+    if(!j.clientSecret)throw new Error("Stripe did not return an embedded checkout session.");
+    if(!j.publishableKey)throw new Error("Stripe publishable key is missing. Add STRIPE_PUBLISHABLE_KEY in Vercel.");
+    if(!window.Stripe)throw new Error("Stripe.js could not load. Check your internet connection and try again.");
+    const stripe=Stripe(j.publishableKey);
+    const checkout=await stripe.initEmbeddedCheckout({clientSecret:j.clientSecret});
+    $("place").hidden=true;
+    $("embedded-checkout").hidden=false;
+    checkout.mount("#embedded-checkout");
+    showMessage("Enter your payment details below to complete your order.");
   }catch(e){$("place").disabled=false;showMessage(e.message||"Could not connect to Stripe. Please try again.","error");}
 };
 init();
