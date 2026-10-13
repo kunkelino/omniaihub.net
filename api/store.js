@@ -141,7 +141,7 @@ module.exports=async function handler(req,res){
     }
     if(action==="settings"&&req.method==="GET"){
       const data=await readData(storeKey);
-      return res.status(200).json({settings:data.settings||{},shipping:data.shipping||{},coupons:data.coupons||[],activity:data.activity||[],products:data.products||[],orders:data.orders||[]});
+      return res.status(200).json({settings:data.settings||{},shipping:data.shipping||{},coupons:data.coupons||[],activity:data.activity||[],products:data.products||[],orders:data.orders||[],webhookConnected:Boolean(data.stripeWebhook?.endpointId&&data.stripeWebhook?.signingSecret),emailConfigured:Boolean(process.env.RESEND_API_KEY)});
     }
     if(action==="settings"&&req.method==="PATCH"){
       const data=await readData(storeKey),body=req.body||{};
