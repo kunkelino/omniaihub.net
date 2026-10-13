@@ -23,6 +23,9 @@ const start=video.play();if(start&&start.catch)start.catch(()=>{video.muted=true
 video.addEventListener("canplay",()=>{if(video.paused)playVideo()});
 
 let products=[];let cart=JSON.parse(localStorage.getItem("sampleCart")||"[]");
+function priceOf(p){return Number(p.displayPrice??p.price??0)}
+function money(v){return "$"+Number(v||0).toFixed(2)}
+async function loadSiteVideo(){try{const r=await fetch("/api/store?store=cologne&action=site-settings");if(!r.ok)return;const d=await r.json();if(d.homeVideoUrl&&video.getAttribute("src")!==d.homeVideoUrl){video.src=d.homeVideoUrl;video.load();playVideo()}}catch(e){}}
 function save(){localStorage.setItem("sampleCart",JSON.stringify(cart))}
 function qty(id){const x=cart.find(i=>i.id===id);return x?x.quantity:0}
 function add(id){
@@ -33,17 +36,17 @@ function add(id){
 function render(){
  const grid=document.getElementById("products");grid.innerHTML="";let total=0,count=0;
  products.forEach(p=>{
-  const q=qty(p.id);total+=p.price*q;count+=q;
+  const q=qty(p.id),price=priceOf(p);total+=price*q;count+=q;
   const card=document.createElement("article");card.className="card";
-  card.innerHTML="<h2>"+p.name+"</h2><img src='"+p.image+"' alt='"+p.name+"'><p class='notes'>"+p.notes+"</p><p class='price'>$"+Number(p.price).toFixed(2)+"</p><span class='stock'>"+p.inventory+" in stock · "+q+" selected</span><button "+(q>=p.inventory?"disabled":"")+">SELECT</button>";
+  card.innerHTML="<h2>"+p.name+"</h2><img src='"+p.image+"' alt='"+p.name+"'><p class='notes'>"+p.notes+"</p><p class='price'>"+(price<Number(p.price)?"<s style='opacity:.65;font-size:.78em'>"+money(p.price)+"</s> ":"")+money(price)+"</p><span class='stock'>"+p.inventory+" in stock · "+q+" selected</span><button "+(q>=p.inventory?"disabled":"")+">SELECT</button>";
   card.querySelector("button").onclick=()=>add(p.id);grid.appendChild(card);
  });
  const picked=document.getElementById("picked");picked.innerHTML=cart.length?"":"Select a cologne";
- cart.forEach(i=>{const p=products.find(x=>x.id===i.id);if(!p)return;const line=document.createElement("div");line.className="picked-line";line.innerHTML="<span>"+p.name+" × "+i.quantity+"</span><span>$"+(p.price*i.quantity).toFixed(2)+"</span>";picked.appendChild(line)});
+ cart.forEach(i=>{const p=products.find(x=>x.id===i.id);if(!p)return;const line=document.createElement("div");line.className="picked-line";line.innerHTML="<span>"+p.name+" × "+i.quantity+"</span><span>"+money(priceOf(p)*i.quantity)+"</span>";picked.appendChild(line)});
  document.getElementById("count").textContent=count;document.getElementById("subtotal").textContent="$"+total.toFixed(2);
  document.getElementById("checkout").style.pointerEvents=count?"auto":"none";document.getElementById("checkout").style.opacity=count?"1":".45";
 }
-async function init(){try{const r=await fetch("/api/store?store=cologne&action=inventory");if(!r.ok)throw new Error();const d=await r.json();products=d.products;document.getElementById("status").textContent="Inventory connected.";render()}catch(e){document.getElementById("status").textContent="Backend storage is not connected yet.";products=[{id:"noir-entree",name:"Noir Entree",price:195,inventory:15,image:"bottle-noir.jpg",notes:"Woody · Smoky · Magnetic"},{id:"velvet-vice",name:"Velvet Vice",price:195,inventory:15,image:"bottle-velvet.jpg",notes:"Spicy · Amber · Bold · Warm"},{id:"midnight-saint",name:"Midnight Saint",price:195,inventory:15,image:"bottle-saint.jpg",notes:"Aromatic · Leather · Smooth"}];render()}}
+async function init(){loadSiteVideo();try{const r=await fetch("/api/store?store=cologne&action=inventory");if(!r.ok)throw new Error();const d=await r.json();products=d.products;document.getElementById("status").textContent="Inventory connected.";render()}catch(e){document.getElementById("status").textContent="Backend storage is not connected yet.";products=[{id:"noir-entree",name:"Noir Entree",price:195,displayPrice:195,inventory:15,image:"bottle-noir.jpg",notes:"Woody · Smoky · Magnetic"},{id:"velvet-vice",name:"Velvet Vice",price:195,displayPrice:195,inventory:15,image:"bottle-velvet.jpg",notes:"Spicy · Amber · Bold · Warm"},{id:"midnight-saint",name:"Midnight Saint",price:195,displayPrice:195,inventory:15,image:"bottle-saint.jpg",notes:"Aromatic · Leather · Smooth"}];render()}}
 init();
 </script>
 <script src="/copyright.js"></script>
