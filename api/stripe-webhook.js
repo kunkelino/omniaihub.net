@@ -2,7 +2,7 @@ const {get,put}=require("@vercel/blob");
 const crypto=require("crypto");
 const COLOGNE_PATH="cologne-store/store-data.json";
 const DEFAULT_PATH="sample-store/store-data.json";
-const CONFIG_PATH="cologne-store/admin-config.json";
+const CONFIG_PATH="cologne-store/store-data.json";
 const DEFAULTS={
   products:[
     {id:"bikini",name:"Bikini",price:50,cost:0,inventory:42,image:"bikini-model-black-yellow.jpg",description:"",colors:[],sizes:[],variantInventory:{}},
@@ -27,7 +27,7 @@ function verify(raw,header,secret){
   return signatures.some(sig=>{try{return crypto.timingSafeEqual(Buffer.from(sig,"hex"),Buffer.from(expected,"hex"))}catch{return false}});
 }
 async function getSecret(){
-  try{const b=await get(CONFIG_PATH,{access:"private",useCache:false});if(!b)return "";const d=JSON.parse(await new Response(b.stream).text());return d.signingSecret||""}catch{return ""}
+  try{const b=await get(CONFIG_PATH,{access:"private",useCache:false});if(!b)return "";const d=JSON.parse(await new Response(b.stream).text());return d.stripeWebhook?.signingSecret||""}catch{return ""}
 }
 module.exports=async function handler(req,res){
   if(req.method!=="POST")return res.status(405).send("Method not allowed");
