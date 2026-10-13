@@ -49,6 +49,13 @@ async function writeData(data,storeKey="default"){
   return data;
 }
 function money(n){return Math.round(Number(n)*100)/100}
+function effectivePrice(p){const now=Date.now(),start=p.saleStartsAt?Date.parse(p.saleStartsAt):0,end=p.saleEndsAt?Date.parse(p.saleEndsAt):Infinity;const sale=Number(p.salePrice);return Number.isFinite(sale)&&sale>0&&sale<Number(p.price)&&now>=start&&now<=end?sale:Number(p.price)||0}
+function logActivity(data,action,details){data.activity=Array.isArray(data.activity)?data.activity:[];data.activity.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),at:new Date().toISOString(),action:String(action),details:String(details||"").slice(0,500)});data.activity=data.activity.slice(0,500)}
+async function sendCustomerEmail(order,subject,html){
+  if(!process.env.RESEND_API_KEY||!order?.customer?.email)return false;
+  const from=process.env.STORE_EMAIL_FROM||"THEY Cologne Store <orders@omniaihub.net>";
+  try{const r=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+process.env.RESEND_API_KEY,"Content-Type":"application/json"},body:JSON.stringify({from,to:[order.customer.email],subject,html})});if(!r.ok)console.error("Customer email failed:",await r.text());return r.ok}catch(e){console.error("Customer email failed:",e);return false}
+}
 function isAdmin(req){return Boolean(process.env.STORE_ADMIN_PASSWORD)&&req.headers["x-admin-password"]===process.env.STORE_ADMIN_PASSWORD}
 async function notifyOrder(order){
   const url=process.env.STORE_ORDER_WEBHOOK_URL;
