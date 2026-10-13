@@ -1,4 +1,5 @@
 const { get, put } = require("@vercel/blob");
+const crypto = require("crypto");
 
 const DATA_PATH = "sample-store/store-data.json";
 const COLOGNE_DATA_PATH = "cologne-store/store-data.json";
@@ -75,7 +76,7 @@ module.exports=async function handler(req,res){
       if(String(req.body?.password||"")!==process.env.STORE_ADMIN_PASSWORD)return res.status(401).json({error:"Incorrect password."});
       return res.status(200).json({ok:true});
     }
-    const adminOnly=(action==="inventory"&&req.method==="PATCH")||(action==="orders"&&(req.method==="GET"||req.method==="PATCH"))||(action==="settings"&&(req.method==="GET"||req.method==="PATCH"))||(action==="sales"&&req.method==="GET")||(action==="connect-stripe-webhook"&&req.method==="POST");
+    const adminOnly=(action==="inventory"&&req.method==="PATCH")||(action==="orders"&&(req.method==="GET"||req.method==="PATCH"))||(action==="settings"&&(req.method==="GET"||req.method==="PATCH"))||(action==="sales"&&req.method==="GET")||(action==="connect-stripe-webhook"&&req.method==="POST")||(action==="upload-ticket"&&req.method==="POST");
     if(adminOnly&&!isAdmin(req))return res.status(401).json({error:"Admin login required."});
 
     if(action==="inventory"&&req.method==="GET"){
@@ -144,6 +145,12 @@ module.exports=async function handler(req,res){
       return res.status(200).json({order});
     }
 
+    if(action==="upload-ticket"&&req.method==="POST"){
+      if(!process.env.STORE_ADMIN_PASSWORD)return res.status(503).json({error:"Admin password is not configured."});
+      const timestamp=Math.floor(Date.now()/1000),nonce=crypto.randomBytes(12).toString("hex"),payload="media-upload|"+timestamp+"|"+nonce;
+      const signature=crypto.createHmac("sha256",process.env.STORE_ADMIN_PASSWORD).update(payload).digest("hex");
+      return res.status(200).json({ticket:timestamp+"."+nonce+"."+signature});
+    }
     if(action==="site-settings"&&req.method==="GET"){
       const data=await readData("cologne");
       return res.status(200).json({homeVideoUrl:data.settings?.homeVideoUrl||"sample-website.mp4?v=1",homeVideoLabel:data.settings?.homeVideoLabel||"THEY home video"});
