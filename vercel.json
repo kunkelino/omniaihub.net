@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/api/stripe-webhook", "destination": "/api/store?route=stripe-webhook" },
+    { "source": "/api/blob-upload", "destination": "/api/store?route=blob-upload" },
     { "source": "/live", "destination": "/ofn.html" },
     { "source": "/one-from-now", "destination": "/ofn.html" }
   ]
