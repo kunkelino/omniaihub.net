@@ -1,4 +1,5 @@
 const { get, put } = require("@vercel/blob");
+const { handleUpload } = require("@vercel/blob/client");
 const crypto = require("crypto");
 
 const DATA_PATH = "sample-store/store-data.json";
@@ -67,8 +68,73 @@ async function notifyOrder(order){
   }catch(error){console.error("Order notification failed:",error);return false}
 }
 
+
+async function ensureRequestBody(req){
+  if(req.body!==undefined&&req.body!==null){
+    if(Buffer.isBuffer(req.body)){req.rawBody=req.body;try{req.body=JSON.parse(req.rawBody.toString("utf8"))}catch{req.body={}}}
+    else if(typeof req.body==="string"){req.rawBody=Buffer.from(req.body);try{req.body=JSON.parse(req.body)}catch{req.body={}}}
+    return;
+  }
+  const chunks=[];for await(const chunk of req)chunks.push(Buffer.isBuffer(chunk)?chunk:Buffer.from(chunk));
+  req.rawBody=Buffer.concat(chunks);
+  if(req.rawBody.length){try{req.body=JSON.parse(req.rawBody.toString("utf8"))}catch{req.body={}}}else req.body={};
+}
+function validStripeSignature(raw,header,secret){
+  const parts=String(header||"").split(",").map(x=>x.split("=")),timestamp=parts.find(x=>x[0]==="t")?.[1],signatures=parts.filter(x=>x[0]==="v1").map(x=>x[1]);
+  if(!timestamp||Math.abs(Date.now()/1000-Number(timestamp))>300)return false;
+  const expected=crypto.createHmac("sha256",secret).update(timestamp+".").update(raw).digest("hex");
+  return signatures.some(sig=>{try{return crypto.timingSafeEqual(Buffer.from(sig,"hex"),Buffer.from(expected,"hex"))}catch{return false}});
+}
+async function handleStripeWebhook(req,res){
+  if(req.method!=="POST")return res.status(405).send("Method not allowed");
+  try{
+    const config=await readData("cologne"),secret=config.stripeWebhook?.signingSecret||"";
+    if(!secret)return res.status(503).send("Stripe webhook is not configured");
+    const raw=req.rawBody||Buffer.from("");
+    if(!validStripeSignature(raw,req.headers["stripe-signature"],secret))return res.status(400).send("Invalid Stripe signature");
+    const event=JSON.parse(raw.toString("utf8")),obj=event.data?.object||{};
+    if(event.type==="checkout.session.completed"||event.type==="checkout.session.async_payment_succeeded"){
+      if(obj.payment_status!=="paid")return res.status(200).json({received:true,ignored:"payment not yet paid"});
+      const store=obj.metadata?.store==="cologne"?"cologne":"default",data=await readData(store);
+      const order=data.orders.find(o=>o.stripeSessionId===obj.id||o.id===obj.metadata?.orderId);
+      if(!order)return res.status(200).json({received:true,ignored:"order not found"});
+      order.stripePaymentIntentId=typeof obj.payment_intent==="string"?obj.payment_intent:(obj.payment_intent?.id||order.stripePaymentIntentId||"");
+      if(order.paymentStatus!=="Paid"){
+        for(const item of order.items||[]){const p=data.products.find(x=>x.id===item.id);if(!p)continue;p.inventory=Math.max(0,Number(p.inventory||0)-Number(item.quantity||0));const key=String(item.color||"")+"|"+String(item.size||"");if(p.variantInventory&&Object.prototype.hasOwnProperty.call(p.variantInventory,key))p.variantInventory[key]=Math.max(0,Number(p.variantInventory[key]||0)-Number(item.quantity||0));}
+        order.status="Paid";order.paymentStatus="Paid";order.paidAt=new Date().toISOString();logActivity(data,"Payment confirmed",order.id+" through Stripe webhook");await writeData(data,store);
+        await sendCustomerEmail(order,"Order confirmed — "+order.id,"<p>Thank you, "+String(order.customer?.name||"there")+".</p><p>Your payment for order <strong>"+order.id+"</strong> is confirmed.</p><p>Order total: $"+Number(order.total||0).toFixed(2)+".</p>");
+      }else await writeData(data,store);
+    }else if(event.type==="charge.refunded"||event.type==="refund.updated"){
+      const charge=event.type==="charge.refunded"?obj:(obj.charge?obj:null),intent=charge?.payment_intent||obj.payment_intent;
+      if(intent)for(const store of ["cologne","default"]){const data=await readData(store),order=data.orders.find(o=>o.stripePaymentIntentId===intent);if(!order)continue;const fully=event.type==="charge.refunded"&&Number(obj.amount_refunded)>=Number(obj.amount||0);if(event.type==="charge.refunded")order.refundedAmount=Number(obj.amount_refunded||0)/100;order.paymentStatus=fully?"Refunded":"Partially refunded";if(fully)order.status="Refunded";logActivity(data,"Stripe refund event",order.id+" — "+order.paymentStatus);await writeData(data,store);await sendCustomerEmail(order,"Refund update — "+order.id,"<p>Your order <strong>"+order.id+"</strong> has a Stripe refund update. Current payment status: "+order.paymentStatus+".</p>");break}
+    }else if(event.type==="payment_intent.payment_failed"){
+      for(const store of ["cologne","default"]){const data=await readData(store),order=data.orders.find(o=>o.stripePaymentIntentId===obj.id);if(!order)continue;order.paymentStatus="Payment failed";order.status="Payment failed";logActivity(data,"Payment failed",order.id);await writeData(data,store);break}
+    }
+    return res.status(200).json({received:true});
+  }catch(error){console.error("Stripe webhook error:",error);return res.status(500).send("Webhook processing failed")}
+}
+async function handleBlobUpload(req,res){
+  if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});
+  try{
+    const result=await handleUpload({body:req.body,request:req,onBeforeGenerateToken:async(pathname,clientPayload)=>{
+      if(!process.env.STORE_ADMIN_PASSWORD||typeof clientPayload!=="string")throw new Error("Upload authorization expired. Sign in and try again.");
+      const parts=clientPayload.split(".");if(parts.length!==3)throw new Error("Invalid upload authorization.");
+      const timestamp=Number(parts[0]),nonce=parts[1],signature=parts[2];
+      if(!Number.isFinite(timestamp)||Math.abs(Date.now()/1000-timestamp)>300||!/^[a-f0-9]{24}$/.test(nonce))throw new Error("Upload authorization expired.");
+      const expected=crypto.createHmac("sha256",process.env.STORE_ADMIN_PASSWORD).update("media-upload|"+timestamp+"|"+nonce).digest("hex");
+      let valid=false;try{valid=crypto.timingSafeEqual(Buffer.from(signature,"hex"),Buffer.from(expected,"hex"))}catch{}
+      if(!valid)throw new Error("Invalid upload authorization.");
+      return {allowedContentTypes:["image/jpeg","image/png","image/webp","image/gif","video/mp4","video/webm","video/quicktime"],maximumSizeInBytes:209715200,addRandomSuffix:true,tokenPayload:JSON.stringify({fileName:String(pathname||"upload").split("/").pop().replace(/[^a-zA-Z0-9._-]/g,"_").slice(-120)})};
+    }});
+    return res.status(200).json(result);
+  }catch(error){console.error("Media upload token error:",error);return res.status(400).json({error:error.message||"Media upload failed"})}
+}
+
 module.exports=async function handler(req,res){
   try{
+    if(req.method!=="GET"&&req.method!=="HEAD")await ensureRequestBody(req);
+    if(req.query?.route==="stripe-webhook")return await handleStripeWebhook(req,res);
+    if(req.query?.route==="blob-upload")return await handleBlobUpload(req,res);
     const action=String(req.query?.action||"");
     const storeKey=req.query?.store==="cologne"?"cologne":"default";
     if(action==="login"&&req.method==="POST"){
@@ -281,3 +347,5 @@ module.exports=async function handler(req,res){
     return res.status(500).json({error:"Store backend error. Check the Vercel function logs and Blob connection."});
   }
 };
+
+module.exports.config = { api: { bodyParser: false } };
