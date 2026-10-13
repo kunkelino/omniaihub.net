@@ -111,8 +111,9 @@ module.exports=async function handler(req,res){
           }
         }
       }
+      logActivity(data,"Inventory saved","Updated "+(body.products||[]).length+" product records.");
       await writeData(data,storeKey);
-      return res.status(200).json({products:data.products,shipping:data.shipping});
+      return res.status(200).json({products:data.products.map(p=>({...p,displayPrice:effectivePrice(p)})),shipping:data.shipping});
     }
     if(action==="orders"&&req.method==="GET"){
       const data=await readData(storeKey);
@@ -122,9 +123,17 @@ module.exports=async function handler(req,res){
       const data=await readData(storeKey),id=String(req.body?.id||"");
       const order=data.orders.find(o=>o.id===id);
       if(!order)return res.status(404).json({error:"Order not found."});
+      const oldStatus=order.status,oldTracking=order.tracking||"";
       if(req.body.status)order.status=String(req.body.status);
       if(req.body.tracking!==undefined)order.tracking=String(req.body.tracking||"").slice(0,200);
+      logActivity(data,"Order updated",order.id+": "+oldStatus+" → "+order.status+(order.tracking?" (tracking updated)":""));
       await writeData(data,storeKey);
+      if(order.customer?.email&&(order.status!==oldStatus||order.tracking!==oldTracking)){
+        const safeName=String(order.customer.name||"there").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+        const subject=order.status==="Shipped"?"Your order "+order.id+" has shipped":"Update on your order "+order.id;
+        const html="<p>Hello "+safeName+",</p><p>Your order <strong>"+order.id+"</strong> is now <strong>"+order.status+"</strong>.</p>"+(order.tracking?"<p>Tracking number: <strong>"+order.tracking+"</strong></p>":"")+"<p>Thank you for shopping with THEY.</p>";
+        await sendCustomerEmail(order,subject,html);
+      }
       return res.status(200).json({order});
     }
 
