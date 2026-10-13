@@ -12,6 +12,8 @@
 <div class="wrap">
 <h1>CHECKOUT</h1>
 <div class="panel"><h2>Order</h2><div id="cart"></div><div class="line"><strong>Subtotal</strong><strong id="subtotal">$0.00</strong></div>
+<div class="field"><label for="couponCode">Coupon code</label><div style="display:flex;gap:8px"><input id="couponCode" placeholder="Enter coupon code" autocomplete="off"><button class="ship-option" id="applyCoupon" type="button">Apply</button></div><p id="couponMsg" class="muted"></p></div>
+<div class="line"><strong>Discount</strong><strong id="discount">—</strong></div>
 <div class="shipping"><button class="ship-option active" data-method="standard"><strong>Standard — $5.99</strong><span>3–5 business days</span></button><button class="ship-option" data-method="priority"><strong>Priority — $10.99</strong><span>1–2 business days</span></button></div>
 <div class="line"><strong>Shipping</strong><strong id="shippingCost">$5.99</strong></div><div class="line"><strong>Total</strong><strong id="total">$0.00</strong></div></div>
 
@@ -34,7 +36,9 @@
 <script>
 const $=id=>document.getElementById(id);
 let cart=JSON.parse(localStorage.getItem("sampleCart")||"[]");
-let products=[],shipping={standard:5.99,priority:10.99,freeOver:250},method="standard";
+let products=[],shipping={standard:5.99,priority:10.99,freeOver:250},method="standard",coupon={code:"",discount:0};
+function priceOf(p){return Number(p.displayPrice??p.price??0)}
+function cartSubtotal(){return cart.reduce((sum,i)=>{const p=products.find(x=>x.id===i.id);return sum+(p?priceOf(p)*Number(i.quantity||0):0)},0)}
 
 function showMessage(message,kind="muted"){ $("msg").className=kind; $("msg").textContent=message; }
 async function init(){
@@ -58,27 +62,29 @@ async function init(){
   try{
     const r=await fetch("/api/store?store=cologne&action=inventory");
     if(!r.ok)throw new Error("Inventory could not be loaded.");
-    const d=await r.json();products=d.products||[];shipping=d.shipping||shipping;render();
+    const d=await r.json();products=d.products||[];shipping=d.shipping||shipping;document.querySelector('[data-method="standard"] strong').textContent="Standard — "+(Number(shipping.standard||0)?"$"+Number(shipping.standard).toFixed(2):"FREE");document.querySelector('[data-method="priority"] strong').textContent="Priority — "+(Number(shipping.priority||0)?"$"+Number(shipping.priority).toFixed(2):"FREE");render();
     if(!products.length)showMessage("No products are currently available.","error");
     else if(!params.get("payment"))showMessage("Your order will be finalized after Stripe confirms payment.");
   }catch(e){showMessage("Store inventory could not be loaded. Please return to the store and try again.","error");}
 }
 function render(){
   let subtotal=0;$("cart").innerHTML="";
-  cart.forEach(i=>{const p=products.find(x=>x.id===i.id);if(!p)return;subtotal+=p.price*i.quantity;const d=document.createElement("div");d.className="line";d.textContent=p.name+" × "+i.quantity;const price=document.createElement("span");price.textContent="$"+(p.price*i.quantity).toFixed(2);d.appendChild(price);$("cart").appendChild(d)});
+  cart.forEach(i=>{const p=products.find(x=>x.id===i.id);if(!p)return;const unit=priceOf(p);subtotal+=unit*i.quantity;const d=document.createElement("div");d.className="line";d.textContent=p.name+" × "+i.quantity;const price=document.createElement("span");price.textContent="$"+(unit*i.quantity).toFixed(2);d.appendChild(price);$("cart").appendChild(d)});
   $("subtotal").textContent="$"+subtotal.toFixed(2);
-  const cost=Number(shipping[method]||0);
-  $("shippingCost").textContent=cost?"$"+cost.toFixed(2):"FREE";
-  $("total").textContent="$"+(subtotal+cost).toFixed(2);
+  $("discount").textContent=coupon.discount?"−$"+coupon.discount.toFixed(2):"—";
+  const cost=Number(shipping[method]||0),shippingCost=Number(shipping.freeOver)>0&&subtotal-coupon.discount>=Number(shipping.freeOver)?0:cost;
+  $("shippingCost").textContent=shippingCost?"$"+shippingCost.toFixed(2):"FREE";
+  $("total").textContent="$"+Math.max(0,subtotal-coupon.discount+shippingCost).toFixed(2);
 }
-document.querySelectorAll(".ship-option").forEach(b=>b.onclick=()=>{method=b.dataset.method;document.querySelectorAll(".ship-option").forEach(x=>x.classList.remove("active"));b.classList.add("active");render()});
+document.querySelectorAll(".ship-option[data-method]").forEach(b=>b.onclick=()=>{method=b.dataset.method;document.querySelectorAll(".ship-option").forEach(x=>x.classList.remove("active"));b.classList.add("active");render()});
+$("applyCoupon").onclick=async()=>{const code=$("couponCode").value.trim().toUpperCase();if(!code){coupon={code:"",discount:0};$("couponMsg").textContent="Enter a coupon code.";render();return}try{const r=await fetch("/api/store?store=cologne&action=validate-coupon",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code,subtotal:cartSubtotal()})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Coupon could not be applied.");coupon={code:d.code,discount:Number(d.discount||0)};$("couponMsg").textContent="Coupon "+d.code+" applied.";render()}catch(e){coupon={code:"",discount:0};$("couponMsg").textContent=e.message;render()}};
 $("place").onclick=async()=>{
   const required=["name","email","phone","address","city","state","zip"];
   const missing=required.find(id=>!$(id).value.trim());
   if(missing){showMessage("Please complete all customer information.","error");$(missing).focus();return}
   if(!cart.length){showMessage("Your cart is empty. Return to the store and select a cologne.","error");return}
   $("place").disabled=true;showMessage("Connecting to secure Stripe checkout…");
-  const body={items:cart,shippingMethod:method,returnPath:"/sample-website.html",customer:{name:$("name").value.trim(),email:$("email").value.trim(),phone:$("phone").value.trim(),address:$("address").value.trim(),city:$("city").value.trim(),state:$("state").value.trim(),zip:$("zip").value.trim()}};
+  const body={items:cart,shippingMethod:method,couponCode:coupon.code,returnPath:"/sample-website.html",customer:{name:$("name").value.trim(),email:$("email").value.trim(),phone:$("phone").value.trim(),address:$("address").value.trim(),city:$("city").value.trim(),state:$("state").value.trim(),zip:$("zip").value.trim()}};
   try{
     const r=await fetch("/api/store?store=cologne&action=create-checkout-session",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
     const j=await r.json();
