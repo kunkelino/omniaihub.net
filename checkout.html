@@ -41,7 +41,7 @@ async function init(){
     $("place").disabled=true;
     showMessage("Verifying your payment with Stripe…");
     try{
-      const r=await fetch("/api/store?action=verify-payment",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionId:params.get("session_id")})});
+      const r=await fetch("/api/store?store=cologne&action=verify-payment",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionId:params.get("session_id")})});
       const j=await r.json();
       if(!r.ok)throw new Error(j.error||"Payment could not be verified.");
       localStorage.removeItem("sampleCart");cart=[];
@@ -54,7 +54,7 @@ async function init(){
   }
   if(params.get("payment")==="cancel")showMessage("Checkout was cancelled. You have not been charged.","error");
   try{
-    const r=await fetch("/api/store?action=inventory");
+    const r=await fetch("/api/store?store=cologne&action=inventory");
     if(!r.ok)throw new Error("Inventory could not be loaded.");
     const d=await r.json();products=d.products||[];shipping=d.shipping||shipping;render();
     if(!products.length)showMessage("No products are currently available.","error");
@@ -78,7 +78,7 @@ $("place").onclick=async()=>{
   $("place").disabled=true;showMessage("Connecting to secure Stripe checkout…");
   const body={items:cart,shippingMethod:method,returnPath:"/sample-website.html",customer:{name:$("name").value.trim(),email:$("email").value.trim(),phone:$("phone").value.trim(),address:$("address").value.trim(),city:$("city").value.trim(),state:$("state").value.trim(),zip:$("zip").value.trim()}};
   try{
-    const r=await fetch("/api/store?action=create-checkout-session",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const r=await fetch("/api/store?store=cologne&action=create-checkout-session",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
     const j=await r.json();
     if(!r.ok)throw new Error(j.error||"Could not start secure checkout.");
     if(!j.url)throw new Error("Stripe did not return a checkout link.");
