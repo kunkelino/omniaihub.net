@@ -76,7 +76,7 @@ module.exports=async function handler(req,res){
       if(String(req.body?.password||"")!==process.env.STORE_ADMIN_PASSWORD)return res.status(401).json({error:"Incorrect password."});
       return res.status(200).json({ok:true});
     }
-    const adminOnly=(action==="inventory"&&req.method==="PATCH")||(action==="orders"&&(req.method==="GET"||req.method==="PATCH"))||(action==="settings"&&(req.method==="GET"||req.method==="PATCH"))||(action==="sales"&&req.method==="GET")||(action==="connect-stripe-webhook"&&req.method==="POST")||(action==="upload-ticket"&&req.method==="POST");
+    const adminOnly=(action==="inventory"&&req.method==="PATCH")||(action==="orders"&&(req.method==="GET"||req.method==="PATCH"))||(action==="settings"&&(req.method==="GET"||req.method==="PATCH"))||(action==="sales"&&req.method==="GET")||(action==="connect-stripe-webhook"&&req.method==="POST")||(action==="upload-ticket"&&req.method==="POST")||(action==="refund-order"&&req.method==="POST");
     if(adminOnly&&!isAdmin(req))return res.status(401).json({error:"Admin login required."});
 
     if(action==="inventory"&&req.method==="GET"){
@@ -194,6 +194,23 @@ module.exports=async function handler(req,res){
       data.stripeWebhook={endpointId:result.id,signingSecret:result.secret,url:result.url,createdAt:new Date().toISOString()};
       logActivity(data,"Stripe webhook connected",result.url);await writeData(data,"cologne");
       return res.status(200).json({connected:true,endpointUrl:result.url,message:"Stripe webhook created and signing secret stored in private server-side storage."});
+    }
+    if(action==="refund-order"&&req.method==="POST"){
+      if(!process.env.STRIPE_SECRET_KEY)return res.status(503).json({error:"Stripe secret key is not configured."});
+      const data=await readData(storeKey),orderId=String(req.body?.orderId||""),order=data.orders.find(o=>o.id===orderId);
+      if(!order)return res.status(404).json({error:"Order not found."});
+      if(!["Paid","Processing","Shipped","Completed","Partially refunded"].includes(order.status))return res.status(409).json({error:"Only paid orders can be refunded."});
+      let intent=order.stripePaymentIntentId||"";
+      if(!intent&&order.stripeSessionId){const sr=await fetch("https://api.stripe.com/v1/checkout/sessions/"+encodeURIComponent(order.stripeSessionId),{headers:{"Authorization":"Bearer "+process.env.STRIPE_SECRET_KEY}});const sd=await sr.json();if(!sr.ok)return res.status(502).json({error:sd.error?.message||"Could not retrieve the Stripe payment."});intent=typeof sd.payment_intent==="string"?sd.payment_intent:(sd.payment_intent?.id||"");if(intent)order.stripePaymentIntentId=intent;}
+      if(!intent)return res.status(409).json({error:"Stripe payment intent is not available for this order yet."});
+      const remaining=Math.max(0,Math.round((Number(order.total||0)-Number(order.refundedAmount||0))*100));
+      const requested=String(req.body?.amount||"").trim()===""?remaining:Math.round(Number(req.body.amount)*100);
+      if(!Number.isFinite(requested)||requested<=0||requested>remaining)return res.status(400).json({error:"Refund amount must be greater than zero and no more than the remaining refundable total."});
+      const params=new URLSearchParams();params.set("payment_intent",intent);params.set("amount",String(requested));params.set("metadata[orderId]",order.id);
+      const response=await fetch("https://api.stripe.com/v1/refunds",{method:"POST",headers:{"Authorization":"Bearer "+process.env.STRIPE_SECRET_KEY,"Content-Type":"application/x-www-form-urlencoded","Idempotency-Key":order.id+"-refund-"+Date.now().toString(36)},body:params.toString()});
+      const refund=await response.json();if(!response.ok)return res.status(502).json({error:refund.error?.message||"Stripe could not issue the refund."});
+      order.stripePaymentIntentId=intent;order.refundIds=Array.isArray(order.refundIds)?order.refundIds:[];order.refundIds.push(refund.id);order.lastRefundRequestedAt=new Date().toISOString();logActivity(data,"Refund requested",order.id+" — $"+(requested/100).toFixed(2)+" — "+refund.id);await writeData(data,storeKey);
+      return res.status(200).json({ok:true,refundId:refund.id,status:refund.status,amount:requested/100,message:"Refund request sent to Stripe. The webhook will synchronize its final status."});
     }
     if(action==="create-checkout-session"&&req.method==="POST"){
       if(!process.env.STRIPE_SECRET_KEY)return res.status(503).json({error:"Online payments are not configured yet. The store owner must add STRIPE_SECRET_KEY in Vercel."});
