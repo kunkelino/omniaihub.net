@@ -53,7 +53,7 @@ module.exports=async function handler(req,res){
       if(intent){
         for(const store of ["cologne","default"]){const data=await readData(store),order=data.orders.find(o=>o.stripePaymentIntentId===intent);if(!order)continue;
           const fully=event.type==="charge.refunded"&&Number(obj.amount_refunded)>=Number(obj.amount||0);
-          order.paymentStatus=fully?"Refunded":"Partially refunded";if(fully)order.status="Refunded";
+          order.refundedAmount=event.type==="charge.refunded"?Number(obj.amount_refunded||0)/100:Number(order.refundedAmount||0);order.paymentStatus=fully?"Refunded":"Partially refunded";if(fully)order.status="Refunded";
           log(data,"Stripe refund event",order.id+" — "+order.paymentStatus);await writeData(data,store);
           await email(order,"Refund update — "+order.id,"<p>Your order <strong>"+order.id+"</strong> has a Stripe refund update. Current payment status: "+order.paymentStatus+".</p>");break;
         }
