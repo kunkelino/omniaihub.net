@@ -177,7 +177,7 @@ module.exports=async function handler(req,res){
     if(action==="sales"&&req.method==="GET"){
       const data=await readData(storeKey),paid=data.orders.filter(o=>["Paid","Processing","Shipped","Completed","Partially refunded"].includes(o.status)&&["Paid","Partially refunded"].includes(o.paymentStatus));
       const total=paid.reduce((n,o)=>n+Math.max(0,Number(o.total||0)-Number(o.refundedAmount||0)),0),units=paid.reduce((n,o)=>n+(o.items||[]).reduce((m,i)=>m+Number(i.quantity||0),0),0);
-      const byDay={};for(const o of paid){const day=String(o.paidAt||o.createdAt||"").slice(0,10);byDay[day]=(byDay[day]||0)+Number(o.total||0);}
+      const byDay={};for(const o of paid){const day=String(o.paidAt||o.createdAt||"").slice(0,10);byDay[day]=(byDay[day]||0)+Math.max(0,Number(o.total||0)-Number(o.refundedAmount||0));}
       const lowStock=(data.products||[]).filter(p=>Number(p.inventory||0)<=Number(data.settings?.lowStockThreshold??3)).map(p=>({id:p.id,name:p.name,inventory:p.inventory}));
       return res.status(200).json({paidOrders:paid.length,revenue:money(total),units,averageOrder:paid.length?money(total/paid.length):0,byDay:Object.entries(byDay).sort((a,b)=>a[0].localeCompare(b[0])).slice(-30),lowStock});
     }
