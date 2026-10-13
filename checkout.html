@@ -24,49 +24,66 @@
 <div class="field"><label>ZIP code</label><input id="zip" autocomplete="postal-code"></div>
 </div>
 
-<div class="panel"><h2>Payment Method</h2><div class="payment-grid">
-<button class="pay-option active" data-payment="card">Credit Card <span class="logos"><span class="logo">VISA</span><span class="logo">MC</span><span class="logo">AMEX</span></span></button>
-<button class="pay-option" data-payment="paypal">Pay with PayPal</button>
-<button class="pay-option" data-payment="venmo-zelle">Pay with Venmo or Zelle</button>
-</div><div id="paymentInfo" class="muted" style="margin-top:12px">Practice mode: selecting Credit Card does not collect or charge card information.</div>
-<div id="qr" class="qr-row" hidden><img src="venmo-qr.png" alt="Venmo QR"><img src="zelle-qr.png" alt="Zelle QR"></div>
-<button class="place" id="place">Place Practice Order</button><p id="msg"></p>
+<div class="panel"><h2>Secure Payment</h2>
+<p class="muted">Pay securely by credit or debit card through Stripe. Your card details are entered on Stripe's secure checkout page.</p>
+<button class="place" id="place">Continue to Secure Payment</button><p id="msg"></p>
 </div>
 </div>
 <script>
 const $=id=>document.getElementById(id);
-const cart=JSON.parse(localStorage.getItem("sampleCart")||"[]");
-let products=[],shipping={standard:5.99,priority:10.99,freeOver:250},method="standard",payment="card";
+let cart=JSON.parse(localStorage.getItem("sampleCart")||"[]");
+let products=[],shipping={standard:5.99,priority:10.99,freeOver:250},method="standard";
 
+function showMessage(message,kind="muted"){ $("msg").className=kind; $("msg").textContent=message; }
 async function init(){
- const r=await fetch("/api/store?action=inventory");
- if(!r.ok){$("msg").className="error";$("msg").textContent="Backend storage is not connected yet.";return}
- const d=await r.json();products=d.products;shipping=d.shipping||shipping;render();
+  const params=new URLSearchParams(location.search);
+  if(params.get("payment")==="success" && params.get("session_id")){
+    $("place").disabled=true;
+    showMessage("Verifying your payment with Stripe…");
+    try{
+      const r=await fetch("/api/store?action=verify-payment",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionId:params.get("session_id")})});
+      const j=await r.json();
+      if(!r.ok)throw new Error(j.error||"Payment could not be verified.");
+      localStorage.removeItem("sampleCart");cart=[];
+      $("cart").innerHTML="<p class='success'>Payment confirmed. Thank you for your order <strong>"+j.orderId+"</strong>.</p>";
+      $("subtotal").textContent="—";$("shippingCost").textContent="—";$("total").textContent="—";
+      $("place").hidden=true;showMessage("Your payment was successful. Your order has been recorded.","success");
+      history.replaceState({},document.title,location.pathname);
+      return;
+    }catch(e){$("place").disabled=false;showMessage(e.message||"Payment verification failed. Contact the store before trying to pay again.","error");}
+  }
+  if(params.get("payment")==="cancel")showMessage("Checkout was cancelled. You have not been charged.","error");
+  try{
+    const r=await fetch("/api/store?action=inventory");
+    if(!r.ok)throw new Error("Inventory could not be loaded.");
+    const d=await r.json();products=d.products||[];shipping=d.shipping||shipping;render();
+    if(!products.length)showMessage("No products are currently available.","error");
+    else if(!params.get("payment"))showMessage("Your order will be finalized after Stripe confirms payment.");
+  }catch(e){showMessage("Store inventory could not be loaded. Please return to the store and try again.","error");}
 }
 function render(){
- let subtotal=0;$("cart").innerHTML="";
- cart.forEach(i=>{const p=products.find(x=>x.id===i.id);if(!p)return;subtotal+=p.price*i.quantity;const d=document.createElement("div");d.className="line";d.innerHTML="<span>"+p.name+" × "+i.quantity+"</span><span>$"+(p.price*i.quantity).toFixed(2)+"</span>";$("cart").appendChild(d)});
- $("subtotal").textContent="$"+subtotal.toFixed(2);
- const cost=Number(shipping[method]||0);
- $("shippingCost").textContent=cost?"$"+cost.toFixed(2):"FREE";
- $("total").textContent="$"+(subtotal+cost).toFixed(2);
+  let subtotal=0;$("cart").innerHTML="";
+  cart.forEach(i=>{const p=products.find(x=>x.id===i.id);if(!p)return;subtotal+=p.price*i.quantity;const d=document.createElement("div");d.className="line";d.textContent=p.name+" × "+i.quantity;const price=document.createElement("span");price.textContent="$"+(p.price*i.quantity).toFixed(2);d.appendChild(price);$("cart").appendChild(d)});
+  $("subtotal").textContent="$"+subtotal.toFixed(2);
+  const cost=Number(shipping[method]||0);
+  $("shippingCost").textContent=cost?"$"+cost.toFixed(2):"FREE";
+  $("total").textContent="$"+(subtotal+cost).toFixed(2);
 }
 document.querySelectorAll(".ship-option").forEach(b=>b.onclick=()=>{method=b.dataset.method;document.querySelectorAll(".ship-option").forEach(x=>x.classList.remove("active"));b.classList.add("active");render()});
-document.querySelectorAll(".pay-option").forEach(b=>b.onclick=()=>{
- payment=b.dataset.payment;document.querySelectorAll(".pay-option").forEach(x=>x.classList.remove("active"));b.classList.add("active");
- $("qr").hidden=payment!=="venmo-zelle";
- $("paymentInfo").textContent=payment==="card"?"Practice mode: selecting Credit Card does not collect or charge card information.":payment==="paypal"?"PayPal will open in a new window. Practice orders are not charged here.":"Use the Venmo or Zelle QR codes below. Practice orders are not charged here.";
- if(payment==="paypal")window.open("https://www.paypal.com/","_blank","noopener,noreferrer");
-});
 $("place").onclick=async()=>{
- const required=["name","email","phone","address","city","state","zip"];
- const missing=required.find(id=>!$(id).value.trim());if(missing){$("msg").className="error";$("msg").textContent="Please complete all customer information.";$(missing).focus();return}
- if(!cart.length){$("msg").className="error";$("msg").textContent="Your cart is empty.";return}
- $("place").disabled=true;$("msg").textContent="Saving practice order…";
- const body={items:cart,shippingMethod:method,paymentMethod:payment,customer:{name:$("name").value,email:$("email").value,phone:$("phone").value,address:$("address").value,city:$("city").value,state:$("state").value,zip:$("zip").value}};
- const r=await fetch("/api/store?action=order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const j=await r.json();
- if(!r.ok){$("place").disabled=false;$("msg").className="error";$("msg").textContent=j.error||"Could not place order.";return}
- localStorage.removeItem("sampleCart");$("msg").className="success";$("msg").innerHTML="Practice order <strong>"+j.order.id+"</strong> created. Inventory was reduced.<br><br><strong>No payment was charged.</strong>";
+  const required=["name","email","phone","address","city","state","zip"];
+  const missing=required.find(id=>!$(id).value.trim());
+  if(missing){showMessage("Please complete all customer information.","error");$(missing).focus();return}
+  if(!cart.length){showMessage("Your cart is empty. Return to the store and select a cologne.","error");return}
+  $("place").disabled=true;showMessage("Connecting to secure Stripe checkout…");
+  const body={items:cart,shippingMethod:method,returnPath:"/sample-website.html",customer:{name:$("name").value.trim(),email:$("email").value.trim(),phone:$("phone").value.trim(),address:$("address").value.trim(),city:$("city").value.trim(),state:$("state").value.trim(),zip:$("zip").value.trim()}};
+  try{
+    const r=await fetch("/api/store?action=create-checkout-session",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const j=await r.json();
+    if(!r.ok)throw new Error(j.error||"Could not start secure checkout.");
+    if(!j.url)throw new Error("Stripe did not return a checkout link.");
+    window.location.assign(j.url);
+  }catch(e){$("place").disabled=false;showMessage(e.message||"Could not connect to Stripe. Please try again.","error");}
 };
 init();
 </script>
