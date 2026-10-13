@@ -1,244 +1,371 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MRBHNCO Store</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif}
-.header{background:#000;padding:12px 20px;text-align:center;border-bottom:1px solid #222}
-.header img{height:50px}
-.main{display:flex;min-height:calc(100vh - 74px)}
-.store{flex:2;padding:16px;overflow-y:auto}
-.video-side{flex:1;background:#111;position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center}
-.video-side video{width:100%;height:100%;object-fit:cover}
-.product{background:#111;border:1px solid #333;border-radius:12px;padding:16px;margin-bottom:20px}
-.product h2{color:#e4c56a;margin-bottom:12px;font-size:18px}
-.preview{width:100%;max-width:320px;margin:0 auto 12px;display:block;border-radius:8px;background:#fff}
-.color-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.color-thumb{cursor:pointer;text-align:center;border:2px solid transparent;border-radius:8px;padding:4px;background:#1a1a1a}
-.color-thumb.active{border-color:#e4c56a}
-.color-thumb img{width:100%;height:80px;object-fit:contain;background:#fff;border-radius:4px}
-.color-thumb span{display:block;font-size:11px;margin-top:4px;color:#ccc}
-.size-qty{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
-.size-qty select,.size-qty input{background:#222;color:#fff;border:1px solid #444;padding:8px;border-radius:6px}
-.add-btn{background:#e4c56a;color:#000;border:none;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer;width:100%}
-.add-btn:hover{background:#f0d48a}
-.cart-bar{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #333;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;z-index:100}
-.cart-items{font-size:13px;color:#ccc;max-width:60%}
-.checkout-btn{background:#e4c56a;color:#000;border:none;padding:10px 24px;border-radius:8px;font-weight:700;cursor:pointer}
+body{background:#000;color:#fff;font-family:Arial,sans-serif;padding-bottom:80px}
+header{padding:15px;text-align:center;border-bottom:1px solid #333}
+header img{max-height:65px;max-width:90%;object-fit:contain}
+main{display:grid;grid-template-columns:2fr 1fr;gap:18px;padding:18px}
+.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.product{background:#111;border:1px solid #333;border-radius:12px;padding:14px;min-width:0}
+.product h2{color:#e4c56a;margin-bottom:12px;font-size:19px}
+.preview{width:100%;height:280px;object-fit:contain;background:#fff;border-radius:8px}
+.colors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0}
+.color{background:#222;color:#fff;border:2px solid transparent;border-radius:6px;padding:4px;font-size:11px;cursor:pointer}
+.color.active{border-color:#e4c56a}
+.color img{width:100%;height:65px;object-fit:contain;background:#fff}
+.color span{display:block;padding:4px 0}
+.options{display:flex;gap:8px;margin:10px 0}
+select,input{background:#222;color:#fff;border:1px solid #555;border-radius:6px;padding:9px;min-width:0}
+input{width:75px}
+.add{width:100%;padding:12px;background:#e4c56a;color:#000;border:0;border-radius:7px;font-weight:bold;cursor:pointer}
+.video{position:sticky;top:0;height:80vh}
+.video video{width:100%;height:100%;object-fit:cover}
+.cart{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #444;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:5}
+#cartItems{font-size:12px;color:#ddd;overflow-wrap:anywhere}
+#checkoutBtn{background:#e4c56a;color:#000;border:0;border-radius:7px;padding:12px 20px;font-weight:bold;cursor:pointer}
+#checkoutBtn:disabled{opacity:.6}
+#notice{display:none;padding:15px;margin:15px;border:1px solid #e4c56a;color:#e4c56a}
 @media(max-width:800px){
-  .main{flex-direction:column}
-  .video-side{height:40vh;position:relative}
-  .store{flex:none}
+ main{display:flex;flex-direction:column;padding:10px}
+ .video{order:-1;position:relative;height:35vh}
+ .products{grid-template-columns:1fr}
+ .preview{height:300px}
+ .cart{padding:10px}
+ #checkoutBtn{padding:11px;font-size:12px}
 }
 </style>
 </head>
+
 <body>
-<div class="header">
-  <img src="logo.png" alt="MRBHNCO" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-  <div style="display:none;color:#e4c56a;font-size:22px;font-weight:700">MRBHNCO</div>
-</div>
+<header>
+  <img src="logo.png" alt="MRBHNCO" onerror="this.style.display='none'">
+</header>
 
-<div class="main">
-  <div class="store" id="store">
+<div id="notice" role="status"></div>
 
-    <!-- TILE 1 - BIKINIS -->
-    <div class="product" data-id="bikini">
-      <h2>Bikini</h2>
-      <img class="preview" id="preview-bikini" src="bikini-black-yellow.jpg" alt="Bikini">
-      <div class="color-grid">
-        <div class="color-thumb active" data-img="bikini-black-yellow.jpg" data-target="bikini" data-color="Black / Yellow"><img src="bikini-black-yellow.jpg" alt=""><span>Black / Yellow</span></div>
-        <div class="color-thumb" data-img="bikini-black-white.jpg" data-target="bikini" data-color="Black / White"><img src="bikini-black-white.jpg" alt=""><span>Black / White</span></div>
-        <div class="color-thumb" data-img="bikini-black-red.jpg" data-target="bikini" data-color="Black / Red"><img src="bikini-black-red.jpg" alt=""><span>Black / Red</span></div>
-        <div class="color-thumb" data-img="bikini-black-green.jpg" data-target="bikini" data-color="Black / Green"><img src="bikini-black-green.jpg" alt=""><span>Black / Green</span></div>
-        <div class="color-thumb" data-img="bikini-black-blue.jpg" data-target="bikini" data-color="Black / Blue"><img src="bikini-black-blue.jpg" alt=""><span>Black / Blue</span></div>
-        <div class="color-thumb" data-img="bikini-black-gray.jpg" data-target="bikini" data-color="Black / Gray"><img src="bikini-black-gray.jpg" alt=""><span>Black / Gray</span></div>
-      </div>
-      <div class="size-qty">
-        <select class="size" data-id="bikini"><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option></select>
-        <input type="number" class="qty" data-id="bikini" value="1" min="1" max="10">
-      </div>
-      <button class="add-btn" data-id="bikini" data-name="Bikini" data-price="45">Add to Cart — $45</button>
-    </div>
-
-    <!-- TILE 2 -->
-    <div class="product" data-id="track2">
-      <h2>Tracksuit</h2>
-      <img class="preview" id="preview-track2" src="track2-1.jpg" alt="Tracksuit">
-      <div class="color-grid">
-        <div class="color-thumb active" data-img="track2-1.jpg" data-target="track2" data-color="Black / Yellow"><img src="track2-1.jpg" alt=""><span>Black / Yellow</span></div>
-        <div class="color-thumb" data-img="track2-2.jpg" data-target="track2" data-color="Black / White"><img src="track2-2.jpg" alt=""><span>Black / White</span></div>
-        <div class="color-thumb" data-img="track2-3.jpg" data-target="track2" data-color="Black / Red"><img src="track2-3.jpg" alt=""><span>Black / Red</span></div>
-        <div class="color-thumb" data-img="track2-4.jpg" data-target="track2" data-color="Black / Green"><img src="track2-4.jpg" alt=""><span>Black / Green</span></div>
-        <div class="color-thumb" data-img="track2-5.jpg" data-target="track2" data-color="Black / Blue"><img src="track2-5.jpg" alt=""><span>Black / Blue</span></div>
-        <div class="color-thumb" data-img="track2-6.jpg" data-target="track2" data-color="Black / Gray"><img src="track2-6.jpg" alt=""><span>Black / Gray</span></div>
-      </div>
-      <div class="size-qty">
-        <select class="size" data-id="track2"><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option></select>
-        <input type="number" class="qty" data-id="track2" value="1" min="1" max="10">
-      </div>
-      <button class="add-btn" data-id="track2" data-name="Tracksuit" data-price="85">Add to Cart — $85</button>
-    </div>
-
-    <!-- TILE 3 -->
-    <div class="product" data-id="track3">
-      <h2>Tracksuit</h2>
-      <img class="preview" id="preview-track3" src="track3-1.jpg" alt="Tracksuit">
-      <div class="color-grid">
-        <div class="color-thumb active" data-img="track3-1.jpg" data-target="track3" data-color="Black / Yellow"><img src="track3-1.jpg" alt=""><span>Black / Yellow</span></div>
-        <div class="color-thumb" data-img="track3-2.jpg" data-target="track3" data-color="Black / White"><img src="track3-2.jpg" alt=""><span>Black / White</span></div>
-        <div class="color-thumb" data-img="track3-3.jpg" data-target="track3" data-color="Black / Red"><img src="track3-3.jpg" alt=""><span>Black / Red</span></div>
-        <div class="color-thumb" data-img="track3-4.jpg" data-target="track3" data-color="Black / Green"><img src="track3-4.jpg" alt=""><span>Black / Green</span></div>
-        <div class="color-thumb" data-img="track3-5.jpg" data-target="track3" data-color="Black / Blue"><img src="track3-5.jpg" alt=""><span>Black / Blue</span></div>
-        <div class="color-thumb" data-img="track3-6.jpg" data-target="track3" data-color="Black / Gray"><img src="track3-6.jpg" alt=""><span>Black / Gray</span></div>
-      </div>
-      <div class="size-qty">
-        <select class="size" data-id="track3"><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option></select>
-        <input type="number" class="qty" data-id="track3" value="1" min="1" max="10">
-      </div>
-      <button class="add-btn" data-id="track3" data-name="Tracksuit" data-price="85">Add to Cart — $85</button>
-    </div>
-
-    <!-- TILE 4 -->
-    <div class="product" data-id="track4">
-      <h2>Tracksuit</h2>
-      <img class="preview" id="preview-track4" src="track4-1.jpg" alt="Tracksuit">
-      <div class="color-grid">
-        <div class="color-thumb active" data-img="track4-1.jpg" data-target="track4" data-color="Black / Yellow"><img src="track4-1.jpg" alt=""><span>Black / Yellow</span></div>
-        <div class="color-thumb" data-img="track4-2.jpg" data-target="track4" data-color="Black / White"><img src="track4-2.jpg" alt=""><span>Black / White</span></div>
-        <div class="color-thumb" data-img="track4-3.jpg" data-target="track4" data-color="Black / Red"><img src="track4-3.jpg" alt=""><span>Black / Red</span></div>
-        <div class="color-thumb" data-img="track4-4.jpg" data-target="track4" data-color="Black / Green"><img src="track4-4.jpg" alt=""><span>Black / Green</span></div>
-        <div class="color-thumb" data-img="track4-5.jpg" data-target="track4" data-color="Black / Blue"><img src="track4-5.jpg" alt=""><span>Black / Blue</span></div>
-        <div class="color-thumb" data-img="track4-6.jpg" data-target="track4" data-color="Black / Gray"><img src="track4-6.jpg" alt=""><span>Black / Gray</span></div>
-      </div>
-      <div class="size-qty">
-        <select class="size" data-id="track4"><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option></select>
-        <input type="number" class="qty" data-id="track4" value="1" min="1" max="10">
-      </div>
-      <button class="add-btn" data-id="track4" data-name="Tracksuit" data-price="85">Add to Cart — $85</button>
-    </div>
-
-    <!-- TILE 5 -->
-    <div class="product" data-id="track5">
-      <h2>Tracksuit</h2>
-      <img class="preview" id="preview-track5" src="track5-1.jpg" alt="Tracksuit">
-      <div class="color-grid">
-        <div class="color-thumb active" data-img="track5-1.jpg" data-target="track5" data-color="Black / Yellow"><img src="track5-1.jpg" alt=""><span>Black / Yellow</span></div>
-        <div class="color-thumb" data-img="track5-2.jpg" data-target="track5" data-color="Black / White"><img src="track5-2.jpg" alt=""><span>Black / White</span></div>
-        <div class="color-thumb" data-img="track5-3.jpg" data-target="track5" data-color="Black / Red"><img src="track5-3.jpg" alt=""><span>Black / Red</span></div>
-        <div class="color-thumb" data-img="track5-4.jpg" data-target="track5" data-color="Black / Green"><img src="track5-4.jpg" alt=""><span>Black / Green</span></div>
-        <div class="color-thumb" data-img="track5-5.jpg" data-target="track5" data-color="Black / Blue"><img src="track5-5.jpg" alt=""><span>Black / Blue</span></div>
-        <div class="color-thumb" data-img="track5-6.jpg" data-target="track5" data-color="Black / Gray"><img src="track5-6.jpg" alt=""><span>Black / Gray</span></div>
-      </div>
-      <div class="size-qty">
-        <select class="size" data-id="track5"><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option></select>
-        <input type="number" class="qty" data-id="track5" value="1" min="1" max="10">
-      </div>
-      <button class="add-btn" data-id="track5" data-name="Tracksuit" data-price="85">Add to Cart — $85</button>
-    </div>
-
-    <!-- TILE 6 - BLACK TRACKSUITS -->
-    <div class="product" data-id="track6">
-      <h2>Tracksuit</h2>
-      <img class="preview" id="preview-track6" src="1.jpg" alt="Tracksuit">
-      <div class="color-grid">
-        <div class="color-thumb active" data-img="1.jpg" data-target="track6" data-color="Black / Yellow"><img src="1.jpg" alt=""><span>Black / Yellow</span></div>
-        <div class="color-thumb" data-img="2.jpg" data-target="track6" data-color="Black / White"><img src="2.jpg" alt=""><span>Black / White</span></div>
-        <div class="color-thumb" data-img="3.jpg" data-target="track6" data-color="Black / Red"><img src="3.jpg" alt=""><span>Black / Red</span></div>
-        <div class="color-thumb" data-img="4.jpg" data-target="track6" data-color="Black / Green"><img src="4.jpg" alt=""><span>Black / Green</span></div>
-        <div class="color-thumb" data-img="5.jpg" data-target="track6" data-color="Black / Blue"><img src="5.jpg" alt=""><span>Black / Blue</span></div>
-        <div class="color-thumb" data-img="6.jpg" data-target="track6" data-color="Black / Gray"><img src="6.jpg" alt=""><span>Black / Gray</span></div>
-      </div>
-      <div class="size-qty">
-        <select class="size" data-id="track6"><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option></select>
-        <input type="number" class="qty" data-id="track6" value="1" min="1" max="10">
-      </div>
-      <button class="add-btn" data-id="track6" data-name="Tracksuit" data-price="85">Add to Cart — $85</button>
-    </div>
-
-    <!-- TILE 7 - GRAY TRACKSUITS -->
-    <div class="product" data-id="track7">
-      <h2>Tracksuit</h2>
-      <img class="preview" id="preview-track7" src="7.jpg" alt="Tracksuit">
-      <div class="color-grid">
-        <div class="color-thumb active" data-img="7.jpg" data-target="track7" data-color="Gray / Yellow"><img src="7.jpg" alt=""><span>Gray / Yellow</span></div>
-        <div class="color-thumb" data-img="8.jpg" data-target="track7" data-color="Gray / White"><img src="8.jpg" alt=""><span>Gray / White</span></div>
-        <div class="color-thumb" data-img="9.jpg" data-target="track7" data-color="Gray / Red"><img src="9.jpg" alt=""><span>Gray / Red</span></div>
-        <div class="color-thumb" data-img="10.jpg" data-target="track7" data-color="Gray / Green"><img src="10.jpg" alt=""><span>Gray / Green</span></div>
-        <div class="color-thumb" data-img="11.jpg" data-target="track7" data-color="Gray / Blue"><img src="11.jpg" alt=""><span>Gray / Blue</span></div>
-        <div class="color-thumb" data-img="12.jpg" data-target="track7" data-color="Gray / Gray"><img src="12.jpg" alt=""><span>Gray / Gray</span></div>
-      </div>
-      <div class="size-qty">
-        <select class="size" data-id="track7"><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option></select>
-        <input type="number" class="qty" data-id="track7" value="1" min="1" max="10">
-      </div>
-      <button class="add-btn" data-id="track7" data-name="Tracksuit" data-price="85">Add to Cart — $85</button>
-    </div>
-
-  </div>
-
-  <div class="video-side">
-    <video id="siteVideo" muted playsinline loop>
+<main>
+  <section class="products" id="products"></section>
+  <aside class="video">
+    <video autoplay muted loop playsinline>
       <source src="home-video.mp4" type="video/mp4">
     </video>
-  </div>
-</div>
+  </aside>
+</main>
 
-<div class="cart-bar">
-  <div class="cart-items" id="cartItems">Cart empty</div>
-  <button class="checkout-btn" id="checkoutBtn">Checkout — $0.00</button>
+<div class="cart">
+  <div id="cartItems">Cart empty</div>
+  <button id="checkoutBtn">Checkout — $0.00</button>
 </div>
 
 <script>
-const cart = [];
-function updateCart() {
-  const el = document.getElementById('cartItems');
-  const btn = document.getElementById('checkoutBtn');
-  if (cart.length === 0) {
-    el.textContent = 'Cart empty';
-    btn.textContent = 'Checkout — $0.00';
-    return;
+/*
+  PRODUCT IMAGE FILES:
+  Keep your existing image files in the same directory as this HTML.
+  If a filename differs, update it in the product definitions below.
+*/
+
+const products = [
+  {
+    id: "bikini",
+    name: "Bikini",
+    price: 45,
+    images: [
+      ["Black / Yellow","bikini-black-yellow.jpg"],
+      ["Black / White","bikini-black-white.jpg"],
+      ["Black / Red","bikini-black-red.jpg"],
+      ["Black / Green","bikini-black-green.jpg"],
+      ["Black / Blue","bikini-black-blue.jpg"],
+      ["Black / Gray","bikini-black-gray.jpg"]
+    ],
+    sizes: ["XS","S","M","L","XL"]
+  },
+  {
+    id: "track2",
+    name: "Tracksuit",
+    price: 85,
+    images: [
+      ["Black / Yellow","track2-1.jpg"],
+      ["Black / White","track2-2.jpg"],
+      ["Black / Red","track2-3.jpg"],
+      ["Black / Green","track2-4.jpg"],
+      ["Black / Blue","track2-5.jpg"],
+      ["Black / Gray","track2-6.jpg"]
+    ],
+    sizes: ["S","M","L","XL","2XL"]
+  },
+  {
+    id: "track3",
+    name: "Tracksuit",
+    price: 85,
+    images: [
+      ["Black / Yellow","track3-1.jpg"],
+      ["Black / White","track3-2.jpg"],
+      ["Black / Red","track3-3.jpg"],
+      ["Black / Green","track3-4.jpg"],
+      ["Black / Blue","track3-5.jpg"],
+      ["Black / Gray","track3-6.jpg"]
+    ],
+    sizes: ["S","M","L","XL","2XL"]
+  },
+  {
+    id: "track4",
+    name: "Tracksuit",
+    price: 85,
+    images: [
+      ["Black / Yellow","track4-1.jpg"],
+      ["Black / White","track4-2.jpg"],
+      ["Black / Red","track4-3.jpg"],
+      ["Black / Green","track4-4.jpg"],
+      ["Black / Blue","track4-5.jpg"],
+      ["Black / Gray","track4-6.jpg"]
+    ],
+    sizes: ["S","M","L","XL","2XL"]
+  },
+  {
+    id: "track5",
+    name: "Tracksuit",
+    price: 85,
+    images: [
+      ["Black / Yellow","track5-1.jpg"],
+      ["Black / White","track5-2.jpg"],
+      ["Black / Red","track5-3.jpg"],
+      ["Black / Green","track5-4.jpg"],
+      ["Black / Blue","track5-5.jpg"],
+      ["Black / Gray","track5-6.jpg"]
+    ],
+    sizes: ["S","M","L","XL","2XL"]
+  },
+  {
+    id: "track6",
+    name: "Tracksuit",
+    price: 85,
+    images: [
+      ["Black / Yellow","1.jpg"],
+      ["Black / White","2.jpg"],
+      ["Black / Red","3.jpg"],
+      ["Black / Green","4.jpg"],
+      ["Black / Blue","5.jpg"],
+      ["Black / Gray","6.jpg"]
+    ],
+    sizes: ["S","M","L","XL","2XL"]
+  },
+  {
+    id: "track7",
+    name: "Tracksuit",
+    price: 85,
+    images: [
+      ["Gray / Yellow","7.jpg"],
+      ["Gray / White","8.jpg"],
+      ["Gray / Red","9.jpg"],
+      ["Gray / Green","10.jpg"],
+      ["Gray / Blue","11.jpg"],
+      ["Gray / Gray","12.jpg"]
+    ],
+    sizes: ["S","M","L","XL","2XL"]
   }
-  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  el.innerHTML = cart.map(i => `${i.name} (${i.color}, ${i.size}) × ${i.qty}`).join('<br>');
-  btn.textContent = `Checkout — $${total.toFixed(2)}`;
+];
+
+const cart = [];
+const productsContainer = document.getElementById("products");
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[character]);
 }
 
-document.querySelectorAll('.color-thumb').forEach(thumb => {
-  thumb.addEventListener('click', () => {
-    const target = thumb.dataset.target;
-    const img = thumb.dataset.img;
-    document.getElementById('preview-' + target).src = img;
-    document.querySelectorAll(`.color-thumb[data-target="${target}"]`).forEach(t => t.classList.remove('active'));
-    thumb.classList.add('active');
+function renderProducts() {
+  productsContainer.innerHTML = products.map(product => `
+    <article class="product" data-product="${product.id}">
+      <h2>${escapeHTML(product.name)}</h2>
+
+      <img
+        class="preview"
+        id="preview-${product.id}"
+        src="${product.images[0][1]}"
+        alt="${escapeHTML(product.name)}"
+      >
+
+      <div class="colors">
+        ${product.images.map((image,index) => `
+          <button
+            type="button"
+            class="color ${index === 0 ? "active" : ""}"
+            data-product="${product.id}"
+            data-index="${index}"
+          >
+            <img src="${image[1]}" alt="">
+            <span>${escapeHTML(image[0])}</span>
+          </button>
+        `).join("")}
+      </div>
+
+      <div class="options">
+        <select class="size" aria-label="Choose size">
+          ${product.sizes.map(size =>
+            `<option value="${size}">${size}</option>`
+          ).join("")}
+        </select>
+
+        <input
+          class="quantity"
+          type="number"
+          min="1"
+          max="10"
+          value="1"
+          aria-label="Quantity"
+        >
+      </div>
+
+      <button class="add" type="button" data-add="${product.id}">
+        Add to Cart — $${product.price.toFixed(2)}
+      </button>
+    </article>
+  `).join("");
+}
+
+function updateCart() {
+  const total = cart.reduce(
+    (sum,item) => sum + item.price * item.qty,
+    0
+  );
+
+  document.getElementById("cartItems").innerHTML =
+    cart.length
+      ? cart.map(item =>
+          `${escapeHTML(item.name)} — ${escapeHTML(item.color)} — Size ${escapeHTML(item.size)} × ${item.qty}`
+        ).join("<br>")
+      : "Cart empty";
+
+  document.getElementById("checkoutBtn").textContent =
+    `Checkout — $${total.toFixed(2)}`;
+}
+
+productsContainer.addEventListener("click", event => {
+  const colorButton = event.target.closest(".color");
+
+  if (colorButton) {
+    const product = products.find(
+      item => item.id === colorButton.dataset.product
+    );
+    const index = Number(colorButton.dataset.index);
+
+    document.getElementById(`preview-${product.id}`).src =
+      product.images[index][1];
+
+    colorButton.parentElement.querySelectorAll(".color")
+      .forEach(button => button.classList.remove("active"));
+
+    colorButton.classList.add("active");
+    return;
+  }
+
+  const addButton = event.target.closest("[data-add]");
+  if (!addButton) return;
+
+  const product = products.find(
+    item => item.id === addButton.dataset.add
+  );
+  const article = addButton.closest(".product");
+  const qty = Number(article.querySelector(".quantity").value);
+  const size = article.querySelector(".size").value;
+  const selectedColor = article.querySelector(".color.active");
+  const colorIndex = selectedColor
+    ? Number(selectedColor.dataset.index)
+    : 0;
+  const color = product.images[colorIndex][0];
+
+  if (!Number.isInteger(qty) || qty < 1 || qty > 10) {
+    alert("Please select a quantity from 1 to 10.");
+    return;
+  }
+
+  cart.push({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    qty,
+    size,
+    color
   });
+
+  updateCart();
+
+  const original = `Add to Cart — $${product.price.toFixed(2)}`;
+  addButton.textContent = "Added!";
+  setTimeout(() => { addButton.textContent = original; }, 800);
 });
 
-document.querySelectorAll('.add-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const id = btn.dataset.id;
-    const name = btn.dataset.name;
-    const price = parseFloat(btn.dataset.price);
-    const size = document.querySelector(`.size[data-id="${id}"]`).value;
-    const qty = parseInt(document.querySelector(`.qty[data-id="${id}"]`).value) || 1;
-    const active = document.querySelector(`.color-thumb.active[data-target="${id}"]`);
-    const color = active ? active.dataset.color : 'Default';
-    cart.push({ id, name, price, size, qty, color });
-    updateCart();
-    btn.textContent = 'Added!';
-    setTimeout(() => { btn.textContent = `Add to Cart — $${price}`; }, 800);
-  });
+document.getElementById("checkoutBtn").addEventListener("click", async () => {
+  if (!cart.length) {
+    alert("Your cart is empty.");
+    return;
+  }
+
+  const button = document.getElementById("checkoutBtn");
+  const previousText = button.textContent;
+
+  button.disabled = true;
+  button.textContent = "Connecting to Stripe...";
+
+  try {
+    const response = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: cart.map(item => ({
+          id: item.id,
+          qty: item.qty,
+          size: item.size,
+          color: item.color
+        }))
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Could not start checkout.");
+    }
+
+    if (!result.url) {
+      throw new Error("Stripe did not return a checkout link.");
+    }
+
+    window.location.href = result.url;
+  } catch (error) {
+    alert(error.message || "Checkout failed. Please try again.");
+    button.disabled = false;
+    button.textContent = previousText;
+  }
 });
 
-document.getElementById('checkoutBtn').addEventListener('click', () => {
-  if (cart.length === 0) return alert('Cart is empty');
-  alert('Checkout — connect your payment processor here.\n\n' + cart.map(i => `${i.name} (${i.color}) × ${i.qty} = $${(i.price*i.qty).toFixed(2)}`).join('\n'));
-});
+const checkoutStatus = new URLSearchParams(location.search).get("checkout");
+const notice = document.getElementById("notice");
 
-const vid = document.getElementById('siteVideo');
-if (vid) { vid.muted = false; vid.play().catch(() => {}); }
+if (checkoutStatus === "success") {
+  notice.textContent =
+    "You've returned from Stripe checkout. Confirm the payment in Stripe before treating an order as paid.";
+  notice.style.display = "block";
+} else if (checkoutStatus === "cancelled") {
+  notice.textContent =
+    "Checkout was cancelled. You can return to your cart and try again.";
+  notice.style.display = "block";
+}
+
+renderProducts();
+updateCart();
 </script>
 </body>
 </html>
