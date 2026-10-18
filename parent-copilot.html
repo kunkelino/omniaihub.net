@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parent CoPilot — Driving Safety</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#172033}.wrap{max-width:1050px;margin:auto;padding:24px}.hero{background:linear-gradient(135deg,#111827,#312e81);color:white;border-radius:22px;padding:28px;margin-bottom:20px}.hero h1{margin:0 0 8px;font-size:clamp(28px,5vw,42px)}.hero p{line-height:1.6;max-width:720px}.tag{display:inline-block;background:#e0e7ff;color:#312e81;padding:6px 10px;border-radius:99px;font-weight:bold;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.card{background:white;border:1px solid #e5e7eb;border-radius:16px;padding:18px;box-shadow:0 8px 24px #0f172a0d}.card h2{font-size:17px;margin:0 0 8px}.card p{font-size:14px;line-height:1.5;color:#475569}.status{font-size:12px;font-weight:bold;color:#92400e;background:#fef3c7;padding:5px 8px;border-radius:8px;display:inline-block}.back{display:inline-block;margin-top:20px;color:#312e81;font-weight:bold;text-decoration:none}.note{margin-top:18px;padding:14px 16px;background:#fff;border-left:4px solid #4f46e5;border-radius:10px;font-size:14px;line-height:1.5;color:#475569}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="hero">
+<span class="tag">PARENT CO-PILOT</span>
+<h1>Teen Driving Safety</h1>
+<p>A parent-focused driving safety concept for Android, designed around clear alerts, safer habits, and peace of mind.</p>
+</section>
+<section class="grid" aria-label="Planned safety features">
+<article class="card"><h2>Phone Use</h2><p>Planned alerts for detected phone use while driving, subject to Android permissions and supported detection methods.</p><span class="status">Prototype — not active</span></article>
+<article class="card"><h2>Speeding</h2><p>Planned configurable speed thresholds and parent notifications when reliable location and speed data are available.</p><span class="status">Prototype — not active</span></article>
+<article class="card"><h2>Hard Braking & Acceleration</h2><p>Planned event detection using device sensors, with calibration to reduce false alerts.</p><span class="status">Prototype — not active</span></article>
+<article class="card"><h2>Driving Hours</h2><p>Planned alerts when a trip occurs outside parent-approved hours.</p><span class="status">Prototype — not active</span></article>
+<article class="card"><h2>Geofence Alerts</h2><p>Planned notifications when a driver enters or leaves a designated area.</p><span class="status">Prototype — not active</span></article>
+<article class="card"><h2>Parent Notifications</h2><p>Planned notification settings and an event history for parents to review.</p><span class="status">Prototype — not active</span></article>
+</section>
+<div class="note"><strong>Prototype notice:</strong> This page is a visual starting point only. It does not monitor a phone, track a vehicle, or send texts yet. Those capabilities require a companion Android app, permissions, a secure backend, and a notification service.</div>
+<a class="back" href="/">← Back to OmniAIHub Portfolio</a>
+</main>
+<script>
+if(sessionStorage.getItem("parent_copilot_ok")!=="1"){location.replace("/")}
+</script>
+</body>
+</html>
