@@ -17,8 +17,7 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:
 .control{border:0;border-radius:15px;padding:17px;text-align:left;font-size:17px;font-weight:800;cursor:pointer;background:#fff;color:var(--ink);box-shadow:0 5px 18px #0f172a12;border:2px solid transparent}
 .control span{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:5px}
 .control[aria-pressed=true]{border-color:var(--purple);background:#eef2ff}
-.panel{display:none}
-.panel.active{display:block}
+.panel{display:none}.panel.active{display:block}
 .panel-title{font-size:23px;margin:22px 0 12px}
 .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;margin-bottom:13px;box-shadow:0 8px 24px #0f172a0d}
 .card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
@@ -30,18 +29,20 @@ li{margin:8px 0;line-height:1.45}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;border:0;border-radius:10px;padding:11px 15px;background:var(--purple);color:white;font-weight:800;cursor:pointer}
 .btn.secondary{background:#fff;color:var(--purple);border:1px solid #c7d2fe}
+.btn.carplay{background:#111827;color:#fff}
 .speed-row{display:flex;align-items:center;justify-content:center;gap:clamp(20px,7vw,70px);padding:20px 8px}
 .speed-number{text-align:center}
 .speed-number strong{display:block;color:var(--red);font-size:clamp(58px,13vw,88px);line-height:1}
 .speed-number span{display:block;color:var(--red);font-weight:800;margin-top:5px}
 .speed-number small{display:block;color:var(--muted);margin-top:7px}
-.sign{width:112px;height:112px;flex:0 0 112px;border:7px solid var(--red);border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#111827}
-.sign small{font-weight:800;font-size:10px;letter-spacing:.05em}
-.sign strong{font-size:39px;line-height:1.1}
+.sign{width:106px;min-height:154px;flex:0 0 106px;border:4px solid #fff;outline:3px solid #111827;border-radius:5px;background:#111827;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;padding:12px 5px;box-shadow:0 4px 10px #0f172a25}
+.sign .sign-word{font-size:13px;font-weight:900;letter-spacing:.06em}
+.sign strong{font-size:49px;line-height:1.12}
+.sign .mph{font-size:15px;font-weight:900;letter-spacing:.08em}
 .over{text-align:center;color:var(--red);font-size:17px;font-weight:900;margin:0 0 8px}
 .notice{padding:13px 15px;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:13px;line-height:1.5;margin-top:16px}
 .back{display:inline-block;margin-top:20px;color:var(--purple);font-weight:bold;text-decoration:none}
-@media(max-width:560px){.wrap{padding:14px}.hero{padding:21px}.controls{grid-template-columns:1fr}.speed-row{gap:18px}.sign{width:96px;height:96px;flex-basis:96px;border-width:6px}.sign strong{font-size:33px}.card{padding:14px}}
+@media(max-width:560px){.wrap{padding:14px}.hero{padding:21px}.controls{grid-template-columns:1fr}.speed-row{gap:24px}.sign{width:94px;min-height:142px;flex-basis:94px}.sign strong{font-size:43px}.card{padding:14px}}
 </style>
 </head>
 <body>
@@ -49,22 +50,21 @@ li{margin:8px 0;line-height:1.45}
 <section class="hero">
 <span class="tag">PARENT CO-PILOT</span>
 <h1>Teen Driving Safety</h1>
-<p>Review sample driving alerts and choose to call or message Henry. This demonstration uses example data; it is not connected to a live phone or vehicle.</p>
+<p>Review sample driving alerts and choose a response. This demonstration uses example data; it is not connected to a live phone or vehicle.</p>
 </section>
-
 <div class="controls" aria-label="Safety alert categories">
 <button class="control" id="phone-tab" type="button" aria-pressed="true" onclick="showPanel('phone')">📱 Phone Use<span>View phone activity alerts</span></button>
 <button class="control" id="speed-tab" type="button" aria-pressed="false" onclick="showPanel('speed')">🚨 Speeding<span>View speed and speed-limit alerts</span></button>
 </div>
-
 <section id="phone-panel" class="panel active" aria-labelledby="phone-heading">
 <h2 class="panel-title" id="phone-heading">Phone Use Alerts</h2>
 <article class="card">
 <div class="card-head"><h3>Son Henry</h3><span class="pill red">High priority</span></div>
 <ul><li>Currently texting</li><li>Car is in motion</li></ul>
 <div class="actions">
-<a class="btn" href="tel:" id="call-henry-phone">☎ Call Henry</a>
-<a class="btn secondary" id="text-henry-phone" href="#">✉ Message Henry</a>
+<a class="btn" href="#" id="call-henry-phone">☎ Call</a>
+<a class="btn secondary" id="text-henry-phone" href="#">✉ Text</a>
+<button class="btn carplay" type="button" onclick="sendCarPlayMessage('phone')">▣ Send Message to Onboard CarPlay</button>
 </div>
 </article>
 <article class="card">
@@ -72,7 +72,6 @@ li{margin:8px 0;line-height:1.45}
 <ul><li>Currently on a phone conversation</li><li>Car is not in motion</li></ul>
 </article>
 </section>
-
 <section id="speed-panel" class="panel" aria-labelledby="speed-heading">
 <h2 class="panel-title" id="speed-heading">Speeding Alert</h2>
 <article class="card">
@@ -80,17 +79,17 @@ li{margin:8px 0;line-height:1.45}
 <p style="color:var(--muted);margin-bottom:0">Vehicle in motion · Sample alert</p>
 <div class="speed-row">
 <div class="speed-number"><strong>75</strong><span>MPH</span><small>Current speed</small></div>
-<div class="sign" role="img" aria-label="Speed limit 55 miles per hour"><small>SPEED LIMIT</small><strong>55</strong><small>MPH</small></div>
+<div class="sign" role="img" aria-label="Speed 55 MPH"><span class="sign-word">SPEED</span><strong>55</strong><span class="mph">MPH</span></div>
 </div>
 <p class="over">20 MPH over the speed limit</p>
 <div class="actions">
-<a class="btn" href="tel:" id="call-henry-speed">☎ Call Henry</a>
-<a class="btn secondary" id="text-henry-speed" href="#">✉ Text Henry</a>
+<a class="btn" href="#" id="call-henry-speed">☎ Call</a>
+<a class="btn secondary" id="text-henry-speed" href="#">✉ Text</a>
+<button class="btn carplay" type="button" onclick="sendCarPlayMessage('speed')">▣ Send Message to Onboard CarPlay</button>
 </div>
 </article>
 </section>
-
-<div class="notice"><strong>Prototype notice:</strong> These alerts are sample display data, not real monitoring. The call and message buttons open your phone's dialer or messaging app only after Henry's real phone number is configured. Live detection requires the Android companion app, permissions, location/sensor data, a secure backend, and notification services.</div>
+<div class="notice"><strong>Prototype notice:</strong> These are sample alerts, not real monitoring. Call and Text require a configured phone number. “Send Message to Onboard CarPlay” currently opens a prepared message preview; automatic delivery to a vehicle's CarPlay display requires a compatible companion app and supported vehicle integration.</div>
 <a class="back" href="/">← Back to OmniAIHub Portfolio</a>
 </main>
 <script>
@@ -106,12 +105,24 @@ const demoPhone="";
 const messagePhone=(message)=>"sms:"+demoPhone+"?&body="+encodeURIComponent(message);
 document.getElementById("call-henry-phone").href=demoPhone?"tel:"+demoPhone:"#";
 document.getElementById("call-henry-speed").href=demoPhone?"tel:"+demoPhone:"#";
-document.getElementById("text-henry-phone").href=demoPhone?messagePhone("Please get off your phone while driving."): "#";
-document.getElementById("text-henry-speed").href=demoPhone?messagePhone("Slow down, Henry. You're doing 75 in a 55 MPH zone."): "#";
+document.getElementById("text-henry-phone").href=demoPhone?messagePhone("Please get off your phone while driving."):"#";
+document.getElementById("text-henry-speed").href=demoPhone?messagePhone("Slow down. You're doing 75 in a 55 MPH zone."):"#";
 for(const id of ["call-henry-phone","call-henry-speed","text-henry-phone","text-henry-speed"]){
  document.getElementById(id).addEventListener("click",function(event){
-   if(!demoPhone){event.preventDefault();alert("Demo button: add Henry's phone number in the app configuration before using calls or texts.");}
+   if(!demoPhone){event.preventDefault();alert("Demo button: configure the driver's phone number before using calls or texts.");}
  });
+}
+function sendCarPlayMessage(type){
+ const message=type==="speed"
+  ?"Slow down. You're doing 75 in a 55 MPH zone. Please focus on driving."
+  :"Please stop using your phone while driving and focus on the road.";
+ const preview=window.prompt("Message to display/send through the onboard CarPlay integration:",message);
+ if(preview===null)return;
+ if(demoPhone){
+   window.location.href=messagePhone(preview);
+ }else{
+   window.alert("Message prepared:\n\n"+preview+"\n\nTo send it, configure the driver's phone number or connect a supported CarPlay companion service.");
+ }
 }
 </script>
 </body>
