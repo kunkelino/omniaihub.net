@@ -97,7 +97,7 @@ li{margin:8px 0;line-height:1.45}
 </div>
 </article>
 </section>
-<div class="notice"><strong>Prototype notice:</strong> These are sample alerts, not real monitoring. Kenny’s saved number is 774-322-0945; Jonathan’s saved number is 646-438-4703. Call opens the phone app. Text and Send Msg to Car open WhatsApp Web with the selected contact and preset message filled in; review it and click Send in WhatsApp. This does not send automatically or connect directly to the car display.</div>
+<div class="notice"><strong>Prototype notice:</strong> These are sample alerts, not real monitoring. Kenny’s saved number is 774-322-0945; Jonathan’s saved number is 646-438-4703. Call opens the phone app. Text and Send Msg to Car open Google Voice Messages. Select the intended contact, enter the selected preset message, and click Send in Google Voice. Google Voice does not provide a documented public link for automatically filling in both the recipient and message. This does not send automatically or connect directly to the car display.</div>
 <a class="back" href="/">← Back to OmniAIHub Portfolio</a>
 </main>
 <script>
@@ -112,7 +112,7 @@ function showPanel(name){
 const kennyPhone="7743220945";
 const jonathanPhone="6464384703";
 const safetyMessage="Get off phone or pull over.";
-const whatsappLink=(phone,message)=>"https://web.whatsapp.com/send?phone="+phone+"&text="+encodeURIComponent(message);
+const googleVoiceMessagesUrl="https://voice.google.com/u/0/messages";
 document.getElementById("call-kenny-phone").href="tel:"+kennyPhone;
 document.getElementById("call-kenny-speed").href="tel:"+kennyPhone;
 function selectedMessage(type){
@@ -125,7 +125,7 @@ function recipientPhone(type){
 }
 function updateTextLink(type){
   const link=document.getElementById(type==="speed"?"text-kenny-speed":type==="jonathan"?"text-jonathan":"text-kenny-phone");
-  if(link) { link.href=whatsappLink(recipientPhone(type),selectedMessage(type)); link.target="_blank"; link.rel="noopener noreferrer"; }
+  if(link) { link.href=googleVoiceMessagesUrl; link.target="_blank"; link.rel="noopener noreferrer"; link.title="Open Google Voice to compose the message"; }
 }
 document.getElementById("message-preset-phone").addEventListener("change",()=>updateTextLink("phone"));
 document.getElementById("message-preset-speed").addEventListener("change",()=>updateTextLink("speed"));
@@ -134,8 +134,8 @@ updateTextLink("phone");
 updateTextLink("speed");
 updateTextLink("jonathan");
 function sendCarPlayMessage(type){
-  // Opens WhatsApp Web with the selected contact and message prefilled. User must click Send.
-  window.open(whatsappLink(recipientPhone(type),selectedMessage(type)),"_blank","noopener,noreferrer");
+  // Google Voice does not provide a documented public URL to prefill a recipient and message. Open Messages; user selects contact, types preset, and clicks Send.
+  window.open(googleVoiceMessagesUrl,"_blank","noopener,noreferrer");
 }
 </script>
 </body>
