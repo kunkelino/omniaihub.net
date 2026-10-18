@@ -59,12 +59,12 @@ li{margin:8px 0;line-height:1.45}
 <section id="phone-panel" class="panel active" aria-labelledby="phone-heading">
 <h2 class="panel-title" id="phone-heading">Phone Use Alerts</h2>
 <article class="card">
-<div class="card-head"><h3>Son Henry</h3><span class="pill red">High priority</span></div>
+<div class="card-head"><h3>Kenny</h3><span class="pill red">High priority</span></div>
 <ul><li>Currently texting</li><li>Car is in motion</li></ul>
 <div class="actions">
-<a class="btn" href="#" id="call-henry-phone">☎ Call</a>
-<a class="btn secondary" id="text-henry-phone" href="#">✉ Text</a>
-<button class="btn carplay" type="button" onclick="sendCarPlayMessage('phone')">▣ Send Message to Onboard CarPlay</button>
+<a class="btn" href="#" id="call-kenny-phone">☎ Call Kenny</a>
+<a class="btn secondary" id="text-kenny-phone" href="#">✉ Send Message to Kenny</a>
+<button class="btn carplay" type="button" onclick="sendCarPlayMessage('phone')">▣ Send Message to Kenny</button>
 </div>
 </article>
 <article class="card">
@@ -75,7 +75,7 @@ li{margin:8px 0;line-height:1.45}
 <section id="speed-panel" class="panel" aria-labelledby="speed-heading">
 <h2 class="panel-title" id="speed-heading">Speeding Alert</h2>
 <article class="card">
-<div class="card-head"><h3>Son Henry</h3><span class="pill red">Speeding</span></div>
+<div class="card-head"><h3>Kenny</h3><span class="pill red">Speeding</span></div>
 <p style="color:var(--muted);margin-bottom:0">Vehicle in motion · Sample alert</p>
 <div class="speed-row">
 <div class="speed-number"><strong>75</strong><span>MPH</span><small>Current speed</small></div>
@@ -83,13 +83,13 @@ li{margin:8px 0;line-height:1.45}
 </div>
 <p class="over">20 MPH over the speed limit</p>
 <div class="actions">
-<a class="btn" href="#" id="call-henry-speed">☎ Call</a>
-<a class="btn secondary" id="text-henry-speed" href="#">✉ Text</a>
-<button class="btn carplay" type="button" onclick="sendCarPlayMessage('speed')">▣ Send Message to Onboard CarPlay</button>
+<a class="btn" href="#" id="call-kenny-speed">☎ Call Kenny</a>
+<a class="btn secondary" id="text-kenny-speed" href="#">✉ Send Message to Kenny</a>
+<button class="btn carplay" type="button" onclick="sendCarPlayMessage('speed')">▣ Send Message to Kenny</button>
 </div>
 </article>
 </section>
-<div class="notice"><strong>Prototype notice:</strong> These are sample alerts, not real monitoring. Call and Text require a configured phone number. “Send Message to Onboard CarPlay” currently opens a prepared message preview; automatic delivery to a vehicle's CarPlay display requires a compatible companion app and supported vehicle integration.</div>
+<div class="notice"><strong>Prototype notice:</strong> These are sample alerts, not real monitoring. Call and Text require a configured phone number. “Send Message to Kenny” currently opens a prepared message preview; automatic delivery to a vehicle's CarPlay display requires a compatible companion app and supported vehicle integration.</div>
 <a class="back" href="/">← Back to OmniAIHub Portfolio</a>
 </main>
 <script>
@@ -101,28 +101,17 @@ function showPanel(name){
   document.getElementById("phone-tab").setAttribute("aria-pressed",String(phone));
   document.getElementById("speed-tab").setAttribute("aria-pressed",String(!phone));
 }
-const demoPhone="";
-const messagePhone=(message)=>"sms:"+demoPhone+"?&body="+encodeURIComponent(message);
-document.getElementById("call-henry-phone").href=demoPhone?"tel:"+demoPhone:"#";
-document.getElementById("call-henry-speed").href=demoPhone?"tel:"+demoPhone:"#";
-document.getElementById("text-henry-phone").href=demoPhone?messagePhone("Please get off your phone while driving."):"#";
-document.getElementById("text-henry-speed").href=demoPhone?messagePhone("Slow down. You're doing 75 in a 55 MPH zone."):"#";
-for(const id of ["call-henry-phone","call-henry-speed","text-henry-phone","text-henry-speed"]){
- document.getElementById(id).addEventListener("click",function(event){
-   if(!demoPhone){event.preventDefault();alert("Demo button: configure the driver's phone number before using calls or texts.");}
- });
-}
+const kennyPhone="6464384703";
+const safetyMessage="Get off phone or pull over.";
+const smsLink=(message)=>"sms:"+kennyPhone+"?&body="+encodeURIComponent(message);
+document.getElementById("call-kenny-phone").href="tel:"+kennyPhone;
+document.getElementById("call-kenny-speed").href="tel:"+kennyPhone;
+document.getElementById("text-kenny-phone").href=smsLink(safetyMessage);
+document.getElementById("text-kenny-speed").href=smsLink(safetyMessage);
 function sendCarPlayMessage(type){
- const message=type==="speed"
-  ?"Slow down. You're doing 75 in a 55 MPH zone. Please focus on driving."
-  :"Please stop using your phone while driving and focus on the road.";
- const preview=window.prompt("Message to display/send through the onboard CarPlay integration:",message);
- if(preview===null)return;
- if(demoPhone){
-   window.location.href=messagePhone(preview);
- }else{
-   window.alert("Message prepared:\n\n"+preview+"\n\nTo send it, configure the driver's phone number or connect a supported CarPlay companion service.");
- }
+  // A webpage cannot silently send a text or write to a CarPlay display.
+  // Open the device's messaging app with Kenny's number and the requested text.
+  window.location.href=smsLink(safetyMessage);
 }
 </script>
 </body>
