@@ -120,6 +120,15 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
         <div class="passcode-err" id="r4r-admin-err"></div>
       </div>
     </form>
+    <form class="box passcode-tile" id="parent-copilot-gate" action="parent-copilot.html">
+      <div class="passcode-inner">
+        <div class="passcode-title">Parent CoPilot</div>
+        <label for="parent-copilot-pin">Passcode</label>
+        <input id="parent-copilot-pin" name="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Passcode">
+        <button type="submit">Enter</button>
+        <div class="passcode-err" id="parent-copilot-err"></div>
+      </div>
+    </form>
     <div class="box yt" data-id="iSAq5QqCaFI">
       <img src="https://img.youtube.com/vi/iSAq5QqCaFI/sddefault.jpg" alt="Video commercial sample">
       <span class="play-badge">▶</span>
@@ -366,6 +375,22 @@ document.getElementById("speak4-gate").addEventListener("submit", function(e){
       document.getElementById(id+"-err").textContent="Wrong passcode";
     }
   });
+});
+document.getElementById("parent-copilot-gate").addEventListener("submit", function(e){
+  e.preventDefault();
+  var pin=(document.getElementById("parent-copilot-pin").value||"").replace(/\\D/g,"");
+  if(pin==="4357"){
+    sessionStorage.setItem("parent_copilot_ok","1");
+    location.href="parent-copilot.html";
+  } else {
+    document.getElementById("parent-copilot-err").textContent="Wrong passcode";
+  }
+});
+document.getElementById("parent-copilot-pin").addEventListener("keydown", function(e){
+  if(e.key==="Enter"){
+    e.preventDefault();
+    document.getElementById("parent-copilot-gate").requestSubmit();
+  }
 });
 document.addEventListener("keydown", function(e){
   if(e.key!=="Escape") return;
