@@ -5,7 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Parent CoPilot — Driving Safety</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#172033}.wrap{max-width:1050px;margin:auto;padding:24px}.hero{background:linear-gradient(135deg,#111827,#312e81);color:white;border-radius:22px;padding:28px;margin-bottom:20px}.hero h1{margin:0 0 8px;font-size:clamp(28px,5vw,42px)}.hero p{line-height:1.6;max-width:720px}.tag{display:inline-block;background:#e0e7ff;color:#312e81;padding:6px 10px;border-radius:99px;font-weight:bold;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.card{background:white;border:1px solid #e5e7eb;border-radius:16px;padding:18px;box-shadow:0 8px 24px #0f172a0d}.card h2{font-size:17px;margin:0 0 8px}.card p{font-size:14px;line-height:1.5;color:#475569}.status{font-size:12px;font-weight:bold;color:#92400e;background:#fef3c7;padding:5px 8px;border-radius:8px;display:inline-block}.back{display:inline-block;margin-top:20px;color:#312e81;font-weight:bold;text-decoration:none}.note{margin-top:18px;padding:14px 16px;background:#fff;border-left:4px solid #4f46e5;border-radius:10px;font-size:14px;line-height:1.5;color:#475569}
+*{box-sizing:border-box}
+:root{--bg:#f4f7fb;--ink:#172033;--muted:#64748b;--line:#e5e7eb;--navy:#111827;--purple:#312e81;--red:#dc2626}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:1050px;margin:auto;padding:22px}
+.hero{background:linear-gradient(135deg,var(--navy),var(--purple));color:#fff;border-radius:22px;padding:26px;margin-bottom:18px}
+.hero h1{margin:8px 0;font-size:clamp(28px,5vw,42px)}
+.hero p{line-height:1.55;max-width:720px;margin-bottom:0}
+.tag{display:inline-block;background:#e0e7ff;color:var(--purple);padding:6px 10px;border-radius:99px;font-weight:bold;font-size:12px}
+.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.control{border:0;border-radius:15px;padding:17px;text-align:left;font-size:17px;font-weight:800;cursor:pointer;background:#fff;color:var(--ink);box-shadow:0 5px 18px #0f172a12;border:2px solid transparent}
+.control span{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:5px}
+.control[aria-pressed=true]{border-color:var(--purple);background:#eef2ff}
+.panel{display:none}
+.panel.active{display:block}
+.panel-title{font-size:23px;margin:22px 0 12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;margin-bottom:13px;box-shadow:0 8px 24px #0f172a0d}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card h3{margin:0;font-size:18px}
+.pill{display:inline-block;border-radius:99px;padding:6px 9px;font-size:12px;font-weight:800;background:#fef3c7;color:#92400e}
+.pill.red{background:#fee2e2;color:#991b1b}
+ul{padding-left:22px;margin:14px 0;color:#334155}
+li{margin:8px 0;line-height:1.45}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;border:0;border-radius:10px;padding:11px 15px;background:var(--purple);color:white;font-weight:800;cursor:pointer}
+.btn.secondary{background:#fff;color:var(--purple);border:1px solid #c7d2fe}
+.speed-row{display:flex;align-items:center;justify-content:center;gap:clamp(20px,7vw,70px);padding:20px 8px}
+.speed-number{text-align:center}
+.speed-number strong{display:block;color:var(--red);font-size:clamp(58px,13vw,88px);line-height:1}
+.speed-number span{display:block;color:var(--red);font-weight:800;margin-top:5px}
+.speed-number small{display:block;color:var(--muted);margin-top:7px}
+.sign{width:112px;height:112px;flex:0 0 112px;border:7px solid var(--red);border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#111827}
+.sign small{font-weight:800;font-size:10px;letter-spacing:.05em}
+.sign strong{font-size:39px;line-height:1.1}
+.over{text-align:center;color:var(--red);font-size:17px;font-weight:900;margin:0 0 8px}
+.notice{padding:13px 15px;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:13px;line-height:1.5;margin-top:16px}
+.back{display:inline-block;margin-top:20px;color:var(--purple);font-weight:bold;text-decoration:none}
+@media(max-width:560px){.wrap{padding:14px}.hero{padding:21px}.controls{grid-template-columns:1fr}.speed-row{gap:18px}.sign{width:96px;height:96px;flex-basis:96px;border-width:6px}.sign strong{font-size:33px}.card{padding:14px}}
 </style>
 </head>
 <body>
@@ -13,21 +49,70 @@
 <section class="hero">
 <span class="tag">PARENT CO-PILOT</span>
 <h1>Teen Driving Safety</h1>
-<p>A parent-focused driving safety concept for Android, designed around clear alerts, safer habits, and peace of mind.</p>
+<p>Review sample driving alerts and choose to call or message Henry. This demonstration uses example data; it is not connected to a live phone or vehicle.</p>
 </section>
-<section class="grid" aria-label="Planned safety features">
-<article class="card"><h2>Phone Use</h2><p>Planned alerts for detected phone use while driving, subject to Android permissions and supported detection methods.</p><span class="status">Prototype — not active</span></article>
-<article class="card"><h2>Speeding</h2><p>Planned configurable speed thresholds and parent notifications when reliable location and speed data are available.</p><span class="status">Prototype — not active</span></article>
-<article class="card"><h2>Hard Braking & Acceleration</h2><p>Planned event detection using device sensors, with calibration to reduce false alerts.</p><span class="status">Prototype — not active</span></article>
-<article class="card"><h2>Driving Hours</h2><p>Planned alerts when a trip occurs outside parent-approved hours.</p><span class="status">Prototype — not active</span></article>
-<article class="card"><h2>Geofence Alerts</h2><p>Planned notifications when a driver enters or leaves a designated area.</p><span class="status">Prototype — not active</span></article>
-<article class="card"><h2>Parent Notifications</h2><p>Planned notification settings and an event history for parents to review.</p><span class="status">Prototype — not active</span></article>
+
+<div class="controls" aria-label="Safety alert categories">
+<button class="control" id="phone-tab" type="button" aria-pressed="true" onclick="showPanel('phone')">📱 Phone Use<span>View phone activity alerts</span></button>
+<button class="control" id="speed-tab" type="button" aria-pressed="false" onclick="showPanel('speed')">🚨 Speeding<span>View speed and speed-limit alerts</span></button>
+</div>
+
+<section id="phone-panel" class="panel active" aria-labelledby="phone-heading">
+<h2 class="panel-title" id="phone-heading">Phone Use Alerts</h2>
+<article class="card">
+<div class="card-head"><h3>Son Henry</h3><span class="pill red">High priority</span></div>
+<ul><li>Currently texting</li><li>Car is in motion</li></ul>
+<div class="actions">
+<a class="btn" href="tel:" id="call-henry-phone">☎ Call Henry</a>
+<a class="btn secondary" id="text-henry-phone" href="#">✉ Message Henry</a>
+</div>
+</article>
+<article class="card">
+<div class="card-head"><h3>Daughter Sally</h3><span class="pill">Informational</span></div>
+<ul><li>Currently on a phone conversation</li><li>Car is not in motion</li></ul>
+</article>
 </section>
-<div class="note"><strong>Prototype notice:</strong> This page is a visual starting point only. It does not monitor a phone, track a vehicle, or send texts yet. Those capabilities require a companion Android app, permissions, a secure backend, and a notification service.</div>
+
+<section id="speed-panel" class="panel" aria-labelledby="speed-heading">
+<h2 class="panel-title" id="speed-heading">Speeding Alert</h2>
+<article class="card">
+<div class="card-head"><h3>Son Henry</h3><span class="pill red">Speeding</span></div>
+<p style="color:var(--muted);margin-bottom:0">Vehicle in motion · Sample alert</p>
+<div class="speed-row">
+<div class="speed-number"><strong>75</strong><span>MPH</span><small>Current speed</small></div>
+<div class="sign" role="img" aria-label="Speed limit 55 miles per hour"><small>SPEED LIMIT</small><strong>55</strong><small>MPH</small></div>
+</div>
+<p class="over">20 MPH over the speed limit</p>
+<div class="actions">
+<a class="btn" href="tel:" id="call-henry-speed">☎ Call Henry</a>
+<a class="btn secondary" id="text-henry-speed" href="#">✉ Text Henry</a>
+</div>
+</article>
+</section>
+
+<div class="notice"><strong>Prototype notice:</strong> These alerts are sample display data, not real monitoring. The call and message buttons open your phone's dialer or messaging app only after Henry's real phone number is configured. Live detection requires the Android companion app, permissions, location/sensor data, a secure backend, and notification services.</div>
 <a class="back" href="/">← Back to OmniAIHub Portfolio</a>
 </main>
 <script>
 if(sessionStorage.getItem("parent_copilot_ok")!=="1"){location.replace("/")}
+function showPanel(name){
+  const phone=name==="phone";
+  document.getElementById("phone-panel").classList.toggle("active",phone);
+  document.getElementById("speed-panel").classList.toggle("active",!phone);
+  document.getElementById("phone-tab").setAttribute("aria-pressed",String(phone));
+  document.getElementById("speed-tab").setAttribute("aria-pressed",String(!phone));
+}
+const demoPhone="";
+const messagePhone=(message)=>"sms:"+demoPhone+"?&body="+encodeURIComponent(message);
+document.getElementById("call-henry-phone").href=demoPhone?"tel:"+demoPhone:"#";
+document.getElementById("call-henry-speed").href=demoPhone?"tel:"+demoPhone:"#";
+document.getElementById("text-henry-phone").href=demoPhone?messagePhone("Please get off your phone while driving."): "#";
+document.getElementById("text-henry-speed").href=demoPhone?messagePhone("Slow down, Henry. You're doing 75 in a 55 MPH zone."): "#";
+for(const id of ["call-henry-phone","call-henry-speed","text-henry-phone","text-henry-speed"]){
+ document.getElementById(id).addEventListener("click",function(event){
+   if(!demoPhone){event.preventDefault();alert("Demo button: add Henry's phone number in the app configuration before using calls or texts.");}
+ });
+}
 </script>
 </body>
 </html>
