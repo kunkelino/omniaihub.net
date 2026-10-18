@@ -6,7 +6,7 @@
 <title>Parent CoPilot — Driving Safety</title>
 <style>
 *{box-sizing:border-box}
-:root{--bg:#f4f7fb;--ink:#172033;--muted:#64748b;--line:#e5e7eb;--navy:#111827;--purple:#312e81;--red:#dc2626}
+:root{--bg:#f4f7fb;--ink:#172033;--muted:#64748b;--line:#e5e7eb;--navy:#111827;--purple:#312e81;--red:#dc2626;--green:#15803d;--yellow:#facc15}
 body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
 .wrap{max-width:1050px;margin:auto;padding:22px}
 .hero{background:linear-gradient(135deg,var(--navy),var(--purple));color:#fff;border-radius:22px;padding:26px;margin-bottom:18px}
@@ -29,7 +29,7 @@ li{margin:8px 0;line-height:1.45}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;border:0;border-radius:10px;padding:11px 15px;background:var(--purple);color:white;font-weight:800;cursor:pointer}
 .btn.secondary{background:#fff;color:var(--purple);border:1px solid #c7d2fe}
-.btn.carplay{background:#111827;color:#fff}
+.btn.call,.btn.carplay{background:var(--green);color:#fff}.btn.text{background:var(--yellow);color:#1f2937}.preset-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:14px}.preset-row label{font-weight:700;font-size:13px}.preset-row select{max-width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:var(--ink);font:inherit}
 .speed-row{display:flex;align-items:center;justify-content:center;gap:clamp(20px,7vw,70px);padding:20px 8px}
 .speed-number{text-align:center}
 .speed-number strong{display:block;color:var(--red);font-size:clamp(58px,13vw,88px);line-height:1}
@@ -61,10 +61,11 @@ li{margin:8px 0;line-height:1.45}
 <article class="card">
 <div class="card-head"><h3>Kenny</h3><span class="pill red">High priority</span></div>
 <ul><li>Currently texting</li><li>Car is in motion</li></ul>
+<div class="preset-row"><label for="message-preset-phone">Preset message</label><select id="message-preset-phone"><option value="Hang up or pull over">Hang up or pull over</option><option value="Stop texting or pull over" selected>Stop texting or pull over</option><option value="Slow speed">Slow speed</option></select></div>
 <div class="actions">
-<a class="btn" href="#" id="call-kenny-phone">☎ Call Kenny</a>
-<a class="btn secondary" id="text-kenny-phone" href="#">✉ Send Message to Kenny</a>
-<button class="btn carplay" type="button" onclick="sendCarPlayMessage('phone')">▣ Send Message to Kenny</button>
+<a class="btn call" href="#" id="call-kenny-phone">☎ Call</a>
+<a class="btn text" id="text-kenny-phone" href="#">✉ Text</a>
+<button class="btn carplay" type="button" onclick="sendCarPlayMessage('phone')">▣ Send Msg to Car</button>
 </div>
 </article>
 <article class="card">
@@ -82,14 +83,15 @@ li{margin:8px 0;line-height:1.45}
 <div class="sign" role="img" aria-label="Speed 55 MPH"><span class="sign-word">SPEED</span><strong>55</strong><span class="mph">MPH</span></div>
 </div>
 <p class="over">20 MPH over the speed limit</p>
+<div class="preset-row"><label for="message-preset-speed">Preset message</label><select id="message-preset-speed"><option value="Hang up or pull over">Hang up or pull over</option><option value="Stop texting or pull over">Stop texting or pull over</option><option value="Slow speed" selected>Slow speed</option></select></div>
 <div class="actions">
-<a class="btn" href="#" id="call-kenny-speed">☎ Call Kenny</a>
-<a class="btn secondary" id="text-kenny-speed" href="#">✉ Send Message to Kenny</a>
-<button class="btn carplay" type="button" onclick="sendCarPlayMessage('speed')">▣ Send Message to Kenny</button>
+<a class="btn call" href="#" id="call-kenny-speed">☎ Call</a>
+<a class="btn text" id="text-kenny-speed" href="#">✉ Text</a>
+<button class="btn carplay" type="button" onclick="sendCarPlayMessage('speed')">▣ Send Msg to Car</button>
 </div>
 </article>
 </section>
-<div class="notice"><strong>Prototype notice:</strong> These are sample alerts, not real monitoring. Call and Text require a configured phone number. “Send Message to Kenny” currently opens a prepared message preview; automatic delivery to a vehicle's CarPlay display requires a compatible companion app and supported vehicle integration.</div>
+<div class="notice"><strong>Prototype notice:</strong> These are sample alerts, not real monitoring. Call opens the phone app. Text and Send Msg to Car open a prepared SMS to Kenny using the selected preset; tap Send to deliver it. Sending directly to a vehicle display requires a compatible companion app and supported vehicle integration.</div>
 <a class="back" href="/">← Back to OmniAIHub Portfolio</a>
 </main>
 <script>
@@ -106,12 +108,21 @@ const safetyMessage="Get off phone or pull over.";
 const smsLink=(message)=>"sms:"+kennyPhone+"?&body="+encodeURIComponent(message);
 document.getElementById("call-kenny-phone").href="tel:"+kennyPhone;
 document.getElementById("call-kenny-speed").href="tel:"+kennyPhone;
-document.getElementById("text-kenny-phone").href=smsLink(safetyMessage);
-document.getElementById("text-kenny-speed").href=smsLink(safetyMessage);
+function selectedMessage(type){
+  const selector=document.getElementById(type==="speed"?"message-preset-speed":"message-preset-phone");
+  return selector ? selector.value : safetyMessage;
+}
+function updateTextLink(type){
+  const link=document.getElementById(type==="speed"?"text-kenny-speed":"text-kenny-phone");
+  if(link) link.href=smsLink(selectedMessage(type));
+}
+document.getElementById("message-preset-phone").addEventListener("change",()=>updateTextLink("phone"));
+document.getElementById("message-preset-speed").addEventListener("change",()=>updateTextLink("speed"));
+updateTextLink("phone");
+updateTextLink("speed");
 function sendCarPlayMessage(type){
-  // A webpage cannot silently send a text or write to a CarPlay display.
-  // Open the device's messaging app with Kenny's number and the requested text.
-  window.location.href=smsLink(safetyMessage);
+  // This opens the SMS composer. Direct CarPlay messaging requires a supported integration.
+  window.location.href=smsLink(selectedMessage(type));
 }
 </script>
 </body>
