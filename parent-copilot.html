@@ -71,7 +71,12 @@ li{margin:8px 0;line-height:1.45}
 <article class="card">
 <div class="card-head"><h3>Jonathan</h3><span class="pill">Saved contact</span></div>
 <p style="color:var(--muted);font-size:13px;margin:8px 0 0">Saved phone: 646-438-4703</p>
-<div class="actions"><a class="btn call" href="tel:6464384703">☎ Call</a><a class="btn text" href="sms:6464384703?&body=Hello%20Jonathan">✉ Text</a></div>
+<div class="preset-row"><label for="message-preset-jonathan">Preset message</label><select id="message-preset-jonathan"><option value="Hang up or pull over">Hang up or pull over</option><option value="Stop texting or pull over" selected>Stop texting or pull over</option><option value="Slow speed">Slow speed</option></select></div>
+<div class="actions">
+<a class="btn call" href="tel:6464384703">☎ Call</a>
+<a class="btn text" id="text-jonathan" href="#">✉ Text</a>
+<button class="btn carplay" type="button" onclick="sendCarPlayMessage('jonathan')">▣ Send Msg to Car</button>
+</div>
 </article>
 </section>
 <section id="speed-panel" class="panel" aria-labelledby="speed-heading">
@@ -105,25 +110,32 @@ function showPanel(name){
   document.getElementById("speed-tab").setAttribute("aria-pressed",String(!phone));
 }
 const kennyPhone="7743220945";
+const jonathanPhone="6464384703";
 const safetyMessage="Get off phone or pull over.";
-const smsLink=(message)=>"sms:"+kennyPhone+"?&body="+encodeURIComponent(message);
+const smsLink=(phone,message)=>"sms:"+phone+"?&body="+encodeURIComponent(message);
 document.getElementById("call-kenny-phone").href="tel:"+kennyPhone;
 document.getElementById("call-kenny-speed").href="tel:"+kennyPhone;
 function selectedMessage(type){
-  const selector=document.getElementById(type==="speed"?"message-preset-speed":"message-preset-phone");
+  const id=type==="speed"?"message-preset-speed":type==="jonathan"?"message-preset-jonathan":"message-preset-phone";
+  const selector=document.getElementById(id);
   return selector ? selector.value : safetyMessage;
 }
+function recipientPhone(type){
+  return type==="jonathan" ? jonathanPhone : kennyPhone;
+}
 function updateTextLink(type){
-  const link=document.getElementById(type==="speed"?"text-kenny-speed":"text-kenny-phone");
-  if(link) link.href=smsLink(selectedMessage(type));
+  const link=document.getElementById(type==="speed"?"text-kenny-speed":type==="jonathan"?"text-jonathan":"text-kenny-phone");
+  if(link) link.href=smsLink(recipientPhone(type),selectedMessage(type));
 }
 document.getElementById("message-preset-phone").addEventListener("change",()=>updateTextLink("phone"));
 document.getElementById("message-preset-speed").addEventListener("change",()=>updateTextLink("speed"));
+document.getElementById("message-preset-jonathan").addEventListener("change",()=>updateTextLink("jonathan"));
 updateTextLink("phone");
 updateTextLink("speed");
+updateTextLink("jonathan");
 function sendCarPlayMessage(type){
-  // This opens the SMS composer. Direct CarPlay messaging requires a supported integration.
-  window.location.href=smsLink(selectedMessage(type));
+  // Opens SMS composer for the selected person. Direct vehicle-display messaging needs a supported integration.
+  window.location.href=smsLink(recipientPhone(type),selectedMessage(type));
 }
 </script>
 </body>
