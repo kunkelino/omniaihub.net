@@ -29,7 +29,7 @@ li{margin:8px 0;line-height:1.45}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;border:0;border-radius:10px;padding:11px 15px;background:var(--purple);color:white;font-weight:800;cursor:pointer}
 .btn.secondary{background:#fff;color:var(--purple);border:1px solid #c7d2fe}
-.btn.call,.btn.carplay{background:var(--green);color:#fff}.btn.text{background:var(--yellow);color:#1f2937}.preset-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:14px}.preset-row label{font-weight:700;font-size:13px}.preset-row select{max-width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:var(--ink);font:inherit}
+.btn.call{background:var(--green);color:#fff}.btn.carplay{background:var(--red);color:#fff}.btn.text{background:var(--yellow);color:#1f2937}.preset-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:14px}.preset-row label{font-weight:700;font-size:13px}.preset-row select{max-width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:var(--ink);font:inherit}
 .speed-row{display:flex;align-items:center;justify-content:center;gap:clamp(20px,7vw,70px);padding:20px 8px}
 .speed-number{text-align:center}
 .speed-number strong{display:block;color:var(--red);font-size:clamp(58px,13vw,88px);line-height:1}
@@ -59,7 +59,7 @@ li{margin:8px 0;line-height:1.45}
 <section id="phone-panel" class="panel active" aria-labelledby="phone-heading">
 <h2 class="panel-title" id="phone-heading">Phone Use Alerts</h2>
 <article class="card">
-<div class="card-head"><h3>Kenny</h3><span class="pill red">High priority</span></div>
+<div class="card-head"><h3>Kenny</h3><span class="pill red">High priority</span></div><p style="color:var(--muted);font-size:13px;margin:8px 0 0">Saved phone: 774-322-0945</p>
 <ul><li>Currently texting</li><li>Car is in motion</li></ul>
 <div class="preset-row"><label for="message-preset-phone">Preset message</label><select id="message-preset-phone"><option value="Hang up or pull over">Hang up or pull over</option><option value="Stop texting or pull over" selected>Stop texting or pull over</option><option value="Slow speed">Slow speed</option></select></div>
 <div class="actions">
@@ -69,14 +69,15 @@ li{margin:8px 0;line-height:1.45}
 </div>
 </article>
 <article class="card">
-<div class="card-head"><h3>Daughter Sally</h3><span class="pill">Informational</span></div>
-<ul><li>Currently on a phone conversation</li><li>Car is not in motion</li></ul>
+<div class="card-head"><h3>Jonathan</h3><span class="pill">Saved contact</span></div>
+<p style="color:var(--muted);font-size:13px;margin:8px 0 0">Saved phone: 646-438-4703</p>
+<div class="actions"><a class="btn call" href="tel:6464384703">☎ Call</a><a class="btn text" href="sms:6464384703?&body=Hello%20Jonathan">✉ Text</a></div>
 </article>
 </section>
 <section id="speed-panel" class="panel" aria-labelledby="speed-heading">
 <h2 class="panel-title" id="speed-heading">Speeding Alert</h2>
 <article class="card">
-<div class="card-head"><h3>Kenny</h3><span class="pill red">Speeding</span></div>
+<div class="card-head"><h3>Kenny</h3><span class="pill red">Speeding</span></div><p style="color:var(--muted);font-size:13px;margin:8px 0 0">Saved phone: 774-322-0945</p>
 <p style="color:var(--muted);margin-bottom:0">Vehicle in motion · Sample alert</p>
 <div class="speed-row">
 <div class="speed-number"><strong>75</strong><span>MPH</span><small>Current speed</small></div>
@@ -91,7 +92,7 @@ li{margin:8px 0;line-height:1.45}
 </div>
 </article>
 </section>
-<div class="notice"><strong>Prototype notice:</strong> These are sample alerts, not real monitoring. Call opens the phone app. Text and Send Msg to Car open a prepared SMS to Kenny using the selected preset; tap Send to deliver it. Sending directly to a vehicle display requires a compatible companion app and supported vehicle integration.</div>
+<div class="notice"><strong>Prototype notice:</strong> These are sample alerts, not real monitoring. Kenny’s saved number is 774-322-0945; Jonathan’s saved number is 646-438-4703. Call opens the phone app. Text and Send Msg to Car open a prepared SMS using the selected preset; tap Send to deliver it. Send Msg to Car is a red button; direct vehicle-display messaging requires a compatible integration.</div>
 <a class="back" href="/">← Back to OmniAIHub Portfolio</a>
 </main>
 <script>
@@ -103,7 +104,7 @@ function showPanel(name){
   document.getElementById("phone-tab").setAttribute("aria-pressed",String(phone));
   document.getElementById("speed-tab").setAttribute("aria-pressed",String(!phone));
 }
-const kennyPhone="6464384703";
+const kennyPhone="7743220945";
 const safetyMessage="Get off phone or pull over.";
 const smsLink=(message)=>"sms:"+kennyPhone+"?&body="+encodeURIComponent(message);
 document.getElementById("call-kenny-phone").href="tel:"+kennyPhone;
