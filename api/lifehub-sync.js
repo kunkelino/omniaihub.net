@@ -30,12 +30,19 @@ export default async function handler(req, res) {
 
     if (req.method === "POST") {
       const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+      const existing = await readBlob(token, pathname);
+      const incomingAt = Number(body.updatedAt) || Date.now();
+      const existingAt = Number(existing && existing.updatedAt) || 0;
+      if (existing && existingAt > incomingAt) {
+        res.status(200).json({ ok: true, stale: true, updatedAt: existingAt });
+        return;
+      }
       const payload = {
         tasks: Array.isArray(body.tasks) ? body.tasks : [],
         buy: Array.isArray(body.buy) ? body.buy : [],
         events: Array.isArray(body.events) ? body.events : [],
         notes: Array.isArray(body.notes) ? body.notes : [],
-        updatedAt: Date.now()
+        updatedAt: incomingAt
       };
       await writeBlob(token, pathname, payload);
       res.status(200).json({ ok: true, updatedAt: payload.updatedAt });
