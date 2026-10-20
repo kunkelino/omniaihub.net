@@ -30,7 +30,7 @@
     html=html.replace("let notes=","var notes=");
     html=html.replace(
       "function saveAll(){\n  localStorage.setItem(KEY.tasks,JSON.stringify(tasks||[]));",
-      "function saveAll(){\n  localStorage.setItem(\"lifehub_updatedAt\", String(Date.now()));\n  localStorage.setItem(KEY.tasks,JSON.stringify(tasks||[]));"
+      "function saveAll(){\n  localStorage.setItem(\"lifehub_updatedAt\", String(Math.max(Date.now()+10000,(parseInt(localStorage.getItem(\"lifehub_updatedAt\")||\"0\",10)||0)+1)));\n  localStorage.setItem(KEY.tasks,JSON.stringify(tasks||[]));"
     );
     html=html.replace(
       "localStorage.setItem(KEY.widgets,JSON.stringify(widgets||[]));\n}",
