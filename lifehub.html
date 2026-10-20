@@ -17,6 +17,14 @@
     if(i>=SRCS.length){ document.body.textContent="Could not load LifeHub. Refresh."; return; }
     fetch(SRCS[i],{cache:"no-store"}).then(function(r){ if(!r.ok) throw new Error(); return r.text(); }).then(function(html){
     html=html.replace("let tasks=","var tasks=");
+    html=html.replace(
+      '<button class="action-apple" onclick="syncICloudCalendar()">☁️ Sync Apple</button>',
+      '<button class="action-apple" onclick="syncICloudCalendar()">☁️ Sync Apple</button><button class="secondary" onclick="updateAppleCalendarLink()">Update Apple Link</button>'
+    );
+    html=html.replace(
+      "async function syncICloudCalendar(silent){",
+      'function updateAppleCalendarLink(){var current=localStorage.getItem("lifehub_apple_ics_home")||localStorage.getItem("lifehub_apple_ics")||"";var value=prompt("Paste the current iCloud Home calendar link. You can copy it from iCloud Calendar → Share Calendar → Copy Link.",current);if(value===null)return;value=String(value).trim();if(!value){alert("No link entered. Your saved link was not changed.");return;}if(value.indexOf("webcal://")===0)value="https://"+value.slice(9);localStorage.setItem("lifehub_apple_ics_home",value);localStorage.removeItem("lifehub_apple_ics");syncICloudCalendar(false);}\nasync function syncICloudCalendar(silent){'
+    );
     html=html.replace("let buy=","var buy=");
     html=html.replace("let events=","var events=");
     html=html.replace("let notes=","var notes=");
