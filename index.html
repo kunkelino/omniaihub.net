@@ -84,15 +84,7 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
         <div class="passcode-err" id="lifehub-err"></div>
       </div>
     </form>
-    <form class="box passcode-tile" id="games-gate" action="games.html">
-      <div class="passcode-inner">
-        <div class="passcode-title">Games</div>
-        <label for="games-pin">Passcode</label>
-        <input id="games-pin" name="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Passcode">
-        <button type="submit">Enter</button>
-        <div class="passcode-err" id="games-err"></div>
-      </div>
-    </form>
+    <a class="box" href="games.html"><img src="games/room/talk.jpg" alt="Games"><span class="cap">Games</span></a>
     <form class="box passcode-tile" id="speak4-gate" action="spk4gln.html">
       <div class="passcode-inner">
         <div class="passcode-title">Speak4</div>
@@ -102,24 +94,8 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
         <div class="passcode-err" id="speak4-err"></div>
       </div>
     </form>
-    <form class="box passcode-tile" id="real4real-gate" aria-label="Open Mark's Real 4 Real website">
-      <div class="passcode-inner">
-        <div class="passcode-title">Real 4 Real — Mark's Website</div>
-        <label for="real4real-pin">Passcode</label>
-        <input id="real4real-pin" name="pin" type="password" inputmode="numeric" maxlength="3" autocomplete="off" placeholder="Passcode">
-        <button type="submit">Enter</button>
-        <div class="passcode-err" id="real4real-err"></div>
-      </div>
-    </form>
-    <form class="box passcode-tile" id="parent-copilot-gate" action="parent-copilot.html">
-      <div class="passcode-inner">
-        <div class="passcode-title">Parent CoPilot</div>
-        <label for="parent-copilot-pin">Passcode</label>
-        <input id="parent-copilot-pin" name="pin" type="password" inputmode="numeric" maxlength="3" autocomplete="off" placeholder="Passcode">
-        <button type="submit">Enter</button>
-        <div class="passcode-err" id="parent-copilot-err"></div>
-      </div>
-    </form>
+    <a class="box" href="https://www.mrbhnco.com/" target="_blank" rel="noopener noreferrer"><img src="holy-family-tile.jpg" alt="Real 4 Real — Mark's Website"><span class="cap">Real 4 Real — Mark's Website</span></a>
+    <a class="box" href="parent-copilot.html"><img src="parent-copilot-preview.jpg" alt="Parent CoPilot"><span class="cap">Parent CoPilot</span></a>
     <div class="box yt" data-id="iSAq5QqCaFI">
       <img src="https://img.youtube.com/vi/iSAq5QqCaFI/sddefault.jpg" alt="Video commercial sample">
       <span class="play-badge">▶</span>
@@ -303,7 +279,7 @@ document.querySelectorAll(".local-vid").forEach(function(box){
 document.getElementById("lifehub-gate").addEventListener("submit", function(e){
   e.preventDefault();
   var pin=(document.getElementById("lifehub-pin").value||"").replace(/\D/g,"");
-  if(pin==="435777"){
+  if(pin==="4357"){
     sessionStorage.setItem("lifehub_ok","1");
     sessionStorage.setItem("jk_gate_ok","1");
     location.href="lifehub.html";
@@ -317,38 +293,6 @@ document.getElementById("lifehub-pin").addEventListener("keydown", function(e){
     document.getElementById("lifehub-gate").requestSubmit();
   }
 });
-document.getElementById("real4real-gate").addEventListener("submit", function(e){
-  e.preventDefault();
-  var pin=(document.getElementById("real4real-pin").value||"").replace(/\D/g,"");
-  if(pin==="777"){
-    window.open("https://www.mrbhnco.com/","_blank","noopener,noreferrer");
-    document.getElementById("real4real-err").textContent="";
-  } else {
-    document.getElementById("real4real-err").textContent="Wrong passcode";
-  }
-});
-document.getElementById("real4real-pin").addEventListener("keydown", function(e){
-  if(e.key==="Enter"){
-    e.preventDefault();
-    document.getElementById("real4real-gate").requestSubmit();
-  }
-});
-document.getElementById("games-gate").addEventListener("submit", function(e){
-  e.preventDefault();
-  var pin=(document.getElementById("games-pin").value||"").replace(/\D/g,"");
-  if(pin==="777"){
-    sessionStorage.setItem("games_ok","1");
-    location.href="games.html";
-  } else {
-    document.getElementById("games-err").textContent="Wrong passcode";
-  }
-});
-document.getElementById("games-pin").addEventListener("keydown", function(e){
-  if(e.key==="Enter"){
-    e.preventDefault();
-    document.getElementById("games-gate").requestSubmit();
-  }
-});
 document.getElementById("speak4-pin").addEventListener("keydown", function(e){
   if(e.key==="Enter"){
     e.preventDefault();
@@ -358,7 +302,7 @@ document.getElementById("speak4-pin").addEventListener("keydown", function(e){
 document.getElementById("speak4-gate").addEventListener("submit", function(e){
   e.preventDefault();
   var pin=(document.getElementById("speak4-pin").value||"").replace(/\D/g,"");
-  if(pin==="435777"){
+  if(pin==="4357"){
     sessionStorage.setItem("speak4_ok","1");
     location.href="spk4gln.html";
   } else {
@@ -383,22 +327,6 @@ document.getElementById("speak4-gate").addEventListener("submit", function(e){
       document.getElementById(id+"-err").textContent="Wrong passcode";
     }
   });
-});
-document.getElementById("parent-copilot-gate").addEventListener("submit", function(e){
-  e.preventDefault();
-  var pin=(document.getElementById("parent-copilot-pin").value||"").replace(/\D/g,"");
-  if(pin==="777"){
-    sessionStorage.setItem("parent_copilot_ok","1");
-    location.href="parent-copilot.html";
-  } else {
-    document.getElementById("parent-copilot-err").textContent="Wrong passcode";
-  }
-});
-document.getElementById("parent-copilot-pin").addEventListener("keydown", function(e){
-  if(e.key==="Enter"){
-    e.preventDefault();
-    document.getElementById("parent-copilot-gate").requestSubmit();
-  }
 });
 document.addEventListener("keydown", function(e){
   if(e.key!=="Escape") return;
