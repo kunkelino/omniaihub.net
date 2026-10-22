@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Parent CoPilot — Driving Safety</title>
+<title>Co-Pilot — Driving Safety</title>
 <style>
 *{box-sizing:border-box}
 :root{--bg:#f4f7fb;--ink:#172033;--muted:#64748b;--line:#e5e7eb;--navy:#111827;--purple:#312e81;--red:#dc2626;--green:#15803d;--yellow:#facc15}
 body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
 .wrap{max-width:1050px;margin:auto;padding:22px}
-.hero{background:linear-gradient(135deg,var(--navy),var(--purple));color:#fff;border-radius:22px;padding:26px;margin-bottom:18px}
+.hero{background:linear-gradient(135deg,var(--navy),var(--purple));color:#fff;border-radius:22px;padding:26px;margin-bottom:18px}\n.hero-image{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:16px;margin:0 0 18px;box-shadow:0 8px 24px #0f172a18}
 .hero h1{margin:8px 0;font-size:clamp(28px,5vw,42px)}
 .hero p{line-height:1.55;max-width:720px;margin-bottom:0}
 .tag{display:inline-block;background:#e0e7ff;color:var(--purple);padding:6px 10px;border-radius:99px;font-weight:bold;font-size:12px}
@@ -47,10 +47,11 @@ li{margin:8px 0;line-height:1.45}
 </head>
 <body>
 <main class="wrap">
+<img class="hero-image" src="IMG_7594.jpeg" alt="Co-Pilot teen driving safety alerts">
 <section class="hero">
-<span class="tag">PARENT CO-PILOT</span>
+<span class="tag">CO-PILOT</span>
 <h1>Teen Driving Safety</h1>
-<p>Review sample driving alerts and choose a response. This demonstration uses example data; it is not connected to a live phone or vehicle.</p>
+<p>Know when a driver may be texting, speeding, or driving after hours. Review sample driving alerts and choose a response. This demonstration uses example data; it is not connected to a live phone or vehicle.</p>
 </section>
 <div class="controls" aria-label="Safety alert categories">
 <button class="control" id="phone-tab" type="button" aria-pressed="true" onclick="showPanel('phone')">📱 Phone Use<span>View phone activity alerts</span></button>
@@ -101,6 +102,7 @@ li{margin:8px 0;line-height:1.45}
 <a class="back" href="/">← Back to OmniAIHub Portfolio</a>
 </main>
 <script>
+if(sessionStorage.getItem("copilot_ok")!=="1"){ location.replace("/"); }
 function showPanel(name){
   const phone=name==="phone";
   document.getElementById("phone-panel").classList.toggle("active",phone);
