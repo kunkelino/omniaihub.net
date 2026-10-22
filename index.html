@@ -95,7 +95,15 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
       </div>
     </form>
     <a class="box" href="https://www.mrbhnco.com/" target="_blank" rel="noopener noreferrer"><img src="holy-family-tile.jpg" alt="Real 4 Real — Mark's Website"><span class="cap">Real 4 Real — Mark's Website</span></a>
-    <a class="box" href="parent-copilot.html"><img src="IMG_7594.jpeg" alt="Parent CoPilot"><span class="cap">Parent CoPilot</span></a>
+    <form class="box passcode-tile" id="copilot-gate" action="parent-copilot.html">
+      <div class="passcode-inner">
+        <div class="passcode-title">Co-Pilot</div>
+        <label for="copilot-pin">Passcode</label>
+        <input id="copilot-pin" name="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Passcode">
+        <button type="submit">Enter</button>
+        <div class="passcode-err" id="copilot-err"></div>
+      </div>
+    </form>
     <div class="box yt" data-id="iSAq5QqCaFI">
       <img src="https://img.youtube.com/vi/iSAq5QqCaFI/sddefault.jpg" alt="Video commercial sample">
       <span class="play-badge">▶</span>
@@ -336,6 +344,20 @@ document.addEventListener("keydown", function(e){
     if(b) b.textContent="Expand";
   });
   document.body.classList.remove("yt-video-full");
+});
+
+document.getElementById("copilot-gate").addEventListener("submit", function(e){
+  e.preventDefault();
+  var pin=(document.getElementById("copilot-pin").value||"").replace(/\\D/g,"");
+  if(pin==="4357"){
+    sessionStorage.setItem("copilot_ok","1");
+    location.href="parent-copilot.html";
+  } else {
+    document.getElementById("copilot-err").textContent="Wrong passcode";
+  }
+});
+document.getElementById("copilot-pin").addEventListener("keydown", function(e){
+  if(e.key==="Enter"){e.preventDefault();document.getElementById("copilot-gate").requestSubmit();}
 });
 </script>
 <script src="/copyright.js"></script>
