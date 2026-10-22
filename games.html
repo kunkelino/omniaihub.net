@@ -21,15 +21,7 @@ button{width:100%;border:0;background:#312e81;color:#fff;font-weight:700;padding
 <body>
 <div class="page">
 <header class="hero"><h1>Games</h1><div class="sub">Private interactive experiments by Jonathan Kunkel & OmniAIHub.net</div><a class="back" href="index.html">← Back to Portfolio</a></header>
-<section id="gate">
-<h2>Private Games</h2><p>Enter the passcode to continue.</p>
-<form id="pin-form">
-<input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Passcode">
-<button type="submit">Enter Games</button>
-<div class="err" id="err"></div>
-</form>
-</section>
-<section id="games">
+<section id="games" style="display:block">
 <div class="grid">
 <a class="game" href="games/room.html">
 <div class="game-preview" style="background:#111 url('games/room/talk.jpg') center/cover"><strong>WHAT ARE<br>YOU LOOKING<br>AT?</strong></div>
@@ -38,15 +30,6 @@ button{width:100%;border:0;background:#312e81;color:#fff;font-weight:700;padding
 </div>
 </section>
 </div>
-<script>
-const ok=()=>sessionStorage.getItem("games_ok")==="1";
-function show(){document.getElementById("gate").style.display="none";document.getElementById("games").style.display="block"}
-if(ok()) show();
-document.getElementById("pin-form").addEventListener("submit",e=>{
-e.preventDefault();
-if((document.getElementById("pin").value||"").replace(/\D/g,"")==="777"){sessionStorage.setItem("games_ok","1");show()}
-else document.getElementById("err").textContent="Wrong passcode";
-});
-</script>
+
 </body>
 </html>
