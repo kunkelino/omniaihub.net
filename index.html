@@ -30,7 +30,7 @@ a{color:#312e81;}
 .box.cross .media{opacity:1;transition:opacity .22s ease;}
 .box.playing .play-badge{display:none;}
 .box .cap{position:absolute;left:0;right:0;bottom:0;padding:10px 12px;background:linear-gradient(transparent,rgba(0,0,0,.75));font-size:13px;font-weight:700;pointer-events:none;}
-.box.playing .cap{display:none;}
+.box.playing .cap{display:none!important;}
 .play-badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:22px;z-index:3;}
 .expand{position:absolute;top:8px;right:8px;z-index:4;background:rgba(0,0,0,.55);color:#fff;border:0;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;display:none;}
   .box.playing .expand{display:block;}
@@ -232,6 +232,8 @@ document.querySelectorAll(".yt").forEach(function(box){
   function play(){
     if(box.classList.contains("playing")) return;
     box.classList.add("playing");
+    var caption=box.querySelector(".cap");
+    if(caption) caption.style.display="none";
     var id=box.dataset.id;
     var frame=document.createElement("iframe");
     frame.className="media";
