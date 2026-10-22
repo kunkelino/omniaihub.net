@@ -319,7 +319,7 @@ document.getElementById("lifehub-pin").addEventListener("keydown", function(e){
 });
 document.getElementById("real4real-gate").addEventListener("submit", function(e){
   e.preventDefault();
-  var pin=(document.getElementById("real4real-pin").value||"").replace(/\\D/g,"");
+  var pin=(document.getElementById("real4real-pin").value||"").replace(/\D/g,"");
   if(pin==="6524"){
     window.open("https://www.mrbhnco.com/","_blank","noopener,noreferrer");
     document.getElementById("real4real-err").textContent="";
