@@ -102,10 +102,15 @@ p,li{font-size:14px;line-height:1.5;color:#334155;}
         <div class="passcode-err" id="speak4-err"></div>
       </div>
     </form>
-    <a class="box" href="https://www.mrbhnco.com/" target="_blank" rel="noopener noreferrer" aria-label="Open Mark's Real 4 Real website">
-      <img src="r4r.png" alt="Real 4 Real website preview">
-      <span class="cap">Real 4 Real — Mark's Website</span>
-    </a>
+    <form class="box passcode-tile" id="real4real-gate" aria-label="Open Mark's Real 4 Real website">
+      <div class="passcode-inner">
+        <div class="passcode-title">Real 4 Real — Mark's Website</div>
+        <label for="real4real-pin">Passcode</label>
+        <input id="real4real-pin" name="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Passcode">
+        <button type="submit">Enter</button>
+        <div class="passcode-err" id="real4real-err"></div>
+      </div>
+    </form>
     <form class="box passcode-tile" id="parent-copilot-gate" action="parent-copilot.html">
       <div class="passcode-inner">
         <div class="passcode-title">Parent CoPilot</div>
@@ -300,6 +305,7 @@ document.getElementById("lifehub-gate").addEventListener("submit", function(e){
   var pin=(document.getElementById("lifehub-pin").value||"").replace(/\D/g,"");
   if(pin==="435777"){
     sessionStorage.setItem("lifehub_ok","1");
+    sessionStorage.setItem("jk_gate_ok","1");
     location.href="lifehub.html";
   } else {
     document.getElementById("lifehub-err").textContent="Wrong passcode";
@@ -309,6 +315,22 @@ document.getElementById("lifehub-pin").addEventListener("keydown", function(e){
   if(e.key==="Enter"){
     e.preventDefault();
     document.getElementById("lifehub-gate").requestSubmit();
+  }
+});
+document.getElementById("real4real-gate").addEventListener("submit", function(e){
+  e.preventDefault();
+  var pin=(document.getElementById("real4real-pin").value||"").replace(/\\D/g,"");
+  if(pin==="6524"){
+    window.open("https://www.mrbhnco.com/","_blank","noopener,noreferrer");
+    document.getElementById("real4real-err").textContent="";
+  } else {
+    document.getElementById("real4real-err").textContent="Wrong passcode";
+  }
+});
+document.getElementById("real4real-pin").addEventListener("keydown", function(e){
+  if(e.key==="Enter"){
+    e.preventDefault();
+    document.getElementById("real4real-gate").requestSubmit();
   }
 });
 document.getElementById("games-gate").addEventListener("submit", function(e){
