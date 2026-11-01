@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101426">
+<title>Omni AI Hub.net Orders</title>
+<style>
+:root{--bg:#0b1020;--panel:#141c31;--panel2:#1a2540;--line:#2a3654;--text:#f4f6ff;--muted:#9ca9c5;--purple:#8275ff;--cyan:#58d5e8;--green:#4bd5a0;--amber:#ffc66d;--red:#ff858e}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 500px at 15% -10%,#25265a 0%,transparent 65%),var(--bg);color:var(--text);font:15px/1.5 Inter,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}.shell{max-width:1250px;margin:auto;padding:24px 18px 60px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--purple),var(--cyan));display:grid;place-items:center;color:#101426;font-weight:900;font-size:18px}.brand h1{font-size:19px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.demo{border:1px solid #806c39;background:#352b19;color:#ffd98d;border-radius:999px;padding:7px 12px;font-size:11px;font-weight:800;letter-spacing:.08em}.hero{padding:28px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(120deg,rgba(130,117,255,.17),rgba(88,213,232,.06)),var(--panel);margin-bottom:20px}.eyebrow{color:var(--cyan);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.hero h2{font-size:clamp(27px,5vw,42px);line-height:1.1;margin:8px 0}.hero p{max-width:700px;color:var(--muted);margin:0}.tabs{display:flex;gap:8px;margin:20px 0;flex-wrap:wrap}.tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:10px 16px;border-radius:12px;font-weight:700}.tab.active{background:var(--purple);border-color:var(--purple);color:#fff}.view{display:none}.view.active{display:block}.grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:18px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:16px}.card h3{margin:0 0 5px;font-size:18px}.sub{color:var(--muted);font-size:13px;margin:0 0 18px}.field{margin:15px 0}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:7px}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:#0e1629;color:var(--text);border-radius:11px;padding:12px;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px #8275ff22}.field textarea{min-height:120px;resize:vertical}.hint{font-size:12px;color:var(--muted);margin-top:6px}.services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.service{border:1px solid var(--line);background:#10182b;border-radius:13px;padding:14px;text-align:left;color:var(--text)}.service.selected{border-color:var(--purple);background:#28234c;box-shadow:inset 0 0 0 1px var(--purple)}.service strong{display:block;margin:6px 0 2px}.service small{color:var(--muted)}.service .price{color:var(--cyan);font-weight:800}.upload{border:1px dashed #56658a;border-radius:14px;padding:20px;text-align:center;background:#10182b}.upload input{max-width:100%;margin-top:10px}.filelist{font-size:12px;color:var(--muted);text-align:left;margin-top:8px}.summary-row{display:flex;justify-content:space-between;gap:12px;margin:10px 0;color:var(--muted)}.summary-row strong{color:var(--text)}.total{border-top:1px solid var(--line);padding-top:14px;margin-top:14px;font-size:17px}.total strong{font-size:25px;color:var(--cyan)}.notice{background:#172b36;border:1px solid #28546a;border-radius:12px;padding:12px;color:#b9eefa;font-size:12px}.btn{border:0;border-radius:12px;background:linear-gradient(110deg,var(--purple),#6559d8);color:white;padding:13px 18px;font-weight:800;width:100%;box-shadow:0 8px 22px #5c50c833}.btn.secondary{background:#26334f;box-shadow:none;border:1px solid var(--line)}.btn:disabled{opacity:.5;cursor:not-allowed}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.metric{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:15px}.metric span{display:block;color:var(--muted);font-size:12px}.metric strong{font-size:26px}.orders{display:grid;gap:10px}.order{border:1px solid var(--line);background:#10182b;border-radius:14px;padding:15px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.order h4{margin:0 0 3px}.order p{margin:0;color:var(--muted);font-size:12px}.pill{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;background:#283653;color:#cbd7f5}.pill.paid{background:#153d36;color:#85f0c7}.pill.progress{background:#3b315e;color:#c7baff}.pill.new{background:#493719;color:#ffd98d}.detail{display:none;border-top:1px solid var(--line);margin-top:13px;padding-top:13px;grid-column:1/-1}.order.open .detail{display:block}.detail p{margin:7px 0;color:#d8def0;font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions button{width:auto;padding:9px 12px;font-size:12px}.empty{text-align:center;color:var(--muted);padding:30px}.foot{text-align:center;color:#7784a2;font-size:11px;margin-top:28px}.modal{position:fixed;inset:0;background:#050916cc;display:none;place-items:center;padding:18px;z-index:5}.modal.show{display:grid}.modalbox{max-width:480px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}.modalbox h3{margin-top:0}@media(max-width:800px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.shell{padding:15px 12px 40px}.hero{padding:21px}.services{grid-template-columns:1fr}.top{align-items:flex-start}.order{grid-template-columns:1fr}.metrics{gap:8px}.metric{padding:12px}.metric strong{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top"><div class="brand"><div class="logo">O</div><div><h1>Omni AI Hub.net Orders</h1><p>Digital services · Customer ordering & job management</p></div></div><span class="demo">INTERACTIVE DEMO</span></header>
+<section class="hero"><div class="eyebrow">Your digital work, organized</div><h2>One place to place and manage every order.</h2><p>Customers can choose a service, send project files, describe what they need, select a deadline and review an estimated total. Your team can track each job from receipt to completion.</p></section>
+<nav class="tabs" aria-label="Order portal sections"><button class="tab active" data-view="customer">Customer order form</button><button class="tab" data-view="admin">Order dashboard</button></nav>
+<section id="customer" class="view active">
+<form id="orderForm">
+<div class="grid"><div>
+<div class="card"><h3>1. Choose a service</h3><p class="sub">Select the type of digital project you need.</p><div class="services" id="services">
+<button class="service selected" type="button" data-service="Video editing" data-price="79"><span>🎬</span><strong>Video editing</strong><small>Editing, captions and finishing</small><span class="price">$79 starting</span></button>
+<button class="service" type="button" data-service="Promotional video" data-price="129"><span>📣</span><strong>Promotional video</strong><small>Commercials and social ads</small><span class="price">$129 starting</span></button>
+<button class="service" type="button" data-service="Digital design" data-price="49"><span>🎨</span><strong>Digital design</strong><small>Graphics and branded assets</small><span class="price">$49 starting</span></button>
+<button class="service" type="button" data-service="Website content" data-price="99"><span>💻</span><strong>Website content</strong><small>Web graphics and content updates</small><span class="price">$99 starting</span></button>
+</div></div>
+<div class="card"><h3>2. Your information</h3><p class="sub">Tell us who to contact about this project.</p><div class="field"><label for="customerName">Full name *</label><input id="customerName" required placeholder="Your name"></div><div class="field"><label for="customerEmail">Email address *</label><input id="customerEmail" type="email" required placeholder="you@example.com"></div><div class="field"><label for="company">Company or organization (optional)</label><input id="company" placeholder="Company name"></div></div>
+<div class="card"><h3>3. Project details & uploads</h3><p class="sub">Provide clear instructions and any reference materials.</p><div class="field"><label for="instructions">Project instructions *</label><textarea id="instructions" required placeholder="Describe what you want created, edited or changed. Include style, dimensions, wording, audience and any important details."></textarea></div><div class="field"><label for="uploads">Upload images, videos, logos or documents</label><div class="upload">☁️<br><strong>Choose project files</strong><br><span class="hint">Demo only: files are listed locally and are not uploaded to a server.</span><input id="uploads" type="file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip"></div><div class="filelist" id="fileList">No files selected</div></div></div>
+<div class="card"><h3>4. Requested deadline</h3><p class="sub">Choose the date you would like your project completed.</p><div class="field"><label for="dueDate">Requested completion date *</label><input id="dueDate" type="date" required><div class="hint" id="deadlineHint">Standard turnaround is five business days. Earlier dates may require an express fee or availability review.</div></div></div>
+</div>
+<aside><div class="card"><h3>Order summary</h3><p class="sub">Your estimate updates as you complete the form.</p><div class="summary-row"><span>Selected service</span><strong id="sumService">Video editing</strong></div><div class="summary-row"><span>Base price</span><strong id="sumBase">$79.00</strong></div><div class="summary-row"><span>Express fee</span><strong id="sumExpress">$0.00</strong></div><div class="summary-row total"><span>Total estimate</span><strong id="sumTotal">$79.00</strong></div><div class="notice" id="feeNote" style="margin:15px 0">Standard turnaround selected. No express fee.</div><button class="btn" type="submit">Continue to demo checkout</button><p class="hint">This sample does not collect payment or send customer data. A live version will use secure PayPal Checkout.</p></div><div class="card"><h3>What happens next?</h3><p class="sub">1. Submit your project details.<br>2. Complete secure payment.<br>3. Receive an order confirmation.<br>4. Track progress through delivery.</p></div></aside></div>
+</form>
+</section>
+<section id="admin" class="view">
+<div class="metrics"><div class="metric"><span>New orders</span><strong id="newCount">2</strong></div><div class="metric"><span>In progress</span><strong id="progressCount">1</strong></div><div class="metric"><span>Completed</span><strong id="completeCount">1</strong></div><div class="metric"><span>Awaiting payment</span><strong id="pendingCount">1</strong></div></div>
+<div class="card"><h3>Order inbox</h3><p class="sub">Open an order to review customer details, instructions, files and requested delivery date. Sample records are illustrative.</p><div class="orders" id="ordersList"></div></div>
+<div class="notice">Demo dashboard: status changes are saved in this browser only. Live PayPal payments, refunds, invoices, email and push notifications require the server-side integrations and credentials.</div>
+</section>
+<div class="foot">OMNI AI HUB.NET ORDERS · SAMPLE EXPERIENCE · NOT A LIVE PAYMENT PORTAL</div>
+</div>
+<div class="modal" id="modal"><div class="modalbox"><h3 id="modalTitle">Demo order created</h3><p id="modalText" class="sub"></p><button class="btn" id="modalClose">Got it</button></div></div>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+let selectedService='Video editing',basePrice=79,expressFee=0;
+const today=new Date();today.setHours(0,0,0,0);
+const addBusinessDays=(start,n)=>{let d=new Date(start),count=0;while(count<n){d.setDate(d.getDate()+1);if(d.getDay()!==0&&d.getDay()!==6)count++;}return d;};
+const minDate=addBusinessDays(today,1);$('dueDate').min=new Date(today.getTime()+86400000).toISOString().slice(0,10);
+const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n);
+const dateText=s=>new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+const calc=()=>{
+ const val=$('dueDate').value;
+ expressFee=0;
+ let note='Choose a completion date to calculate turnaround pricing.';
+ if(val){
+  const target=new Date(val+'T12:00:00');let business=0,d=new Date(today);
+  while(d<target){d.setDate(d.getDate()+1);if(d.getDay()!==0&&d.getDay()!==6)business++;}
+  if(business>=5){note='Standard turnaround selected. No express fee.';}
+  else if(business===4){expressFee=15;note='Priority turnaround: $15 express fee.';}
+  else if(business===3){expressFee=25;note='Rush turnaround: $25 express fee.';}
+  else if(business===2){expressFee=50;note='Next-business-day turnaround: $50 express fee.';}
+  else if(business===1){expressFee=75;note='Urgent turnaround: $75 express fee and availability review.';}
+  else {note='Same-day or past-date requests require manual availability review. This demo does not accept them.';}
+ }
+ $('sumService').textContent=selectedService;$('sumBase').textContent=money(basePrice);$('sumExpress').textContent=money(expressFee);$('sumTotal').textContent=money(basePrice+expressFee);$('feeNote').textContent=note;$('deadlineHint').textContent=note;
+};
+document.querySelectorAll('.service').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.service').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');selectedService=b.dataset.service;basePrice=Number(b.dataset.price);calc();}));
+$('dueDate').addEventListener('change',calc);
+$('uploads').addEventListener('change',()=>{$('fileList').textContent=[...$('uploads').files].map(f=>f.name+' ('+Math.round(f.size/1024)+' KB)').join(' · ')||'No files selected';});
+const seed=[
+{id:'1048',name:'Morgan Lee',email:'morgan@example.com',service:'Promotional video',amount:154,base:129,express:25,due:'2026-11-05',status:'New order',paid:true,instructions:'Create a 30-second promotional video for a local business. Use the supplied logo and keep the tone upbeat.',files:['brand-logo.png','reference-clip.mp4'],created:'Today · 9:18 AM'},
+{id:'1047',name:'Taylor Brooks',email:'taylor@example.com',service:'Video editing',amount:79,base:79,express:0,due:'2026-11-10',status:'In progress',paid:true,instructions:'Edit the supplied interview, remove pauses and add clean captions.',files:['interview.mp4'],created:'Yesterday · 3:42 PM'},
+{id:'1046',name:'Jordan Rivera',email:'jordan@example.com',service:'Digital design',amount:49,base:49,express:0,due:'2026-10-30',status:'Completed',paid:true,instructions:'Create a square social media graphic using the supplied copy.',files:['campaign-copy.pdf'],created:'Oct 27 · 11:05 AM'},
+{id:'1045',name:'Casey Morgan',email:'casey@example.com',service:'Website content',amount:99,base:99,express:0,due:'2026-11-12',status:'Awaiting payment',paid:false,instructions:'Update the homepage hero image and revise the introductory text.',files:['homepage-reference.jpg'],created:'Oct 26 · 2:10 PM'}
+];
+let orders=JSON.parse(localStorage.getItem('omni_demo_orders')||'null')||seed;
+const save=()=>localStorage.setItem('omni_demo_orders',JSON.stringify(orders));
+function render(){
+ $('newCount').textContent=orders.filter(o=>o.status==='New order').length;
+ $('progressCount').textContent=orders.filter(o=>o.status==='In progress').length;
+ $('completeCount').textContent=orders.filter(o=>o.status==='Completed').length;
+ $('pendingCount').textContent=orders.filter(o=>o.status==='Awaiting payment').length;
+ $('ordersList').innerHTML=orders.map(o=>{
+ const cls=o.status==='New order'?'new':o.status==='In progress'?'progress':o.status==='Completed'?'paid':'';
+ return '<article class="order" data-id="'+o.id+'"><div><h4>Order #'+o.id+' · '+o.service+'</h4><p>'+o.name+' · '+o.created+' · '+money(o.amount)+'</p></div><div><span class="pill '+cls+'">'+o.status+'</span> <button class="tab" data-open="'+o.id+'" style="padding:7px 10px">Details</button></div><div class="detail"><p><b>Customer:</b> '+o.name+' · '+o.email+'</p><p><b>Payment:</b> '+(o.paid?'Demo payment marked paid':'Awaiting payment')+' · '+money(o.amount)+'</p><p><b>Requested deadline:</b> '+dateText(o.due)+'</p><p><b>Price:</b> Base '+money(o.base)+' + express '+money(o.express)+'</p><p><b>Instructions:</b> '+o.instructions+'</p><p><b>Files:</b> '+(o.files||[]).join(', ')+'</p><div class="actions"><button class="btn secondary" data-status="Received" data-id="'+o.id+'">Mark received</button><button class="btn secondary" data-status="In progress" data-id="'+o.id+'">Start work</button><button class="btn secondary" data-status="Waiting for customer" data-id="'+o.id+'">Need customer</button><button class="btn secondary" data-status="Completed" data-id="'+o.id+'">Complete</button><button class="btn secondary" data-demo="'+o.id+'">Payment / refund</button></div></div></article>';
+ }).join('');
+}
+$('ordersList').addEventListener('click',e=>{
+ const open=e.target.closest('[data-open]');if(open){open.closest('.order').classList.toggle('open');return;}
+ const status=e.target.closest('[data-status]');if(status){const o=orders.find(x=>x.id===status.dataset.id);if(o){o.status=status.dataset.status==='Received'?'Received':status.dataset.status;save();render();document.querySelector('[data-id="'+o.id+'"]')?.classList.add('open');}return;}
+ const pay=e.target.closest('[data-demo]');if(pay){show('Payment actions are a demo','In the live system this area will connect to PayPal to issue a full or partial refund, send an additional invoice, and display the real transaction history. No money has moved.');}
+});
+function show(title,body){$('modalTitle').textContent=title;$('modalText').textContent=body;$('modal').classList.add('show');}
+$('modalClose').addEventListener('click',()=>$('modal').classList.remove('show'));
+document.querySelectorAll('.tab[data-view]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab[data-view]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===b.dataset.view));if(b.dataset.view==='admin')render();}));
+$('orderForm').addEventListener('submit',e=>{
+ e.preventDefault();calc();
+ if(!$('dueDate').value){show('Choose a deadline','Please select the requested completion date.');return;}
+ const business=(()=>{let n=0,d=new Date(today),t=new Date($('dueDate').value+'T12:00:00');while(d<t){d.setDate(d.getDate()+1);if(d.getDay()!==0&&d.getDay()!==6)n++;}return n;})();
+ if(business<1){show('Deadline needs review','Please choose a future business day. Same-day requests require manual availability review.');return;}
+ if(business<2){show('Express request needs approval','This sample flags urgent requests for manual availability approval before accepting payment.');return;}
+ const o={id:String(Math.max(1048,...orders.map(x=>Number(x.id)||0))+1),name:$('customerName').value,email:$('customerEmail').value,company:$('company').value,service:selectedService,base:basePrice,express:expressFee,amount:basePrice+expressFee,due:$('dueDate').value,status:'New order',paid:false,instructions:$('instructions').value,files:[...$('uploads').files].map(f=>f.name),created:'Just now'};
+ orders.unshift(o);save();render();show('Sample order #'+o.id+' created','Your order details have been added to this browser’s demo dashboard. The live version will continue to PayPal Checkout, verify payment by webhook, and then send your business a new-order alert. No payment was taken.');$('orderForm').reset();$('fileList').textContent='No files selected';document.querySelectorAll('.service').forEach(x=>x.classList.toggle('selected',x.dataset.service==='Video editing'));selectedService='Video editing';basePrice=79;calc();
+});
+calc();render();
+})();
+</script>
+</body>
+</html>
